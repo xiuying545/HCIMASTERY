@@ -23,14 +23,17 @@ class _QuizPageState extends State<QuizPage> {
         'Paris',
         'Rome'
       ],
+      'answer':1,
     },
     {
       'questionText': 'What is 2 + 2?',
       'options': ['3', '4', '5', '6'],
+      'answer':1,
     },
     {
       'questionText': 'What is the capital of Malaysia?',
       'options': ['Bangkok', 'Kuala Lumpur', 'Jakarta', 'Manila'],
+      'answer':1,
     },
   ];
 
