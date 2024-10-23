@@ -18,7 +18,7 @@ class QuizResultPage extends StatelessWidget {
     {'text': 'What is the smallest prime number?', 'isCorrect': true},
     {'text': 'What is the capital of Italy?', 'isCorrect': false},
     {'text': 'What is 10 / 2?', 'isCorrect': true},
-     {'text': 'What is the capital of France?', 'isCorrect': true},
+    {'text': 'What is the capital of France?', 'isCorrect': true},
     {'text': 'What is 2 + 2?', 'isCorrect': true},
     {'text': 'What is the capital of Germany?', 'isCorrect': false},
     {'text': 'What is 3 * 5?', 'isCorrect': true},
@@ -30,7 +30,7 @@ class QuizResultPage extends StatelessWidget {
     {'text': 'What is 10 / 2?', 'isCorrect': true},
   ];
 
-   QuizResultPage({super.key});
+  QuizResultPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,18 @@ class QuizResultPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DashboardPage'),
+        title: Text(
+          'Quiz Result',
+          style: GoogleFonts.rubik(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6a5ae0),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        padding: const EdgeInsets.fromLTRB(25, 25, 25, 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,7 +73,7 @@ class QuizResultPage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
                         child: ClipRRect(
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20),
@@ -73,37 +81,51 @@ class QuizResultPage extends StatelessWidget {
                           ),
                           child: Container(
                             color: const Color(0xFFfeb3b3),
-                            child: Row(
-                              children: [
-                                CircularPercentIndicator(
-                                  radius: 45.0, // Size of the circular chart
-                                  lineWidth: 7.0, // Thickness of the progress line
-                                  percent: percentage, // The percentage of correct answers (0.0 to 1.0)
-                                  center: Text(
-                                    "$correctAnswers/$totalQuestions",
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                              child: Row(
+                                children: [
+                                  CircularPercentIndicator(
+                                    radius: 45.0, // Size of the circular chart
+                                    lineWidth:
+                                        7.0, // Thickness of the progress line
+                                    percent:
+                                        percentage, // The percentage of correct answers (0.0 to 1.0)
+                                    center: Text(
+                                      "$correctAnswers/$totalQuestions",
+                                      style: GoogleFonts.rubik(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    progressColor: Colors
+                                        .white, // The color of the progress bar
+                                    backgroundColor: const Color.fromARGB(
+                                        255,
+                                        190,
+                                        192,
+                                        193), // The background color of the circle
+                                    circularStrokeCap: CircularStrokeCap
+                                        .round, // Makes the ends of the progress rounded
+                                  ),
+                                  const SizedBox(
+                                      width:
+                                          10), // Add some space between the chart and the text
+                                  Expanded(
+                                    child: Text(
+                                      "Great try, keep going up",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.rubik(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                  progressColor: Colors.white, // The color of the progress bar
-                                  backgroundColor: const Color.fromARGB(
-                                      255, 190, 192, 193), // The background color of the circle
-                                  circularStrokeCap: CircularStrokeCap.round, // Makes the ends of the progress rounded
-                                ),
-                                const SizedBox(width: 10), // Add some space between the chart and the text
-                                Expanded(
-                                  child: Text(
-                                    "You got $correctAnswers correct out of $totalQuestions questions",
-                                    style: GoogleFonts.rubik(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -119,43 +141,50 @@ class QuizResultPage extends StatelessWidget {
               style: GoogleFonts.rubik(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w500,
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: const Color.fromARGB(255, 0, 0, 0),
               ),
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: Container(
-                color: Color(0xffefeefb),
-                child: ListView.builder(
-                  itemCount: questions.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${index + 1}. ${questions[index]['text']}', 
-                              style: GoogleFonts.rubik(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w400,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                child: Container(
+                  color: const Color(0xffefeefb),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ListView.builder(
+                      itemCount: questions.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5.0, horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${index + 1}. ${questions[index]['text']}',
+                                  style: GoogleFonts.rubik(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                               ),
-                            ),
+                              // Icon to indicate correctness
+                              Icon(
+                                questions[index]['isCorrect']
+                                    ? Icons.check_circle
+                                    : Icons.cancel,
+                                color: questions[index]['isCorrect']
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ],
                           ),
-                          // Icon to indicate correctness
-                          Icon(
-                            questions[index]['isCorrect']
-                                ? Icons.check_circle
-                                : Icons.cancel,
-                            color: questions[index]['isCorrect']
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -165,4 +194,3 @@ class QuizResultPage extends StatelessWidget {
     );
   }
 }
-

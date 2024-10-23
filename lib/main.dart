@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:provider/provider.dart'; // Import the provider package
 import 'package:fyp1/widget/studentnavbar.dart';
 import 'firebase_options.dart';
 
 
-
-
 Future<void> main() async {
-   WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized(); 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
+
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,11 +21,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Demo',
-      home: StudentNavBar(),
+    return MultiProvider(
+      providers: [
+        
+        ChangeNotifierProvider(create: (context) => QuizViewModel()), 
+       
+      ],
+      child: const MaterialApp(
+        title: 'Flutter Demo',
+        home: StudentNavBar(),
+      ),
     );
   }
 }
-
-

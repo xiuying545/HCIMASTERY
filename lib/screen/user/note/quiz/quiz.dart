@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+
 import 'package:google_fonts/google_fonts.dart';
 
 class QuizPage extends StatefulWidget {
@@ -47,6 +48,7 @@ class _QuizPageState extends State<QuizPage> {
     super.initState();
     // Initialize the list with null values (no answers selected yet)
     selectedAnswers = List<int?>.filled(questions.length, null);
+
   }
 
   // Function to handle answer selection
@@ -71,11 +73,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Quiz'),
-        backgroundColor:
-            const Color(0xFF6a5ae0), // Set AppBar color to match the background
-      ),
+     
       body: Container(
         color: const Color(0xFF6a5ae0), // Set the background color of the body
         child: Column(

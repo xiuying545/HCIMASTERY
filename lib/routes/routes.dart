@@ -1,5 +1,7 @@
 import 'package:fyp1/screen/user/forum/forum.dart';
+import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
+import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:go_router/go_router.dart';
@@ -23,9 +25,18 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const QuizPage(),
     ),
     GoRoute(
+      path: '/student/quizResult',
+      builder: (context, state) =>  QuizResultPage(),
+    ),
+     GoRoute(
+      path: '/student/questionlist',
+      builder: (context, state) =>  const QuestionListPage(),
+    ),
+    GoRoute(
       path: '/student/profile',
       builder: (context, state) => const ProfilePage(),
     ),
+
     
     // Routes for teachers
     // GoRoute(
