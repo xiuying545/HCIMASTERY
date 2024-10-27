@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
@@ -6,10 +10,10 @@ import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:go_router/go_router.dart';
 
-
-// Route configuration for both teacher and student
-final GoRouter appRouter = GoRouter(
-  initialLocation: '/student/quiz',
+GoRouter router() {
+  return GoRouter(
+  
+  initialLocation: '/student/questionlist',
   routes: [
     // Routes for students
     GoRoute(
@@ -20,24 +24,40 @@ final GoRouter appRouter = GoRouter(
       path: '/student/practicalExercise',
       builder: (context, state) => const PracticalExercisePage(),
     ),
-    GoRoute(
-      path: '/student/quiz',
-      builder: (context, state) => const QuizPage(),
-    ),
+  GoRoute(
+  path: '/student/quiz',
+  builder: (context, state) {
+    final quizListJson = state.uri.queryParameters['quizzList'];
+    final indexString = state.uri.queryParameters['index'];
+
+    if (quizListJson == null || indexString == null) {
+      // Handle the error case (e.g., navigate to an error page or show a message)
+      return const Scaffold(
+        body: Center(child: Text('Error: Missing quiz data.')),
+      );
+    }
+
+    final index = int.tryParse(indexString) ?? 0; // Fallback to 0 if parsing fails
+
+    List<dynamic> quizList = jsonDecode(quizListJson);
+    List<Quiz> quizzes = quizList.map((quizJson) => Quiz.fromJson(quizJson)).toList();
+
+    return QuizPage(quizzes: quizzes, questionIndex: index);
+  },
+),
     GoRoute(
       path: '/student/quizResult',
-      builder: (context, state) =>  QuizResultPage(),
+      builder: (context, state) => QuizResultPage(),
     ),
-     GoRoute(
+    GoRoute(
       path: '/student/questionlist',
-      builder: (context, state) =>  const QuestionListPage(),
+      builder: (context, state) => const QuestionListPage(),
     ),
     GoRoute(
       path: '/student/profile',
       builder: (context, state) => const ProfilePage(),
     ),
 
-    
     // Routes for teachers
     // GoRoute(
     //   path: '/teacher/dashboard',
@@ -53,3 +73,4 @@ final GoRouter appRouter = GoRouter(
     // ),
   ],
 );
+}

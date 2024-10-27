@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
-import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 
@@ -41,7 +40,7 @@ class _StudentNavBar extends State<StudentNavBar> {
           return const ProfilePage();
 
         default:
-          return const QuizPage();
+          return const QuestionListPage();
       }
     }
 

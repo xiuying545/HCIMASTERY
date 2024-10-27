@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -14,18 +16,19 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
-    // Note: Consider fetching quizzes in the build method or using a FutureBuilder
+    final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    // Call fetchQuizzes only once when the widget is initialized
+    if (quizViewModel.quizzes.isEmpty) {
+      quizViewModel.fetchQuizzes(1);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final quizViewModel = Provider.of<QuizViewModel>(context);
 
-    // Fetch quizzes if not already fetched
-    if (quizViewModel.quizzes.isEmpty) {
-      quizViewModel.fetchQuizzes(1);
-    }
-    print(quizViewModel.quizzes.length);
+    // Debugging output for the length of quizzes
+    print('Fetched quizzes: ${quizViewModel.quizzes.length}');
 
     return Scaffold(
       appBar: AppBar(
@@ -62,10 +65,9 @@ class _QuestionListPageState extends State<QuestionListPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: quizViewModel.isLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : ListView.builder(
                           itemCount: quizViewModel.quizzes.length,
-                          
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -80,7 +82,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                                   leading: CircleAvatar(
                                     backgroundColor: const Color(0xFFfd7e7e),
                                     child: Text(
-                                      'Q${index+1}',
+                                      'Q${index + 1}',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -95,17 +97,9 @@ class _QuestionListPageState extends State<QuestionListPage> {
                                     ),
                                   ),
                                   onTap: () {
-                                    // Example: Navigate to the quiz details page
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => QuizDetailPage(quiz: quizViewModel.quizzes[index]),
-                                    //   ),
-                                    // );
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Selected ${quizViewModel.quizzes[index].question}')),
-                                      
-                                    );
+                                    final quizListJson = jsonEncode(
+                                        quizViewModel.quizzes.map((quiz) => quiz.toJson()).toList());
+                                 context.go('/student/quiz?quizzList=${Uri.encodeComponent(quizListJson)}&index=$index');
                                   },
                                 ),
                               ),

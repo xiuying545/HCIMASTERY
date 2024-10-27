@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/routes/routes.dart';
 import 'package:provider/provider.dart'; // Import the provider package
-import 'package:fyp1/widget/studentnavbar.dart';
 import 'firebase_options.dart';
 
 
@@ -14,22 +14,18 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        
-        ChangeNotifierProvider(create: (context) => QuizViewModel()), 
-       
+        ChangeNotifierProvider(create: (context) => QuizViewModel()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp.router(
         title: 'Flutter Demo',
-        home: StudentNavBar(),
+        routerConfig: router(),
       ),
     );
   }

@@ -1,88 +1,45 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:fyp1/model/quiz.dart';
+import 'package:fyp1/modelview/quizviewmodel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  final List<Quiz> quizzes;
+  final int questionIndex;
+
+  const QuizPage({super.key, required this.quizzes, required this.questionIndex});
 
   @override
   _QuizPageState createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
-  int currentQuestionIndex = 0; // Track current question index
-
-  // Sample quiz data
-  final List<Map<String, Object>> questions = [
-    {
-      'questionText': 'What is the capital of France?',
-      'options': [
-        'BerlinBerlinBerlinBerlinBerlinBerlinBerlinBerlin',
-        'London',
-        'Paris',
-        'Rome'
-      ],
-      'answer':1,
-    },
-    {
-      'questionText': 'What is 2 + 2?',
-      'options': ['3', '4', '5', '6'],
-      'answer':1,
-    },
-    {
-      'questionText': 'What is the capital of Malaysia?',
-      'options': ['Bangkok', 'Kuala Lumpur', 'Jakarta', 'Manila'],
-      'answer':1,
-    },
-  ];
-
-  List<String> choice = ['A', 'B', 'C', 'D'];
-
-  // This list will store the selected answer for each question
-  List<int?> selectedAnswers = [];
+  late int currentQuestionIndex;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the list with null values (no answers selected yet)
-    selectedAnswers = List<int?>.filled(questions.length, null);
-
-  }
-
-  // Function to handle answer selection
-  void _selectAnswer(int selectedIndex) {
-    // Set the selected answer immediately
-    setState(() {
-      selectedAnswers[currentQuestionIndex] = selectedIndex;
-    });
-
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        if (currentQuestionIndex + 1 != questions.length) {
-          currentQuestionIndex++;
-        } else {
-          // Quiz is complete; you can handle the end of the quiz here if necessary
-          _showCompletionDialog(context);
-        }
-      });
-    });
+    currentQuestionIndex = widget.questionIndex; // Initialize currentQuestionIndex here
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Number of quizzes: ${widget.quizzes.length}");
+
+    final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    String quizId = widget.quizzes[currentQuestionIndex].quizzID ?? '-1';
+    List<String> choice = ['A', 'B', 'C', 'D'];
+
     return Scaffold(
-     
       body: Container(
-        color: const Color(0xFF6a5ae0), // Set the background color of the body
+        color: const Color(0xFF6a5ae0),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.end, // Align children to the bottom
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(30)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.7,
                 decoration: BoxDecoration(
@@ -92,7 +49,7 @@ class _QuizPageState extends State<QuizPage> {
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 10,
                       spreadRadius: 2,
-                      offset: const Offset(0, 3), // changes position of shadow
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -102,101 +59,100 @@ class _QuizPageState extends State<QuizPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        'Question ${currentQuestionIndex + 1}',
-                        style: GoogleFonts.rubik(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        'Quiz',
+                        style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        questions[currentQuestionIndex]['questionText']
-                            as String,
-                        style: GoogleFonts.rubik(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        widget.quizzes[currentQuestionIndex].question,
+                        style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      ListView.builder(
-                        shrinkWrap: true, // Prevent overflow
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: (questions[currentQuestionIndex]['options']
-                                as List<String>)
-                            .length,
-                        itemBuilder: (context, index) {
-                          List<String> options = questions[currentQuestionIndex]
-                              ['options'] as List<String>;
-                          return Column(
-                            children: <Widget>[
-                              GestureDetector(
+                      FutureBuilder<int>(
+                        future: quizViewModel.getUserAnswer(
+                          1,
+                          widget.quizzes[currentQuestionIndex].chapter,
+                          widget.quizzes[currentQuestionIndex].quizzID ?? '-1',
+                        ),
+                        builder: (context, snapshot) {
+                          // If the future is still loading
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+
+                          // If there's an error
+                          if (snapshot.hasError) {
+                            return Text("Error: ${snapshot.error}");
+                          }
+
+                          int userAnswer = snapshot.data ?? -1;
+
+                          // Ensure the currentQuestionIndex is valid before rendering
+                          if (currentQuestionIndex < widget.quizzes.length) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: widget.quizzes[currentQuestionIndex].options.length,
+                              itemBuilder: (context, index) {
+                                // Set color based on user answer
+                                Color color = (userAnswer == index)
+                                    ? const Color(0xFFfd7e7e) // Color for the selected answer
+                                    : const Color(0xFFfeb3b3); // Default color
+
+                                return GestureDetector(
                                   onTap: () {
-                                    _selectAnswer(index);
+                                    // Update the answer when the user taps on an option
+                                    quizViewModel.saveAnswer(1, widget.quizzes[currentQuestionIndex].chapter, quizId, index);
+                                    updateQuestionIndex();
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 5),
-                                    child: AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 100),
-                                      curve: Curves.easeInOut,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        color: selectedAnswers[
-                                                    currentQuestionIndex] ==
-                                                index
-                                            ? const Color(0xFFfd7e7e)
-                                            : const Color(0xFFfeb3b3),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(25),
-                                                color: const Color(0xFFfd7e7e)),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10,
-                                                      horizontal: 15),
-                                              child: Text(
-                                                choice[index],
-                                                style: GoogleFonts.rubik(
-                                                  fontSize: 24.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 100),
+                                    curve: Curves.easeInOut,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: color,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(25),
+                                            color: const Color(0xFFfd7e7e),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                            child: Text(
+                                              choice[index],
+                                              style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 15),
-                                                child: AutoSizeText(
-                                                  options[index],
-                                                  style: GoogleFonts.rubik(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  minFontSize: 10,
-                                                  maxLines: 2,
-                                                )),
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                            child: AutoSizeText(
+                                              widget.quizzes[currentQuestionIndex].options[index],
+                                              style: GoogleFonts.rubik(fontSize: 18.0, fontWeight: FontWeight.w400),
+                                              minFontSize: 10,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  )),
-                            ],
-                          );
+                                  ),
+                                );
+                              },
+                            );
+                          }
+
+                          // If currentQuestionIndex is out of bounds, return an empty Container
+                          return Container();
                         },
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Back Button
                           Visibility(
                             visible: currentQuestionIndex > 0,
                             child: Padding(
@@ -204,57 +160,46 @@ class _QuizPageState extends State<QuizPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    currentQuestionIndex--;
+                                    if (currentQuestionIndex > 0) {
+                                      currentQuestionIndex--;
+                                    }
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   elevation: 1,
-                                  side: const BorderSide(
-                                      color: Color(0xFF6a5ae0), width: 2),
+                                  side: const BorderSide(color: Color(0xFF6a5ae0), width: 2),
                                   shadowColor: Colors.transparent,
-                                  shape:
-                                      const CircleBorder(), // Set to CircleBorder for circular buttons
+                                  shape: const CircleBorder(),
                                   minimumSize: const Size(50, 50),
                                 ),
-                                child: const Icon(Icons.arrow_back_ios,
-                                    color: Color(0xFF6a5ae0)),
+                                child: const Icon(Icons.arrow_back_ios, color: Color(0xFF6a5ae0)),
                               ),
                             ),
                           ),
-                          // Next Button
                           Padding(
                             padding: const EdgeInsets.all(1.0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 elevation: 1,
-                                side: const BorderSide(
-                                    color: Color(0xFF6a5ae0), width: 2),
+                                side: const BorderSide(color: Color(0xFF6a5ae0), width: 2),
                                 shadowColor: Colors.transparent,
-                                shape:
-                                    const CircleBorder(), // Set to CircleBorder for circular buttons
+                                shape: const CircleBorder(),
                                 minimumSize: const Size(50, 50),
                               ),
                               onPressed: () {
-                                if (currentQuestionIndex <
-                                    questions.length - 1) {
-                                  setState(() {
+                                setState(() {
+                                  if (currentQuestionIndex < widget.quizzes.length - 1) {
                                     currentQuestionIndex++;
-                                  });
-                                } else {
-                                  // Show dialog or perform action on quiz completion
-                                  _showCompletionDialog(context);
-                                }
+                                  } else {
+                                    _showCompletionDialog(context);
+                                  }
+                                });
                               },
                               child: Icon(
-                                currentQuestionIndex == questions.length - 1
-                                    ? Icons
-                                        .check // Check icon if it's the last question
-                                    : Icons
-                                        .arrow_forward_ios, // Back icon otherwise
-                                color: const Color(
-                                    0xFF6a5ae0), // Set the icon color
+                                currentQuestionIndex == widget.quizzes.length - 1 ? Icons.check : Icons.arrow_forward_ios,
+                                color: const Color(0xFF6a5ae0),
                               ),
                             ),
                           ),
@@ -271,7 +216,18 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  // Function to show a completion dialog
+  void updateQuestionIndex() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        if (currentQuestionIndex < widget.quizzes.length - 1) {
+          currentQuestionIndex++;
+        } else {
+          _showCompletionDialog(context);
+        }
+      });
+    });
+  }
+
   void _showCompletionDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -283,6 +239,7 @@ class _QuizPageState extends State<QuizPage> {
             child: const Text('OK'),
             onPressed: () {
               Navigator.of(ctx).pop();
+              // You can add navigation or reset logic here
             },
           ),
         ],
