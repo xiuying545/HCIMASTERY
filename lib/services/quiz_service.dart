@@ -9,28 +9,30 @@ class QuizService {
     print('Quiz added with ID: ${docRef.id}'); // Log the ID of the added quiz
   }
 
-  Future<List<Quiz>> getQuizzesByChapter(int chapter) async {
-    // predefinedQuizzes();
-    try {
-      QuerySnapshot querySnapshot = await _db
-          .collection('Quiz')
-          .where("chapter", isEqualTo: chapter)
-          .get();
+Future<List<Quiz>> getQuizzesByChapter(int chapter) async {
+  try {
+    
+    QuerySnapshot querySnapshot = await _db
+        .collection('Quiz')
+        .where("chapter", isEqualTo: chapter)
+        .get();
 
-      List<Quiz> quizList = querySnapshot.docs.map((doc) {
+    List<Quiz> quizList = querySnapshot.docs.map((doc) {
+      var quizData = Quiz.fromJson(doc.data() as Map<String, dynamic>);
+      
+      // Assign the document ID to the quizzID field
+      quizData.quizzID = doc.id;
+      
+      return quizData;
+    }).toList();
 
-        var quizData = Quiz.fromJson(doc.data() as Map<String, dynamic>);
-        
-        return quizData;
-      }).toList();
-
-      print('Fetched quizzes: ${quizList.length}');
-      return quizList;
-    } catch (e) {
-      print('Error fetching quizzes: $e');
-      return [];
-    }
+    print('Fetched quizzes: ${quizList.length}');
+    return quizList;
+  } catch (e) {
+    print('Error fetching quizzes: $e');
+    return [];
   }
+}
 
   Future<Quiz> getQuizzById(String quizId) async {
     try {
@@ -48,7 +50,7 @@ class QuizService {
           chapter: 0,
           question: 'Default Question',
           options: ['Option A', 'Option B', 'Option C', 'Option D'],
-          answer: 'A',
+          answer: 0,
         );
       }
     } catch (e) {
@@ -59,7 +61,7 @@ class QuizService {
         chapter: 0,
         question: 'Error fetching quiz',
         options: [],
-        answer: '',
+        answer: 0,
       );
     }
   }
@@ -67,107 +69,117 @@ class QuizService {
   Future<void> predefinedQuizzes() async {
     List<Quiz> predefinedQuizList = [
       // Chapter 1 Questions
-      Quiz(
-        chapter: 1,
-        question: 'What does HCI stand for?',
-        options: [
-          'Human-Computer Interaction',
-          'Human-Centric Interface',
-          'Human-Computer Interface',
-          'Human Communication Interaction'
-        ],
-        answer: 'Human-Computer Interaction',
-      ),
-      Quiz(
-        chapter: 1,
-        question: 'Which of the following is NOT an input device?',
-        options: ['Keyboard', 'Mouse', 'Monitor', 'Touchscreen'],
-        answer: 'Monitor',
-      ),
-      Quiz(
-        chapter: 1,
-        question: 'What is a key goal of HCI?',
-        options: [
-          'Improve user experience',
-          'Increase production speed',
-          'Reduce costs',
-          'Maximize functionality'
-        ],
-        answer: 'Improve user experience',
-      ),
-      Quiz(
-        chapter: 1,
-        question:
-            'Which principle focuses on making systems easy to learn and use?',
-        options: ['Usability', 'Accessibility', 'Affordance', 'Feedback'],
-        answer: 'Usability',
-      ),
-      Quiz(
-        chapter: 1,
-        question:
-            'What is the term for the difference between the user’s mental model and the system’s model?',
-        options: [
-          'Cognitive load',
-          'Usability gap',
-          'Interaction gap',
-          'Mismatch'
-        ],
-        answer: 'Mismatch',
-      ),
-      Quiz(
-        chapter: 1,
-        question:
-            'Which type of interface uses visual elements to facilitate user interaction?',
-        options: [
-          'Text-based interface',
-          'Graphical User Interface (GUI)',
-          'Command Line Interface',
-          'Voice User Interface'
-        ],
-        answer: 'Graphical User Interface (GUI)',
-      ),
-      Quiz(
-        chapter: 1,
-        question: 'What does usability testing typically involve?',
-        options: ['A/B testing', 'Focus groups', 'User observation', 'Surveys'],
-        answer: 'User observation',
-      ),
-      Quiz(
-        chapter: 1,
-        question:
-            'Which term refers to the layout of interactive elements in a user interface?',
-        options: [
-          'Interface design',
-          'Information architecture',
-          'User flow',
-          'Wireframe'
-        ],
-        answer: 'Interface design',
-      ),
-      Quiz(
-        chapter: 1,
-        question: 'What does the term “affordance” mean in HCI?',
-        options: [
-          'The capacity of an interface to support user tasks',
-          'The physical properties of an object that suggest its use',
-          'The feedback provided by the system',
-          'The learning curve associated with an interface'
-        ],
-        answer: 'The physical properties of an object that suggest its use',
-      ),
-      Quiz(
-        chapter: 1,
-        question:
-            'What is the primary focus of the User-Centered Design process?',
-        options: [
-          'Technical feasibility',
-          'User needs and goals',
-          'Market trends',
-          'Design aesthetics'
-        ],
-        answer: 'User needs and goals',
-      ),
-      // Add more chapters and questions as needed
+    Quiz(
+  chapter: 1,
+  question: 'What is the main purpose of a user interface?',
+  options: [
+    'To perform calculations',
+    'To manage system resources',
+    'To facilitate user interaction with the system',
+    'To store data'
+  ],
+  answer: 2, // To facilitate user interaction is at index 2
+),
+Quiz(
+  chapter: 1,
+  question: 'Which of the following is an example of a command line interface?',
+  options: [
+    'Microsoft Word',
+    'Terminal',
+    'Adobe Photoshop',
+    'Web Browser'
+  ],
+  answer: 1, // Terminal is at index 1
+),
+Quiz(
+  chapter: 1,
+  question: 'What does “feedback” refer to in HCI?',
+  options: [
+    'User responses to the system',
+    'System responses to user actions',
+    'Design suggestions from users',
+    'User testing results'
+  ],
+  answer: 1, // System responses to user actions is at index 1
+),
+Quiz(
+  chapter: 1,
+  question: 'Which principle emphasizes designing for users with diverse abilities?',
+  options: [
+    'Usability',
+    'Accessibility',
+    'User experience',
+    'Human factors'
+  ],
+  answer: 1, // Accessibility is at index 1
+),
+Quiz(
+  chapter: 1,
+  question: 'What is a wireframe in UI design?',
+  options: [
+    'A detailed visual representation of the user interface',
+    'A low-fidelity blueprint of the user interface',
+    'The final design of the application',
+    'A prototype used for user testing'
+  ],
+  answer: 1, // A low-fidelity blueprint is at index 1
+),
+Quiz(
+  chapter: 1,
+  question: 'Which type of testing involves observing real users interacting with a product?',
+  options: [
+    'Unit testing',
+    'Integration testing',
+    'Usability testing',
+    'System testing'
+  ],
+  answer: 2, // Usability testing is at index 2
+),
+Quiz(
+  chapter: 1,
+  question: 'What does the term “cognitive load” refer to?',
+  options: [
+    'The amount of information a user can process at one time',
+    'The physical effort required to interact with a system',
+    'The mental effort required to learn a new interface',
+    'The time it takes to complete a task'
+  ],
+  answer: 0, // The amount of information is at index 0
+),
+Quiz(
+  chapter: 1,
+  question: 'What is the significance of a “mental model” in HCI?',
+  options: [
+    'It represents how users perceive and interact with a system',
+    'It is the physical design of a system',
+    'It is a model of the system architecture',
+    'It is the documentation for a software application'
+  ],
+  answer: 0, // It represents how users perceive is at index 0
+),
+Quiz(
+  chapter: 1,
+  question: 'Which design principle involves making important functions easily accessible?',
+  options: [
+    'Hierarchy',
+    'Visibility',
+    'Affordance',
+    'Consistency'
+  ],
+  answer: 1, // Visibility is at index 1
+),
+Quiz(
+  chapter: 1,
+  question: 'What is a common method for improving user experience in HCI?',
+  options: [
+    'Increasing system complexity',
+    'Reducing user feedback',
+    'Simplifying navigation',
+    'Limiting user choices'
+  ],
+  answer: 2, // Simplifying navigation is at index 2
+),
+
     ];
 
     for (Quiz quiz in predefinedQuizList) {

@@ -100,6 +100,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                                     final quizListJson = jsonEncode(
                                         quizViewModel.quizzes.map((quiz) => quiz.toJson()).toList());
                                  context.go('/student/quiz?quizzList=${Uri.encodeComponent(quizListJson)}&index=$index');
+                                 print("quiz22:${Uri.encodeComponent(quizListJson)}&index=$index')");
                                   },
                                 ),
                               ),

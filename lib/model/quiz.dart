@@ -3,7 +3,7 @@ class Quiz {
   int chapter;
   String question;
   List<String> options;
-  String answer;
+  int answer;
 
   Quiz({
     this.quizzID, 
@@ -25,6 +25,7 @@ class Quiz {
 
   Map<String, dynamic> toJson() {
     return {
+      'quizzID':quizzID,
       'chapter': chapter,
       'question': question,
       'options': options,

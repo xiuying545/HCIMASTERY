@@ -1,43 +1,54 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart'; // Import GoogleFonts
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
-class QuizResultPage extends StatelessWidget {
-  final int totalQuestions = 10;
-  final int correctAnswers = 8;
+class QuizResultPage extends StatefulWidget {
+  final int chapter;
 
-  // Sample questions with a correct or incorrect answer
-  final List<Map<String, dynamic>> questions = [
-    {'text': 'What is the capital of France?', 'isCorrect': true},
-    {'text': 'What is 2 + 2?', 'isCorrect': true},
-    {'text': 'What is the capital of Germany?', 'isCorrect': false},
-    {'text': 'What is 3 * 5?', 'isCorrect': true},
-    {'text': 'What is the largest planet?', 'isCorrect': false},
-    {'text': 'What is 5 - 3?', 'isCorrect': true},
-    {'text': 'What is the chemical symbol for water?', 'isCorrect': true},
-    {'text': 'What is the smallest prime number?', 'isCorrect': true},
-    {'text': 'What is the capital of Italy?', 'isCorrect': false},
-    {'text': 'What is 10 / 2?', 'isCorrect': true},
-    {'text': 'What is the capital of France?', 'isCorrect': true},
-    {'text': 'What is 2 + 2?', 'isCorrect': true},
-    {'text': 'What is the capital of Germany?', 'isCorrect': false},
-    {'text': 'What is 3 * 5?', 'isCorrect': true},
-    {'text': 'What is the largest planet?', 'isCorrect': false},
-    {'text': 'What is 5 - 3?', 'isCorrect': true},
-    {'text': 'What is the chemical symbol for water?', 'isCorrect': true},
-    {'text': 'What is the smallest prime number?', 'isCorrect': true},
-    {'text': 'What is the capital of Italy?', 'isCorrect': false},
-    {'text': 'What is 10 / 2?', 'isCorrect': true},
-  ];
+  const QuizResultPage({super.key, required this.chapter});
 
-  QuizResultPage({super.key});
+  @override
+  _QuizResultPageState createState() => _QuizResultPageState();
+}
+
+class _QuizResultPageState extends State<QuizResultPage> {
+  late Future<void> _quizDataFuture;
+  // ignore: prefer_final_fields
+  Map<String, int> _userAnswerCache = {};
+  @override
+  void initState() {
+    super.initState();
+    _quizDataFuture = _loadQuizData();
+  }
+
+  Future<void> _loadQuizData() async {
+    final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    await quizViewModel.fetchQuizzes(widget.chapter);
+    await quizViewModel.calculateScore(widget.chapter);
+    for (var quiz in quizViewModel.quizzes) {
+      final quizId = quiz.quizzID!;
+      final userAnswer =
+          await quizViewModel.getUserAnswer(1, widget.chapter, quizId);
+      _userAnswerCache[quizId] = userAnswer;
+    }
+    print("Current Score: ${quizViewModel.score}");
+  }
 
   @override
   Widget build(BuildContext context) {
-    double percentage = correctAnswers / totalQuestions;
-
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            context.go('/student/questionlist/${widget.chapter}');
+          },
+        ),
         title: Text(
           'Quiz Result',
           style: GoogleFonts.rubik(
@@ -48,85 +59,101 @@ class QuizResultPage extends StatelessWidget {
         ),
         backgroundColor: const Color(0xFF6a5ae0),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(25, 25, 25, 25),
+      body: FutureBuilder<void>(
+        future: _quizDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // While loading data, show a loading indicator
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // If there's an error loading data, show an error message
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            // Data has been loaded, build the UI
+            final quizViewModel =
+                Provider.of<QuizViewModel>(context, listen: false);
+
+            return Padding(
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(widget.chapter, quizViewModel),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Your Answers",
+                    style: GoogleFonts.rubik(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildAnswerList(quizViewModel),
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader(int chapter, QuizViewModel quizViewModel) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      child: Container(
+        width: double.infinity,
+        color: const Color(0xFF6a5ae0),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: Container(
-                width: double.infinity,
-                color: const Color(0xFF6a5ae0),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Text(
+              'Chapter $chapter',
+              style: GoogleFonts.rubik(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                child: Container(
+                  color: const Color(0xFFfeb3b3),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
                     children: [
-                      Text(
-                        'Chapter 1',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
+                      CircularPercentIndicator(
+                        radius: 45.0,
+                        lineWidth: 7.0,
+                        percent: quizViewModel.score / 100,
+                        center: Text(
+                          "${quizViewModel.score}%",
+                          style: GoogleFonts.rubik(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
-                          child: Container(
-                            color: const Color(0xFFfeb3b3),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                              child: Row(
-                                children: [
-                                  CircularPercentIndicator(
-                                    radius: 45.0, // Size of the circular chart
-                                    lineWidth:
-                                        7.0, // Thickness of the progress line
-                                    percent:
-                                        percentage, // The percentage of correct answers (0.0 to 1.0)
-                                    center: Text(
-                                      "$correctAnswers/$totalQuestions",
-                                      style: GoogleFonts.rubik(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    progressColor: Colors
-                                        .white, // The color of the progress bar
-                                    backgroundColor: const Color.fromARGB(
-                                        255,
-                                        190,
-                                        192,
-                                        193), // The background color of the circle
-                                    circularStrokeCap: CircularStrokeCap
-                                        .round, // Makes the ends of the progress rounded
-                                  ),
-                                  const SizedBox(
-                                      width:
-                                          10), // Add some space between the chart and the text
-                                  Expanded(
-                                    child: Text(
-                                      "Great try, keep going up",
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.rubik(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                        ),
+                        progressColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 190, 192, 193),
+                        circularStrokeCap: CircularStrokeCap.round,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          "Great try, keep going up",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.rubik(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -135,62 +162,102 @@ class QuizResultPage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Space between sections
-            Text(
-              "Your Answers",
-              style: GoogleFonts.rubik(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 0, 0, 0),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                child: Container(
-                  color: const Color(0xffefeefb),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ListView.builder(
-                      itemCount: questions.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '${index + 1}. ${questions[index]['text']}',
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              // Icon to indicate correctness
-                              Icon(
-                                questions[index]['isCorrect']
-                                    ? Icons.check_circle
-                                    : Icons.cancel,
-                                color: questions[index]['isCorrect']
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAnswerList(QuizViewModel quizViewModel) {
+    return Expanded(
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        child: Container(
+          color: const Color(0xffefeefb),
+          padding: const EdgeInsets.all(10),
+          child: ListView.builder(
+            itemCount: quizViewModel.quizzes.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () async {
+                  String encodedQuiz = jsonEncode(quizViewModel.quizzes[index]);
+                  int? userAnswerIndex =
+                      _userAnswerCache[quizViewModel.quizzes[index].quizzID];
+
+                  // await quizViewModel.getUserAnswer(
+                  //     1, widget.chapter, quizViewModel.quizzes[index].quizzID!);
+
+                  // ignore: unnecessary_null_comparison
+                  if (encodedQuiz.isNotEmpty && userAnswerIndex != null) {
+                    // ignore: use_build_context_synchronously
+                    context.push(
+                      '/student/quizAnswer?quizz=$encodedQuiz&userAnswer=$userAnswerIndex',
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${index + 1}. ${quizViewModel.quizzes[index].question}',
+                          style: GoogleFonts.rubik(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      _buildAnswerIcon(index, quizViewModel),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget _buildAnswerIcon(int index, QuizViewModel quizViewModel) {
+  //   return FutureBuilder<int>(
+  //     future
+  //     // future: quizViewModel.getUserAnswer(
+  //     //     1, widget.chapter, quizViewModel.quizzes[index].quizzID!),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const CircularProgressIndicator();
+  //       } else if (snapshot.hasError) {
+  //         return const Icon(Icons.error, color: Colors.red);
+  //       } else {
+  //         final userAnswer = snapshot.data ?? -1;
+  //         return Icon(
+  //           quizViewModel.quizzes[index].answer == userAnswer
+  //               ? Icons.check_circle
+  //               : Icons.cancel,
+  //           color: quizViewModel.quizzes[index].answer == userAnswer
+  //               ? Colors.green
+  //               : Colors.red,
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
+
+  Widget _buildAnswerIcon(int index, QuizViewModel quizViewModel) {
+    final quizId = quizViewModel.quizzes[index].quizzID!;
+    final userAnswer = _userAnswerCache[quizId];
+
+    return Icon(
+      quizViewModel.quizzes[index].answer == userAnswer
+          ? Icons.check_circle
+          : Icons.cancel,
+      color: quizViewModel.quizzes[index].answer == userAnswer
+          ? Colors.green
+          : Colors.red,
     );
   }
 }

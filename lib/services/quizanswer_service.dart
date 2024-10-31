@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/model/quizanswer.dart';
+import 'package:fyp1/services/quiz_service.dart';
 
 class QuizAnswerService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -68,4 +70,28 @@ Future<int?> getUserAnswer(int userID, int chapter, String quizID) async {
   
   return null;
 }
+
+
+Future<double> calculateScore(int chapter) async {
+  QuizService quizService = QuizService();
+  List<Quiz> quizzes = await quizService.getQuizzesByChapter(chapter);
+  int correctAnswers = 0;
+
+  for (int i = 0; i < quizzes.length; i++) {
+  
+    if (quizzes[i].quizzID != null) { 
+      String quizid = quizzes[i].quizzID!;
+      int? userAnswer = await getUserAnswer(1, chapter, quizid); 
+     
+      if (userAnswer != null && quizzes[i].answer == userAnswer) {
+        correctAnswers++;
+
+      }
+    }
+  }
+
+  return (correctAnswers/quizzes.length)*100; 
+}
+
+
 }

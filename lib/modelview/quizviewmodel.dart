@@ -12,20 +12,37 @@ class QuizViewModel extends ChangeNotifier {
 
   List<Quiz> _quizzes = [];
   Quiz _selectedQuiz;
+  double _score = 0.0;
 
-  List<Quiz> get quizzes => _quizzes;
+
+
+  List<Quiz> get quizzes {
+  
+
+    
+    return _quizzes;
+  }
+
   Quiz get selectedQuiz => _selectedQuiz;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  double get score {
+
+   
+    return _score;
+  }
+
   QuizViewModel()
-      : _selectedQuiz = Quiz(chapter: 0, question: '', options: [], answer: '');
+      : _selectedQuiz = Quiz(chapter: 0, question: '', options: [], answer: 0);
 
   Future<void> fetchQuizzes(int chapter) async {
     _isLoading = true;
     notifyListeners();
 
     _quizzes = await _quizService.getQuizzesByChapter(chapter);
+ 
     _isLoading = false;
     notifyListeners();
   }
@@ -88,5 +105,23 @@ class QuizViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<double> calculateScore(int chapter) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _score = await quizAnswerService.calculateScore(chapter);
+
+      print('Score calculated: $_score');
+    } catch (e) {
+      print('Error calculating score: $e');
+      _score = 0.0; 
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+    return _score;
   }
 }
