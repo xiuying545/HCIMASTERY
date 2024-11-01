@@ -14,7 +14,7 @@ import 'package:go_router/go_router.dart';
 GoRouter router() {
   return GoRouter(
   
-  initialLocation: '/student/questionlist',
+  initialLocation: '/student/forum',
   routes: [
     // Routes for students
     GoRoute(

@@ -44,7 +44,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             context.go('/student/questionlist/${widget.chapter}');
           },
@@ -64,7 +64,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // While loading data, show a loading indicator
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // If there's an error loading data, show an error message
             return Center(child: Text('Error: ${snapshot.error}'));
