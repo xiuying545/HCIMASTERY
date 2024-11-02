@@ -16,7 +16,9 @@ class ForumViewModel extends ChangeNotifier {
    
     _setLoading(true);
     try {
+      // await _postService.createPredefinedPosts();
       _posts = await _postService.fetchPosts();
+      notifyListeners();
     } catch (e) {
       // Handle errors here (e.g., log the error)
       print('Error fetching posts: $e');
@@ -24,7 +26,7 @@ class ForumViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
-  Future<bool> checkIfPostLiked(int postID, int userId) async {
+  Future<bool> checkIfPostLiked(String postID, String userId) async {
     return await _postService.isPostLikedByUser(postID, userId);
   }
 
@@ -43,7 +45,7 @@ class ForumViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> editPost(int postID, {String? title, String? content, File? imageFile}) async {
+  Future<void> editPost(String postID, {String? title, String? content, File? imageFile}) async {
     _setLoading(true);
     try {
       await _postService.editPost(postID, title: title, content: content, imageFile: imageFile);
@@ -57,7 +59,7 @@ class ForumViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> deletePost(int postID) async {
+  Future<void> deletePost(String postID) async {
     _setLoading(true);
     try {
       await _postService.deletePost(postID);
@@ -71,18 +73,19 @@ class ForumViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> likePost(int postID, int userId) async {
+  Future<void> likePost(String postID, String userId) async {
     try {
       await _postService.likePost(postID, userId);
 
       await fetchPosts();
+      
     } catch (e) {
       print('Error liking post: $e');
     }
   }
 
 
-  Future<void> unlikePost(int postID, int userId) async {
+  Future<void> unlikePost(String postID, String userId) async {
     try {
       await _postService.unlikePost(postID, userId);
 
@@ -93,7 +96,7 @@ class ForumViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> addReplyToPost(int postID, Reply reply) async {
+  Future<void> addReplyToPost(String postID, Reply reply) async {
     try {
       await _postService.addReplyToPost(postID, reply);
 

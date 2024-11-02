@@ -1,7 +1,7 @@
 class Post {
-  final int? postID; 
+  final String? postID; 
   final String title; 
-  final int creator; 
+  final String creator; 
   final String content;
   final String? images;
   final List<String> likedByUserIds;

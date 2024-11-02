@@ -10,6 +10,9 @@ class ForumPage extends StatefulWidget {
 }
 
 class _ForumPageState extends State<ForumPage> {
+  // Initialize as a map
+  Map<String, bool> isLikedByUser = {};
+
   @override
   void initState() {
     super.initState();
@@ -19,11 +22,22 @@ class _ForumPageState extends State<ForumPage> {
   void loadPosts() async {
     final forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
     await forumViewModel.fetchPosts();
+
+    // Retrieve like status for each post
+    for (var post in forumViewModel.posts) {
+      if (post.postID != null) {
+        isLikedByUser[post.postID!] =
+            await forumViewModel.checkIfPostLiked(post.postID!, "1");
+      }
+    }
+
+    // Optionally trigger a rebuild (you can also use notifyListeners in the ViewModel)
+    setState(() {}); // Trigger a rebuild
   }
 
   @override
   Widget build(BuildContext context) {
-    final forumViewModel = Provider.of<ForumViewModel>(context);
+    final forumViewModel = Provider.of<ForumViewModel>(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +51,9 @@ class _ForumPageState extends State<ForumPage> {
         child: ListView.builder(
           itemCount: forumViewModel.posts.length,
           itemBuilder: (context, index) {
+            final post = forumViewModel.posts[index];
+            final isLiked = isLikedByUser[post.postID] ?? false;
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Card(
@@ -51,7 +68,7 @@ class _ForumPageState extends State<ForumPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                         child: Text(
-                          forumViewModel.posts[index].title,
+                          post.title,
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -86,7 +103,7 @@ class _ForumPageState extends State<ForumPage> {
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "post on ${forumViewModel.posts[index].timeCreated}",
+                                "posted on ${post.timeCreated}",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -100,7 +117,7 @@ class _ForumPageState extends State<ForumPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 8.0),
                         child: Text(
-                          forumViewModel.posts[index].content,
+                          post.content,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),
@@ -119,42 +136,34 @@ class _ForumPageState extends State<ForumPage> {
                           children: [
                             Row(
                               children: [
-                                FutureBuilder<bool>(
-                                  future: forumViewModel.checkIfPostLiked(
-                                      forumViewModel.posts[index].postID!,
-                                      1),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return const Icon(Icons.error);
-                                    } else {
-                                      final isLiked = snapshot.data ?? false;
-                                      return IconButton(
-                                        icon: const Icon(Icons.favorite),
-                                        color: isLiked
-                                            ? Colors.pinkAccent
-                                            : Colors.white,
-                                        onPressed: () {
-                                          if (isLiked) {
-                                            forumViewModel.unlikePost(
-                                                forumViewModel.posts[index]
-                                                    .postID!,
-                                                1);
-                                          } else {
-                                            forumViewModel.likePost(
-                                                forumViewModel.posts[index]
-                                                    .postID!,
-                                                1);
-                                          }
-                                        },
-                                      );
+                                IconButton(
+                                  icon: const Icon(Icons.favorite),
+                                  color: isLiked
+                                      ? Colors.pinkAccent
+                                      : Colors.white,
+                                  onPressed: () async {
+                                    final postID = post.postID;
+                                    if (postID != null) {
+                                      if (isLiked) {
+                                        await forumViewModel.unlikePost(
+                                            postID, "1");
+                                        setState(() {
+                                          isLikedByUser[postID] =
+                                              false; // Update the state
+                                        });
+                                      } else {
+                                        await forumViewModel.likePost(
+                                            postID, "1");
+                                        setState(() {
+                                          isLikedByUser[postID] =
+                                              true; // Update the state
+                                        });
+                                      }
                                     }
                                   },
                                 ),
                                 Text(
-                                  '${forumViewModel.posts[index].likedByUserIds.length} likes',
+                                  '${post.likedByUserIds.length} likes',
                                   style: const TextStyle(
                                     color: Color.fromARGB(255, 98, 98, 98),
                                     fontWeight: FontWeight.w400,
@@ -163,7 +172,7 @@ class _ForumPageState extends State<ForumPage> {
                               ],
                             ),
                             Text(
-                              '${forumViewModel.posts[index].replies.length} replies',
+                              '${post.replies.length} replies',
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 98, 98, 98),
                                 fontWeight: FontWeight.w400,
