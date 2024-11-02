@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/services/post_service.dart';
@@ -11,9 +10,24 @@ class ForumViewModel extends ChangeNotifier {
   List<Post> get posts => _posts;
   bool get isLoading => _isLoading;
 
+  Future<Post> fetchPostById(String postId) async {
+    Post post = Post(
+        title: "",
+        creator: "",
+        content: "",
+        timeCreated: DateTime.now(),
+        editStatus: false);
+    try {
+      post = await _postService.getPostById(postId);
+      return post;
+    } catch (e) {
+      print('Error fetching posts by ID: $e');
+    }
+    return post;
+  }
 
   Future<void> fetchPosts() async {
-   
+    //_postService.createPredefinedPosts();
     _setLoading(true);
     try {
       // await _postService.createPredefinedPosts();
@@ -26,15 +40,15 @@ class ForumViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
+
   Future<bool> checkIfPostLiked(String postID, String userId) async {
     return await _postService.isPostLikedByUser(postID, userId);
   }
 
-
-  Future<void> addPost(Post post, File? imageFile) async {
+  Future<void> addPost(Post post) async {
     _setLoading(true);
     try {
-      await _postService.addPost(post, imageFile);
+      await _postService.addPost(post);
 
       await fetchPosts();
     } catch (e) {
@@ -44,11 +58,10 @@ class ForumViewModel extends ChangeNotifier {
     }
   }
 
-
-  Future<void> editPost(String postID, {String? title, String? content, File? imageFile}) async {
+  Future<void> editPost(Post post) async {
     _setLoading(true);
     try {
-      await _postService.editPost(postID, title: title, content: content, imageFile: imageFile);
+      await _postService.editPost(post);
 
       await fetchPosts();
     } catch (e) {
@@ -57,7 +70,6 @@ class ForumViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
-
 
   Future<void> deletePost(String postID) async {
     _setLoading(true);
@@ -72,18 +84,15 @@ class ForumViewModel extends ChangeNotifier {
     }
   }
 
-
   Future<void> likePost(String postID, String userId) async {
     try {
       await _postService.likePost(postID, userId);
 
       await fetchPosts();
-      
     } catch (e) {
       print('Error liking post: $e');
     }
   }
-
 
   Future<void> unlikePost(String postID, String userId) async {
     try {
@@ -95,20 +104,18 @@ class ForumViewModel extends ChangeNotifier {
     }
   }
 
-
   Future<void> addReplyToPost(String postID, Reply reply) async {
     try {
       await _postService.addReplyToPost(postID, reply);
 
-      await fetchPosts();
+      notifyListeners();
     } catch (e) {
       print('Error adding reply: $e');
     }
   }
 
-
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners(); 
+    notifyListeners();
   }
 }

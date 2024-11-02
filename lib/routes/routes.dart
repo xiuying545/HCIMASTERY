@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/quiz.dart';
+import 'package:fyp1/screen/user/forum/EditPost.dart';
+import 'package:fyp1/screen/user/forum/PostDetail.dart';
 import 'package:fyp1/screen/user/forum/addPost.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
@@ -10,20 +12,40 @@ import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
 import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
+import 'package:fyp1/widget/studentnavbar.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router() {
   return GoRouter(
-    initialLocation: '/student/forum/addPost',
+    initialLocation: '/',
     routes: [
-      // Routes for students
+      
+
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const StudentNavBar(),
+      ), 
       GoRoute(
         path: '/student/forum',
         builder: (context, state) => const ForumPage(),
       ),
-       GoRoute(
+      GoRoute(
         path: '/student/forum/addPost',
         builder: (context, state) => const CreatePostPage(),
+      ),
+      GoRoute(
+        path: '/student/forum/editPost/:postId',
+        builder: (context, state) {
+          final postId = state.pathParameters['postId']!;
+          return EditPostPage(postId: postId);
+        },
+      ),
+      GoRoute(
+        path: '/student/forum/postDetail/:postId',
+        builder: (context, state) {
+          final postId = state.pathParameters['postId']!;
+          return PostDetailPage(postID: postId);
+        },
       ),
       GoRoute(
         path: '/student/practicalExercise',

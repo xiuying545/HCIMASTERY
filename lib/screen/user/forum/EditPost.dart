@@ -3,23 +3,49 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/modelview/forumviewmodel.dart';
+import 'package:fyp1/services/post_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({super.key});
+class EditPostPage extends StatefulWidget {
+  final String postId; // Pass the post ID to edit
+  const EditPostPage({super.key, required this.postId});
 
   @override
-  _CreatePostPageState createState() => _CreatePostPageState();
+  _EditPostPageState createState() => _EditPostPageState();
 }
 
-class _CreatePostPageState extends State<CreatePostPage> {
+class _EditPostPageState extends State<EditPostPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   List<File> _images = [];
   final _picker = ImagePicker();
+  late Post _post; // Store the post to be edited
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPost();
+  }
+
+  Future<void> _loadPost() async {
+    try {
+   
+
+      final forumViewModel = ForumViewModel();
+      print("postiddddddd${widget.postId}");
+      _post = await forumViewModel.fetchPostById(widget.postId);
+          _titleController.text = _post.title;
+             _contentController.text = _post.content;
+    } catch (e) {
+      print('Error loading post: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Failed to load post.')));
+    }
+  }
 
   Future<void> _pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
@@ -34,7 +60,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     });
   }
 
-  Future<void> _uploadPost() async {
+  Future<void> _editPost() async {
     if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all the fields.')),
@@ -44,40 +70,43 @@ class _CreatePostPageState extends State<CreatePostPage> {
     List<String> imageUrls = [];
 
     try {
-      // for (File image in _images) {
-      //   String fileName = image.path.split('/').last;
-      //   Reference storageRef =
-      //       FirebaseStorage.instance.ref().child('book_images/$fileName');
-      //   UploadTask uploadTask = storageRef.putFile(image);
-      //   TaskSnapshot taskSnapshot = await uploadTask;
-      //   String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-      //   imageUrls.add(downloadUrl);
-      // }
+      for (File image in _images) {
+        String fileName = image.path.split('/').last;
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('book_images/$fileName');
+        UploadTask uploadTask = storageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+        imageUrls.add(downloadUrl);
+      }
 
+      // Create the updated Post object
       Post post = Post(
-          title: _titleController.text,
-          content: _titleController.text,
-          creator: "1",
-          timeCreated: DateTime.now(),
-          images: imageUrls,
-          editStatus:false);
+        postID:widget.postId,
+        title: _titleController.text,
+        content: _contentController.text,
+        creator: _post.creator,
+        timeCreated: DateTime.now(),
+        images: imageUrls,
+        editStatus: true,
+      );
 
-      await ForumViewModel().addPost(post);
+      await PostService()
+          .editPost(post); 
 
       _titleController.clear();
       _contentController.clear();
-
       setState(() {
         _images.clear();
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Post added successfully!')));
+          const SnackBar(content: Text('Post updated successfully!')));
       context.go("/student/forum");
     } catch (e) {
-      print('Error uploading book: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to add book.')));
+      print('Error updating post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update post.')));
     }
   }
 
@@ -88,14 +117,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
         backgroundColor: const Color(0xFFefeefb),
         foregroundColor: Colors.black,
         title: Text(
-          'Create Post',
+          'Edit Post',
           style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Navigate back to the previous page
+         
             context.go("/student/forum");
           },
         ),
@@ -129,6 +158,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: TextField(
                       controller: _titleController,
+                     
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post's title",
@@ -224,14 +254,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   width: 263,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _uploadPost,
+                    onPressed: _editPost,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(fontSize: 18),
                       backgroundColor: const Color(0xff4a56c1),
                     ),
                     child: const Text(
-                      'Submit',
+                      'Update',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
