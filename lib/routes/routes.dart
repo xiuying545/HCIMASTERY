@@ -11,6 +11,7 @@ import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
 import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
+import 'package:fyp1/screen/user/profile/editProfile.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:fyp1/widget/studentnavbar.dart';
 import 'package:go_router/go_router.dart';
@@ -112,6 +113,11 @@ GoRouter router() {
         path: '/student/profile',
         builder: (context, state) => const ProfilePage(),
       ),
+       GoRoute(
+        path: '/student/editProfile',
+        builder: (context, state) => const EditProfilePage(),
+      ),
+
 
       // Routes for teachers
       // GoRoute(

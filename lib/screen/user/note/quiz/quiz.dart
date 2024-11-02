@@ -39,9 +39,10 @@ class _QuizPageState extends State<QuizPage> {
         backgroundColor: const Color(
             0xFF6a5ae0), // Set the AppBar color to match the background
         leading: IconButton(
-     icon: const Icon(Icons.arrow_back, color: Colors.white), 
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-           GoRouter.of(context).go('/student/questionlist');
+            GoRouter.of(context).go('/student/questionlist');
+
             ///${widget.quizzes[currentQuestionIndex].chapter}
           },
         ),
@@ -118,7 +119,8 @@ class _QuizPageState extends State<QuizPage> {
                                     : const Color(0xFFfeb3b3); // Default color
 
                                 return Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 20),
                                   child: GestureDetector(
                                     onTap: () async {
                                       print("quizid:$quizId");
@@ -278,49 +280,50 @@ class _QuizPageState extends State<QuizPage> {
     });
   }
 
-void _showCompletionDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      backgroundColor: const Color(0xFF6a5ae0), // Purple background
-      title: const Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.white), // Icon for success
-          SizedBox(width: 8), // Space between icon and text
-          Text(
-            'Quiz Completed',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+  void _showCompletionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF6a5ae0), // Purple background
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white), // Icon for success
+            SizedBox(width: 8), // Space between icon and text
+            Text(
+              'Quiz Completed',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: const Text(
+          'You have completed the quiz! Do you want to submit your answers?',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text(
+              'Submit',
+              style: TextStyle(color: Colors.white), // White text for button
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop(); // Close the dialog
+              // Redirect to QuizResultPage
+              context.go(
+                  '/student/quizResult/${widget.quizzes[currentQuestionIndex].chapter}'); // Use GoRouter to navigate
+            },
+          ),
+          TextButton(
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white), // White text for button
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop(); // Close the dialog
+            },
           ),
         ],
       ),
-      content: const Text(
-        'You have completed the quiz! Do you want to submit your answers?',
-        style: TextStyle(color: Colors.white),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text(
-            'Submit',
-            style: TextStyle(color: Colors.white), // White text for button
-          ),
-          onPressed: () {
-            Navigator.of(ctx).pop(); // Close the dialog
-            // Redirect to QuizResultPage
-            context.go('/student/quizResult/${widget.quizzes[currentQuestionIndex].chapter}'); // Use GoRouter to navigate
-          },
-        ),
-        TextButton(
-          child: const Text(
-            'Cancel',
-            style: TextStyle(color: Colors.white), // White text for button
-          ),
-          onPressed: () {
-            Navigator.of(ctx).pop(); // Close the dialog
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 }
