@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/model/user.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:fyp1/model/profile.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String userId;
@@ -50,7 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (user != null) {
       setState(() {
         _nameController.text = user.name;
-        _phoneController.text = user.phone;
+        _phoneController.text = user.phone??"";
         _emailController.text = user.email;
         _profileImage =
             user.profileImagePath; // Assuming User has a profileImage property
@@ -61,12 +61,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _saveProfile() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     // Assuming User has a constructor or method to create an instance
-    final user = User(
+    final user = Profile(
       userId: widget.userId,
       name: _nameController.text,
       phone: _phoneController.text,
       email: _emailController.text,
       profileImagePath: _profileImage,
+      role:"Student",
     );
 
     await userViewModel.saveUser(user);

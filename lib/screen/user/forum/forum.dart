@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/modelview/forumviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +18,13 @@ class _ForumPageState extends State<ForumPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Map<String, bool> isLikedByUser = {};
+  late UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+     userViewModel=Provider.of<UserViewModel>(context, listen: false);
     loadPosts();
   }
 
@@ -30,9 +33,9 @@ class _ForumPageState extends State<ForumPage>
     await forumViewModel.fetchPosts();
 
     for (var post in forumViewModel.posts) {
-      if (post.postID != null) {
+      if (post.postID != null &&userViewModel.userId!=null) {
         isLikedByUser[post.postID!] =
-            await forumViewModel.checkIfPostLiked(post.postID!, "1");
+            await forumViewModel.checkIfPostLiked(post.postID!,userViewModel.userId!);
       }
     }
   }

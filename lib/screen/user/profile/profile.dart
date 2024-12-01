@@ -17,7 +17,8 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      userViewModel.loadUser("1"); // Ensure this function doesn't require parameters or adjusts as needed
+
+      userViewModel.loadUser(userViewModel.userId!); 
     });
   }
 
@@ -62,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (userViewModel.user != null) ...[
                   _buildInfoCard("Name", userViewModel.user!.name),
                   const SizedBox(height: 16.0),
-                  _buildInfoCard("Phone", userViewModel.user!.phone),
+                  _buildInfoCard("Phone", userViewModel.user!.phone??""),
                   const SizedBox(height: 16.0),
                   _buildInfoCard("Email", userViewModel.user!.email),
                   const SizedBox(height: 16.0),
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: ElevatedButton(
                     onPressed: () {
                        print("widgget:${userViewModel.user!.userId}");
-                       GoRouter.of(context).push("/student/editProfile/1");
+                       GoRouter.of(context).push("/student/editProfile/${userViewModel.userId??"1"}");
                       
                     },
                     style: ElevatedButton.styleFrom(

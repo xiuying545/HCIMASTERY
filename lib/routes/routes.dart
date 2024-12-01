@@ -26,7 +26,7 @@ import 'package:provider/provider.dart';
 
 GoRouter router() {
   return GoRouter(
-    initialLocation: '/student/note/2',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
@@ -60,11 +60,11 @@ GoRouter router() {
       ),
       GoRoute(
         path: '/signin',
-        builder: (context, state) => SignInScreen(),
+        builder: (context, state) => const SignInScreen(),
       ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => SignUpScreen(),
+        builder: (context, state) => const SignUpScreen(),
       ),
 
       GoRoute(

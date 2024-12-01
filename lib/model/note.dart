@@ -2,15 +2,15 @@ class Note {
   String? noteID;        
   final String title;       
   final String content;     
-  final String images;      
-  final String videoLink;   
+  final List<String>? images;      
+  final List<String>? videoLink;   
 
   Note({
     this.noteID,
     required this.title,
     required this.content,
-    required this.images,
-    required this.videoLink,
+    this.images,
+   this.videoLink,
   });
 
   factory Note.fromJson(Map<String, dynamic> json) {
@@ -18,8 +18,8 @@ class Note {
       noteID: json['noteID'],
       title: json['title'] as String,
       content: json['content'] as String,
-      images: json['images'] as String,
-      videoLink: json['videoLink'] as String,
+     images: List<String>.from(json['images'] ?? []),
+      videoLink: List<String>.from(json['videoLink'] ?? []),
     );
   }
 

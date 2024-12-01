@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/model/profile.dart';
+import 'package:fyp1/model/user.dart';
 import 'package:fyp1/services/user_service.dart';
-
 
 class UserViewModel extends ChangeNotifier {
   final UserService _userService = UserService();
-  User? _user;
-  User? get user => _user;
+  Profile? _user;
+  String? _userId;
+  Profile? get user => _user;
+  String? get userId => _userId;
 
- Future<void> loadUser(String userID) async {
-    _user = await _userService.getUserById(userID);  // Load user by userID
+  void setUserId(String userId) {
+    _userId = userId;
     notifyListeners();
   }
 
-  Future<void> saveUser(User user) async {
+  Future<void> loadUser(String userID) async {
+    _user = await _userService.getUserById(userID); // Load user by userID
+    notifyListeners();
+  }
+
+  Future<void> saveUser(Profile user) async {
     await _userService.addOrUpdateUser(user);
     _user = user;
     notifyListeners();
   }
-
 
   Future<void> deleteUser(String email) async {
     await _userService.deleteUser(email);
@@ -28,7 +33,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<User>> getAllUsers() async {
+  Future<List<Profile>> getAllUsers() async {
     return await _userService.getAllUsers();
   }
 }

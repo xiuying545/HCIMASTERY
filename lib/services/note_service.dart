@@ -151,24 +151,24 @@ class NoteService {
             title: "What is HCI?",
             content:
                 "Human-Computer Interaction (HCI) focuses on designing user-centered systems by understanding user needs, capabilities, and limitations.",
-            images: "assets/images/hci_intro.jpg",
-            videoLink: "https://www.example.com/hci-intro-video",
+         
+      
           ),
           Note(
             noteID: "note2",
             title: "Goals of HCI",
             content:
                 "The main goals of HCI are to improve usability, enhance user experience, and ensure accessibility for all users.",
-            images: "assets/images/hci_goals.jpg",
-            videoLink: "https://www.example.com/hci-goals-video",
+            
+          
           ),
           Note(
             noteID: "note3",
             title: "HCI and Interaction Design",
             content:
                 "HCI is closely linked to interaction design, which focuses on creating meaningful and intuitive interactions between users and systems.",
-            images: "assets/images/interaction_design.jpg",
-            videoLink: "https://www.example.com/hci-interaction-design",
+        
+      
           ),
         ],
       ),
@@ -181,24 +181,21 @@ class NoteService {
             title: "Usability Principles",
             content:
                 "Usability principles, such as learnability, efficiency, and satisfaction, are core to HCI design.",
-            images: "assets/images/usability_principles.jpg",
-            videoLink: "https://www.example.com/usability-principles",
+
           ),
           Note(
             noteID: "note2",
             title: "Norman’s Design Principles",
             content:
                 "Don Norman's design principles include feedback, constraints, affordances, and mapping to create effective interfaces.",
-            images: "assets/images/norman_principles.jpg",
-            videoLink: "https://www.example.com/norman-design-principles",
+
           ),
           Note(
             noteID: "note3",
             title: "Cognitive Load in HCI",
             content:
                 "Minimizing cognitive load helps users process information efficiently and reduces errors.",
-            images: "assets/images/cognitive_load.jpg",
-            videoLink: "https://www.example.com/cognitive-load",
+
           ),
         ],
       ),
@@ -211,24 +208,21 @@ class NoteService {
             title: "Usability Testing",
             content:
                 "Usability testing involves observing users interact with a system to identify usability issues.",
-            images: "assets/images/usability_testing.jpg",
-            videoLink: "https://www.example.com/usability-testing",
+   
           ),
           Note(
             noteID: "note2",
             title: "Heuristic Evaluation",
             content:
                 "Heuristic evaluation uses predefined heuristics to identify usability flaws in interfaces.",
-            images: "assets/images/heuristic_evaluation.jpg",
-            videoLink: "https://www.example.com/heuristic-evaluation",
+
           ),
           Note(
             noteID: "note3",
             title: "Surveys and Feedback",
             content:
                 "Surveys and user feedback are crucial for understanding user satisfaction and collecting suggestions for improvement.",
-            images: "assets/images/surveys_feedback.jpg",
-            videoLink: "https://www.example.com/surveys-feedback",
+
           ),
         ],
       ),

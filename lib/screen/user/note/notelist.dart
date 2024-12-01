@@ -112,7 +112,7 @@ Widget _buildNoteProgress(
                 onTap: () {
                   if (note.noteID != null) {
                     GoRouter.of(context).push('/student/note/${note.noteID}');
-                    noteProgress.progress[note.noteID!] = "In Progress";
+                    noteProgress.progress[note.noteID!] = "Completed";
                     NoteViewModel().addOrUpdateStudentProgress(noteProgress);
                   } else {
                     print('Error: noteID is null');

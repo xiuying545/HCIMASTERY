@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fyp1/model/profile.dart';
+import 'package:fyp1/model/user.dart';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('User');
 
   // Adds or updates a user in Firestore
-  Future<void> addOrUpdateUser(User user) async {
+  Future<void> addOrUpdateUser(Profile user) async {
     try {
       await _usersCollection.doc(user.userId).set(user.toJson());
     } catch (e) {
@@ -16,7 +16,7 @@ class UserService {
   }
 
   
-Future<User?> getUserById(String userID) async {
+Future<Profile?> getUserById(String userID) async {
   try {
     DocumentSnapshot doc = await _usersCollection.doc(userID).get();
     if (doc.exists) {
@@ -24,7 +24,7 @@ Future<User?> getUserById(String userID) async {
      
       
       // Create a User instance from Firestore data and add the userID
-      return User.fromJson({
+      return Profile.fromJson({
         ...doc.data() as Map<String, dynamic>,
         'userID': userID,
       });
@@ -45,11 +45,11 @@ Future<User?> getUserById(String userID) async {
   }
 
   // Retrieves all users (for displaying lists or managing multiple users)
-  Future<List<User>> getAllUsers() async {
+  Future<List<Profile>> getAllUsers() async {
     try {
       QuerySnapshot querySnapshot = await _usersCollection.get();
       return querySnapshot.docs.map((doc) {
-        return User.fromJson(doc.data() as Map<String, dynamic>);
+        return Profile.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
     } catch (e) {
       print("Error retrieving all users: $e");

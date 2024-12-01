@@ -49,6 +49,8 @@ dependencies:
   weekly_calendar: ^0.1.2
   horizontal_week_calendar: ^0.0.18
   audioplayers: ^6.1.0
+  video_player: ^2.5.1
+  youtube_player_flutter: ^8.1.0
 
 
 

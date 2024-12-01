@@ -1,10 +1,44 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
-class SignInScreen extends StatelessWidget {
+  @override
+  _SignInScreenState createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  SignInScreen({super.key});
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Perform sign-in with Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+     UserViewModel userViewModel= Provider.of<UserViewModel>(context, listen: false);
+     userViewModel.setUserId(userCredential.user!.uid);
+
+        
+        context.go('/studentNav');  
+      } catch (e) {
+        // Handle authentication errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to sign in: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +69,7 @@ class SignInScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: _emailController,
                           decoration: const InputDecoration(
                             hintText: 'Email',
                             filled: true,
@@ -47,11 +82,17 @@ class SignInScreen extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(50)),
                             ),
                           ),
-                          onSaved: (phone) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: TextFormField(
+                            controller: _passwordController,
                             obscureText: true,
                             decoration: const InputDecoration(
                               hintText: 'Password',
@@ -65,18 +106,16 @@ class SignInScreen extends StatelessWidget {
                                     BorderRadius.all(Radius.circular(50)),
                               ),
                             ),
-                            onSaved: (passaword) {
-                              // Save it
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
                             },
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              // Navigate to the main screen
-                            }
-                          },
+                          onPressed: _signIn,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor: const Color(0xFF6a5ae0),
@@ -88,7 +127,9 @@ class SignInScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16.0),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // Forgot password action
+                          },
                           child: Text(
                             'Forgot Password?',
                             style: Theme.of(context)
@@ -104,7 +145,9 @@ class SignInScreen extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () { context.go("/register");},
+                          onPressed: () {
+                            context.go("/register");
+                          },
                           child: Text.rich(
                             const TextSpan(
                               text: "Don’t have an account? ",
