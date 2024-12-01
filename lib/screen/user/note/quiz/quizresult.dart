@@ -46,7 +46,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            context.go('/student/questionlist/${widget.chapter}');
+          GoRouter.of(context).push('/studentNav');
           },
         ),
         title: Text(

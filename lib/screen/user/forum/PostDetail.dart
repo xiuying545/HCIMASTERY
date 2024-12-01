@@ -53,7 +53,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           backgroundColor: const Color(0xFFefeefb),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go("/student/forum"),
+            onPressed: () =>GoRouter.of(context).pop(),
           ),
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -66,7 +66,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         backgroundColor: const Color(0xFFefeefb),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go("/student/forum"),
+          onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
       body: Padding(

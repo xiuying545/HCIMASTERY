@@ -102,7 +102,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Post updated successfully!')));
-      context.go("/student/forum");
+   GoRouter.of(context).pop();
     } catch (e) {
       print('Error updating post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,7 +125,7 @@ class _EditPostPageState extends State<EditPostPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
          
-            context.go("/student/forum");
+           GoRouter.of(context).pop();
           },
         ),
       ),

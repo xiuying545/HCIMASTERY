@@ -1,36 +1,76 @@
-import 'dart:io'; // For handling File
 import 'package:flutter/material.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart'; // Import the image picker package
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:fyp1/model/profile.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  final String userId;
+
+  const EditProfilePage({super.key, required this.userId});
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final TextEditingController _nameController =
-      TextEditingController(text: "John Doe");
-  final TextEditingController _phoneController =
-      TextEditingController(text: "+1 234 567 890");
-  final TextEditingController _emailController =
-      TextEditingController(text: "john.doe@example.com");
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
-  File? _profileImage; // Variable to store the profile image
-  final ImagePicker _picker = ImagePicker(); // Instance of ImagePicker
+  late String? _profileImage;
 
-  // Function to pick image from gallery
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
+  }
+
   Future<void> _pickImage() async {
-    final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
       setState(() {
-        _profileImage = File(pickedImage.path);
+        _profileImage = image.path;
       });
     }
+  }
+
+  Future<void> _loadUserData() async {
+    print("widget:${widget.userId}");
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    await userViewModel.loadUser(widget.userId);
+    final user = userViewModel.user;
+
+    if (user != null) {
+      setState(() {
+        _nameController.text = user.name;
+        _phoneController.text = user.phone;
+        _emailController.text = user.email;
+        _profileImage =
+            user.profileImagePath; // Assuming User has a profileImage property
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    // Assuming User has a constructor or method to create an instance
+    final user = User(
+      userId: widget.userId,
+      name: _nameController.text,
+      phone: _phoneController.text,
+      email: _emailController.text,
+      profileImagePath: _profileImage,
+    );
+
+    await userViewModel.saveUser(user);
+    GoRouter.of(context).pop();// Navigate back after saving
   }
 
   @override
@@ -41,7 +81,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go("/student/profile");
+            GoRouter.of(context).pop();
           },
         ),
         title: Text(
@@ -51,96 +91,99 @@ class _EditProfilePageState extends State<EditProfilePage> {
         backgroundColor: const Color(0xFF6a5ae0),
         foregroundColor: Colors.white,
       ),
-      body: Center(
-        // Center the entire content vertically and horizontally
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-          child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Center content vertically
-            children: [
-              // Profile photo and upload button
-              Column(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 70, // Slightly larger radius for profile photo
-                    backgroundImage: _profileImage != null
-                        ? FileImage(_profileImage!) // Display picked image
-                        : const NetworkImage(
+                  SizedBox(height: constraints.maxHeight * 0.08),
+
+                  // Profile photo and upload button
+                  Column(
+                    children: [
+                      const CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
                                 "https://i.postimg.cc/nz0YBQcH/Logo-light.png")
                             as ImageProvider,
-                    backgroundColor: Colors.white,
+                        backgroundColor: Colors.white,
+                      ),
+                      TextButton(
+                        onPressed: _pickImage,
+                        child: Text(
+                          "Upload Photo",
+                          style: GoogleFonts.rubik(
+                            fontSize: 18,
+                            color: const Color(0xFF6a5ae0),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: _pickImage,
-                    child: Text(
-                      "Upload Photo",
-                      style: GoogleFonts.rubik(
-                        fontSize: 20, // Increased font size for upload button
-                        color: const Color(0xFF6a5ae0),
-                        fontWeight: FontWeight.w600,
+                  SizedBox(height: constraints.maxHeight * 0.05),
+
+                  // Editable fields
+                  _buildInputField("Name", _nameController, 18),
+                  const SizedBox(height: 5.0),
+                  _buildInputField("Phone", _phoneController, 18),
+                  const SizedBox(height: 5.0),
+                  _buildInputField("Email", _emailController, 18),
+                  SizedBox(height: constraints.maxHeight * 0.05),
+
+                  // Save button
+                  ElevatedButton(
+                    onPressed: _saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 2,
+                      backgroundColor: const Color(0xFF6a5ae0),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 24.0),
+                      child: Text(
+                        "Save Changes",
+                        style: GoogleFonts.rubik(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 40.0),
-
-              // Editable fields
-              _buildInputField("Name", _nameController, 20),
-              const SizedBox(height: 20.0),
-              _buildInputField("Phone", _phoneController, 20),
-              const SizedBox(height: 20.0),
-              _buildInputField("Email", _emailController, 20),
-              const SizedBox(height: 40.0),
-
-              // Save button
-              ElevatedButton(
-                onPressed: () {
-                  // Save the edited details logic here
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 2,
-                  backgroundColor: const Color(0xFF6a5ae0),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 24.0),
-                  child: Text(
-                    "Save Changes",
-                    style: GoogleFonts.rubik(
-                      fontSize: 22, // Increased font size for save button
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  // Helper method to create input fields
+  // Input field widget
   Widget _buildInputField(
       String label, TextEditingController controller, double fontSize) {
-    return TextFormField(
-      controller: controller,
-      style: GoogleFonts.rubik(fontSize: fontSize, color: Colors.black87),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle:
-            GoogleFonts.rubik(fontSize: fontSize - 4, color: Colors.grey[600]),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        style: GoogleFonts.rubik(fontSize: fontSize, color: Colors.black87),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: GoogleFonts.rubik(
+              fontSize: fontSize - 4, color: Colors.grey[600]),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
         ),
       ),
     );

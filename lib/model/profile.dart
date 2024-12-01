@@ -1,26 +1,29 @@
 // user_model.dart
-class UserModel {
+class User {
+  String? userId;
   String name;
   String phone;
   String email;
-  String? profileImagePath;  // Nullable to handle cases with no image
+  String? profileImagePath; // Nullable to handle cases with no image
 
-  UserModel({
+  User({
+    this.userId,
     required this.name,
     required this.phone,
     required this.email,
     this.profileImagePath,
   });
 
-  // You can also add a method to convert this model to/from JSON if needed
   Map<String, dynamic> toJson() => {
         'name': name,
+        'userId': userId,
         'phone': phone,
         'email': email,
         'profileImagePath': profileImagePath,
       };
 
-  static UserModel fromJson(Map<String, dynamic> json) => UserModel(
+  static User fromJson(Map<String, dynamic> json) => User(
+        userId: json['userId'],
         name: json['name'],
         phone: json['phone'],
         email: json['email'],

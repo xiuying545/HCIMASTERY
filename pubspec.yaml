@@ -45,6 +45,12 @@ dependencies:
   google_sign_in: ^6.2.1
   image_picker: ^1.1.0
   intl: ^0.19.0
+  cached_network_image: ^3.0.0
+  weekly_calendar: ^0.1.2
+  horizontal_week_calendar: ^0.0.18
+  audioplayers: ^6.1.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +73,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+
+  assets:
+  - assets/SplashScreen1.jpg
+  - assets/SplashScreen2.jpg
+  - assets/SplashScreen3.jpg
+  - assets/logo.jpg
+  - assets/
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

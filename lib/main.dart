@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fyp1/modelview/forumviewmodel.dart';
+import 'package:fyp1/modelview/noteviewmodel.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/routes/routes.dart';
 import 'package:provider/provider.dart'; // Import the provider package
 import 'firebase_options.dart';
@@ -16,15 +18,14 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-
-
-
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+         ChangeNotifierProvider(create: (context) => NoteViewModel()),
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => QuizViewModel()),
         ChangeNotifierProvider(create: (context) => ForumViewModel()),
       ],
@@ -35,5 +36,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

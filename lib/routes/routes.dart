@@ -1,11 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/model/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
+import 'package:fyp1/screen/authenication/loginScreen.dart';
+import 'package:fyp1/screen/authenication/registerScreen.dart';
+import 'package:fyp1/screen/mainScren.dart';
 import 'package:fyp1/screen/user/forum/EditPost.dart';
 import 'package:fyp1/screen/user/forum/PostDetail.dart';
 import 'package:fyp1/screen/user/forum/addPost.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
+import 'package:fyp1/screen/user/note/mainpage.dart';
+import 'package:fyp1/screen/user/note/notelist.dart';
 import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
@@ -15,17 +22,55 @@ import 'package:fyp1/screen/user/profile/editProfile.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:fyp1/widget/studentnavbar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 GoRouter router() {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/student/note/2',
     routes: [
-      
-
       GoRoute(
         path: '/',
+        builder: (context, state) {
+          final firebaseUser = context.watch<UserViewModel?>();
+          // if (firebaseUser != null) {
+          //   return const Homepage();
+          // }
+          return const SplashScreen();
+        },
+      ),
+      GoRoute(
+          path: '/student/note/:noteID',
+          builder: (context, state) {
+            final noteID = state.pathParameters['noteID']!;
+            return NotePage(noteID: noteID);
+          }),
+      GoRoute(
+        path: '/main',
+        builder: (context, state) => const MainPage(),
+      ),
+      GoRoute(
+          path: '/student/notelist/:chapterId',
+          builder: (context, state) {
+            final chapterId = state.pathParameters['chapterId']!;
+            return NoteListPage(chapterId: chapterId);
+          }),
+      GoRoute(
+        path: '/studentNav',
         builder: (context, state) => const StudentNavBar(),
-      ), 
+      ),
+      GoRoute(
+        path: '/signin',
+        builder: (context, state) => SignInScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => SignUpScreen(),
+      ),
+
+      GoRoute(
+        path: '/nav',
+        builder: (context, state) => const StudentNavBar(),
+      ),
       GoRoute(
         path: '/student/forum',
         builder: (context, state) => const ForumPage(),
@@ -106,18 +151,25 @@ GoRouter router() {
         },
       ),
       GoRoute(
-        path: '/student/questionlist',
-        builder: (context, state) => const QuestionListPage(),
+        path: '/student/questionlist/:chapterID',
+          builder: (context, state) {
+          final String chapterID = state.pathParameters['chapterID']!;
+     
+          return QuestionListPage(chapterID: chapterID);
+        },
       ),
       GoRoute(
         path: '/student/profile',
         builder: (context, state) => const ProfilePage(),
       ),
-       GoRoute(
-        path: '/student/editProfile',
-        builder: (context, state) => const EditProfilePage(),
-      ),
+      GoRoute(
+        path: '/student/editProfile/:userId',
+        builder: (context, state) {
+          final String userId = state.pathParameters['userId']!;
 
+          return EditProfilePage(userId: userId);
+        },
+      ),
 
       // Routes for teachers
       // GoRoute(

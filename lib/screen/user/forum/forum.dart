@@ -13,7 +13,8 @@ class ForumPage extends StatefulWidget {
   _ForumPageState createState() => _ForumPageState();
 }
 
-class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMixin {
+class _ForumPageState extends State<ForumPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Map<String, bool> isLikedByUser = {};
 
@@ -66,40 +67,38 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
     final forumViewModel = Provider.of<ForumViewModel>(context, listen: true);
 
     return Scaffold(
-        appBar: AppBar(
-      title: const Text(''), // Empty title to remove default behavior
+      appBar: AppBar(
+        title: const Text(''), // Empty title to remove default behavior
         backgroundColor: const Color(0xFFefeefb),
         elevation: 0,
         flexibleSpace: Center(
           child: Text(
             'Forum',
-            style: GoogleFonts.rubik(fontSize: 24, fontWeight: FontWeight.bold), // Larger font size
+            style: GoogleFonts.rubik(
+                fontSize: 24, fontWeight: FontWeight.bold), // Larger font size
           ),
         ),
-      
-    
+
         bottom: TabBar(
           controller: _tabController,
-      
-
-  tabs: [
-    Tab(
-    
-      child: Text(
-        'Posts',
-        style: GoogleFonts.rubik(fontSize: 18,fontWeight: FontWeight.w500),
-      ),
-    ),
-    Tab(
-   
-      child: Text(
-        'My Posts',
-        style: GoogleFonts.rubik(fontSize: 18,fontWeight: FontWeight.w500),
-      ),
-    ),
-  ],
-          indicatorColor: Color(0xFF3f5fd7),
-          labelColor: Color(0xFF3f5fd7),
+          tabs: [
+            Tab(
+              child: Text(
+                'Posts',
+                style: GoogleFonts.rubik(
+                    fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Tab(
+              child: Text(
+                'My Posts',
+                style: GoogleFonts.rubik(
+                    fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+          indicatorColor: const Color(0xFF3f5fd7),
+          labelColor: const Color(0xFF3f5fd7),
           unselectedLabelColor: Colors.black,
         ),
       ),
@@ -112,7 +111,7 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go("/student/forum/addPost");
+          GoRouter.of(context).push("/student/forum/addPost");
         },
         shape: const CircleBorder(),
         backgroundColor: const Color(0xFF3f5fd7),
@@ -123,7 +122,7 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
 
   Widget _buildPostsList(ForumViewModel forumViewModel) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.white, Color(0xFFefeefb)],
           begin: Alignment.topCenter,
@@ -143,10 +142,11 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
 
   Widget _buildMyPostsList(ForumViewModel forumViewModel) {
     // Filter the posts to show only the user's posts (assuming "1" is the user ID)
-    var myPosts = forumViewModel.posts.where((post) => post.creator == "1").toList();
+    var myPosts =
+        forumViewModel.posts.where((post) => post.creator == "1").toList();
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.white, Color(0xFFefeefb)],
           begin: Alignment.topCenter,
@@ -170,7 +170,7 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
     return GestureDetector(
       onTap: () {
         if (post.postID != null) {
-          context.go("/student/forum/postDetail/${post.postID}");
+          GoRouter.of(context).push("/student/forum/postDetail/${post.postID}");
         }
       },
       child: Padding(
@@ -191,14 +191,14 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                   child: Text(
                     post.title,
                     style: const TextStyle(
-                      fontSize: 24, // Increased font size
+                      fontSize: 21, 
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF3f5fd7),
                     ),
                   ),
                 ),
                 const Divider(
-                  height: 25,
+                  height: 20,
                   thickness: 0.5,
                   color: Color(0xFF3f5fd7),
                 ),
@@ -220,7 +220,7 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                         const Text(
                           "Wong Xiu Ying",
                           style: TextStyle(
-                            fontSize: 18, // Increased font size
+                            fontSize: 16, // Increased font size
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -248,7 +248,7 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                 const SizedBox(height: 8),
                 Container(
                   decoration: const BoxDecoration(
-                 color: Color(0xFFECEFF1), 
+                    color: Color(0xFFECEFF1),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12),
@@ -262,7 +262,9 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                         children: [
                           IconButton(
                             icon: const Icon(Icons.favorite),
-                            color: isLiked ? Colors.pinkAccent : Color(0xFF757575),
+                            color: isLiked
+                                ? Colors.pinkAccent
+                                : const Color(0xFF757575),
                             onPressed: () async {
                               final postID = post.postID;
                               if (postID != null) {
@@ -301,21 +303,25 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.delete),
-                                  color: Color(0xFF757575),
+                                  color: const Color(0xFF757575),
                                   onPressed: () {
                                     confirmDelete(post.postID!);
                                   },
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.edit),
-                                  color: Color(0xFF757575),
+                                  color: const Color(0xFF757575),
                                   onPressed: () {
-                                    context.go("/student/forum/editPost/${post.postID}");
+                                    GoRouter.of(context).push(
+                                        "/student/forum/editPost/${post.postID}");
                                   },
                                 ),
                               ],
                             )
-                          : Container(child: const SizedBox(width: 100,)),
+                          : Container(
+                              child: const SizedBox(
+                              width: 100,
+                            )),
                     ],
                   ),
                 ),

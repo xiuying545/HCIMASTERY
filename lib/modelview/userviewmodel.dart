@@ -1,46 +1,34 @@
-// user_view_model.dart
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/profile.dart';
+import 'package:fyp1/services/user_service.dart';
 
 
 class UserViewModel extends ChangeNotifier {
-  // Initializing a UserModel instance with default data
-  UserModel _user = UserModel(
-    name: "",
-    phone: "",
-    email: "",
-    profileImagePath: null,
-  );
+  final UserService _userService = UserService();
+  User? _user;
+  User? get user => _user;
 
-  
-  String get name => _user.name;
-  String get phone => _user.phone;
-  String get email => _user.email;
-  String? get profileImagePath => _user.profileImagePath;
-
-
-  void updateName(String newName) {
-    _user.name = newName;
-    notifyListeners();  
-  }
-
-  void updatePhone(String newPhone) {
-    _user.phone = newPhone;
+ Future<void> loadUser(String userID) async {
+    _user = await _userService.getUserById(userID);  // Load user by userID
     notifyListeners();
   }
 
-  void updateEmail(String newEmail) {
-    _user.email = newEmail;
+  Future<void> saveUser(User user) async {
+    await _userService.addOrUpdateUser(user);
+    _user = user;
     notifyListeners();
   }
 
-  void updateProfileImage(String imagePath) {
-    _user.profileImagePath = imagePath;
+
+  Future<void> deleteUser(String email) async {
+    await _userService.deleteUser(email);
+    if (_user?.email == email) {
+      _user = null; // Reset the current user
+    }
     notifyListeners();
   }
 
-  // You could also add a method to save to an API or database if needed
-  Future<void> saveUserData() async {
-    // Add code here to save the user data to a database or server
+  Future<List<User>> getAllUsers() async {
+    return await _userService.getAllUsers();
   }
 }

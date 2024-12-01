@@ -4,9 +4,10 @@ import 'package:fyp1/modelview/quizviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
 class QuestionListPage extends StatefulWidget {
-  const QuestionListPage({super.key});
+  final String chapterID;
+  
+  const QuestionListPage({super.key, required this.chapterID});
 
   @override
   _QuestionListPageState createState() => _QuestionListPageState();
@@ -17,7 +18,6 @@ class _QuestionListPageState extends State<QuestionListPage> {
   void initState() {
     super.initState();
     final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    // Call fetchQuizzes only once when the widget is initialized
     if (quizViewModel.quizzes.isEmpty) {
       quizViewModel.fetchQuizzes(1);
     }
@@ -37,82 +37,74 @@ class _QuestionListPageState extends State<QuestionListPage> {
           style: GoogleFonts.rubik(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: const Color.fromARGB(255, 0, 0, 0),
           ),
         ),
-        backgroundColor: const Color(0xFF6a5ae0),
+        centerTitle: true,
+        backgroundColor: Colors.white,
       ),
-      body: Container(
-        color: const Color(0xFF6a5ae0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: quizViewModel.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-                          itemCount: quizViewModel.quizzes.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
+      body: quizViewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              color: const Color(0xFFefeefb),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 25),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: quizViewModel.quizzes.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: const Color(0xFFffffff),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 15),
+                              leading: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF6a5ae0),
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                elevation: 5,
-                                color: const Color(0xFFfeb3b3),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.all(16),
-                                  leading: CircleAvatar(
-                                    backgroundColor: const Color(0xFFfd7e7e),
-                                    child: Text(
-                                      'Q${index + 1}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    quizViewModel.quizzes[index].question,
-                                    style: const TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    final quizListJson = jsonEncode(
-                                        quizViewModel.quizzes.map((quiz) => quiz.toJson()).toList());
-                                 context.go('/student/quiz?quizzList=${Uri.encodeComponent(quizListJson)}&index=$index');
-                                 print("quiz22:${Uri.encodeComponent(quizListJson)}&index=$index')");
-                                  },
+                                child: const Icon(
+                                  Icons.question_answer,
+                                  color: Colors.white,
+                                  size: 28,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                ),
+                              title: Text(
+                               "${index+1}. ${ quizViewModel.quizzes[index].question}",
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onTap: () {
+                                final quizListJson = jsonEncode(quizViewModel
+                                    .quizzes
+                                    .map((quiz) => quiz.toJson())
+                                    .toList());
+                                GoRouter.of(context).push(
+                                    '/student/quiz?quizzList=${Uri.encodeComponent(quizListJson)}&index=$index');
+
+                                print(
+                                    "quiz22:${Uri.encodeComponent(quizListJson)}&index=$index')");
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

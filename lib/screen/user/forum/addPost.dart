@@ -73,7 +73,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Post added successfully!')));
-      context.go("/student/forum");
+     GoRouter.of(context).pop();
     } catch (e) {
       print('Error uploading book: $e');
       ScaffoldMessenger.of(context)
@@ -96,7 +96,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Navigate back to the previous page
-            context.go("/student/forum");
+            GoRouter.of(context).pop();
           },
         ),
       ),

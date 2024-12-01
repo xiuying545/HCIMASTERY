@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
-import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
+import 'package:fyp1/screen/user/note/mainpage.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 
@@ -31,7 +31,7 @@ class _StudentNavBar extends State<StudentNavBar> {
     Widget getBodyWidget(int index) {
       switch (index) {
         case 0:
-          return const QuestionListPage();
+          return const MainPage();
         case 1:
           return const ForumPage();
         case 2:
@@ -40,7 +40,7 @@ class _StudentNavBar extends State<StudentNavBar> {
           return const ProfilePage();
 
         default:
-          return const QuestionListPage();
+          return const MainPage();
       }
     }
 
