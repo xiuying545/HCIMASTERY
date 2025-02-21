@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/noteviewmodel.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:provider/provider.dart';
 
 class MainPage extends StatelessWidget {
@@ -13,7 +12,6 @@ class MainPage extends StatelessWidget {
 
     // Fetch chapters when the page is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // viewModel.loadData();
       viewModel.fetchChapters();
       viewModel.calculateAllProgress();
     });
@@ -40,15 +38,15 @@ class MainPage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-           Positioned(
-              top: 0,
-              right: 16,
-              child: Image.asset(
-                'assets/bck.png', // Replace with your image path
-                width: 100, // Adjust width as needed
-                height: 100, // Adjust height as needed
-              ),
+          Positioned(
+            top: 0,
+            right: 16,
+            child: Image.asset(
+              'assets/bck.png', // Replace with your image path
+              width: 100, // Adjust width as needed
+              height: 100, // Adjust height as needed
             ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -75,34 +73,39 @@ class MainPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 5.0),
-                Container(
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 131, 117, 240),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                      SizedBox(width: 8.0),
-                      Text(
-                        'What are you looking for?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildSearchBar(),
+                const SizedBox(height: 20.0),
               ],
             ),
           ),
-          const SizedBox(height: 150.0),
+        ],
+      ),
+    );
+  }
+
+  // Search bar widget
+  Widget _buildSearchBar() {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 131, 117, 240),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        children: [
+          Icon(
+            Icons.search,
+            color: Colors.white,
+            size: 28,
+          ),
+          SizedBox(width: 8.0),
+          Text(
+            'What are you looking for?',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );
@@ -138,12 +141,10 @@ class MainPage extends StatelessWidget {
           return Container(
             decoration: const BoxDecoration(
               color: Color(0xFFefeefb),
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(30)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
             ),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
               child: Column(
                 children: [
                   const Padding(
@@ -167,14 +168,12 @@ class MainPage extends StatelessWidget {
                       itemCount: viewModel.chapters.length,
                       itemBuilder: (context, index) {
                         final chapter = viewModel.chapters[index];
-
                         return ExerciseTitle(
                           icon: Icons.book,
                           title: chapter.chapterName,
                           subtitle: "${chapter.notes.length} lessons",
                           chapterId: chapter.chapterID!,
-                          progress:
-                              viewModel.progressMap[chapter.chapterID] ?? 0.0,
+                          progress: viewModel.progressMap[chapter.chapterID] ?? 0.0,
                           color: Colors.lightBlueAccent,
                         );
                       },
@@ -212,13 +211,21 @@ class ExerciseTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {GoRouter.of(context).push('/student/notelist/$chapterId')},
+      onTap: () => GoRouter.of(context).push('/student/notelist/$chapterId'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16.0),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [

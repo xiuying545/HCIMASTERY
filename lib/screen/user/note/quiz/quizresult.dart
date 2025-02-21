@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -18,22 +19,24 @@ class QuizResultPage extends StatefulWidget {
 
 class _QuizResultPageState extends State<QuizResultPage> {
   late Future<void> _quizDataFuture;
+  late UserViewModel userViewModel;
   // ignore: prefer_final_fields
   Map<String, int> _userAnswerCache = {};
   @override
   void initState() {
     super.initState();
     _quizDataFuture = _loadQuizData();
+     userViewModel = Provider.of<UserViewModel>(context, listen: false);
   }
 
   Future<void> _loadQuizData() async {
     final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     await quizViewModel.fetchQuizzes(widget.chapter);
-    await quizViewModel.calculateScore(widget.chapter);
+    await quizViewModel.calculateScore(widget.chapter,userViewModel.userId);
     for (var quiz in quizViewModel.quizzes) {
       final quizId = quiz.quizzID!;
       final userAnswer =
-          await quizViewModel.getUserAnswer(1, widget.chapter, quizId);
+          await quizViewModel.getUserAnswer(userViewModel.userId!, widget.chapter, quizId);
       _userAnswerCache[quizId] = userAnswer;
     }
     print("Current Score: ${quizViewModel.score}");

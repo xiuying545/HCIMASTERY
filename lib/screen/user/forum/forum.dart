@@ -14,8 +14,7 @@ class ForumPage extends StatefulWidget {
   _ForumPageState createState() => _ForumPageState();
 }
 
-class _ForumPageState extends State<ForumPage>
-    with SingleTickerProviderStateMixin {
+class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Map<String, bool> isLikedByUser = {};
   late UserViewModel userViewModel;
@@ -24,24 +23,29 @@ class _ForumPageState extends State<ForumPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-     userViewModel=Provider.of<UserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     loadPosts();
   }
 
-  void loadPosts() async {
-    final forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
-    await forumViewModel.fetchPosts();
+  Future<void> loadPosts() async {
+    try {
+      final forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
+      await forumViewModel.fetchPosts();
 
-    for (var post in forumViewModel.posts) {
-      if (post.postID != null &&userViewModel.userId!=null) {
-        isLikedByUser[post.postID!] =
-            await forumViewModel.checkIfPostLiked(post.postID!,userViewModel.userId!);
+      for (var post in forumViewModel.posts) {
+        if (post.postID != null && userViewModel.userId != null) {
+          isLikedByUser[post.postID!] = await forumViewModel.checkIfPostLiked(
+              post.postID!, userViewModel.userId!);
+        }
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load posts: $e')),
+      );
     }
   }
 
   Future<void> confirmDelete(String postID) async {
-    final forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -61,7 +65,14 @@ class _ForumPageState extends State<ForumPage>
     );
 
     if (shouldDelete == true) {
-      await forumViewModel.deletePost(postID);
+      try {
+        final forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
+        await forumViewModel.deletePost(postID);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete post: $e')),
+        );
+      }
     }
   }
 
@@ -81,7 +92,6 @@ class _ForumPageState extends State<ForumPage>
                 fontSize: 24, fontWeight: FontWeight.bold), // Larger font size
           ),
         ),
-
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -144,9 +154,10 @@ class _ForumPageState extends State<ForumPage>
   }
 
   Widget _buildMyPostsList(ForumViewModel forumViewModel) {
-    // Filter the posts to show only the user's posts (assuming "1" is the user ID)
-    var myPosts =
-        forumViewModel.posts.where((post) => post.creator == "1").toList();
+    // Filter the posts to show only the user's posts
+    var myPosts = forumViewModel.posts
+        .where((post) => post.creator == userViewModel.userId)
+        .toList();
 
     return Container(
       decoration: const BoxDecoration(
@@ -173,7 +184,7 @@ class _ForumPageState extends State<ForumPage>
     return GestureDetector(
       onTap: () {
         if (post.postID != null) {
-          GoRouter.of(context).push("/student/forum/postDetail/${post.postID}");
+          GoRouter.of(context).push("/forum/postDetail/${post.postID}");
         }
       },
       child: Padding(
@@ -184,154 +195,168 @@ class _ForumPageState extends State<ForumPage>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  child: Text(
-                    post.title,
-                    style: const TextStyle(
-                      fontSize: 21, 
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF3f5fd7),
-                    ),
-                  ),
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 0.5,
-                  color: Color(0xFF3f5fd7),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: CircleAvatar(
-                        radius: 25,
-                        backgroundImage: const NetworkImage(
-                          "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
-                        ),
-                        backgroundColor: Colors.grey.shade300,
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Wong Xiu Ying",
-                          style: TextStyle(
-                            fontSize: 16, // Increased font size
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          !post.editStatus
-                              ? "posted on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}"
-                              : "edited on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromARGB(255, 98, 98, 98),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8.0),
-                  child: Text(
-                    post.content,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFECEFF1),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.favorite),
-                            color: isLiked
-                                ? Colors.pinkAccent
-                                : const Color(0xFF757575),
-                            onPressed: () async {
-                              final postID = post.postID;
-                              if (postID != null) {
-                                if (isLiked) {
-                                  await forumViewModel.unlikePost(postID, "1");
-                                  setState(() {
-                                    isLikedByUser[postID] = false;
-                                  });
-                                } else {
-                                  await forumViewModel.likePost(postID, "1");
-                                  setState(() {
-                                    isLikedByUser[postID] = true;
-                                  });
-                                }
-                              }
-                            },
-                          ),
-                          Text(
-                            '${post.likedByUserIds.length} likes',
-                            style: const TextStyle(
-                              color: Color(0xFF757575),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        '${forumViewModel.posts.where((p) => p.postID == post.postID).first.replies.length} replies',
-                        style: const TextStyle(
-                          color: Color(0xFF757575),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      post.creator == "1"
-                          ? Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  color: const Color(0xFF757575),
-                                  onPressed: () {
-                                    confirmDelete(post.postID!);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  color: const Color(0xFF757575),
-                                  onPressed: () {
-                                    GoRouter.of(context).push(
-                                        "/student/forum/editPost/${post.postID}");
-                                  },
-                                ),
-                              ],
-                            )
-                          : Container(
-                              child: const SizedBox(
-                              width: 100,
-                            )),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPostHeader(post),
+              _buildPostContent(post),
+              _buildPostActions(post, forumViewModel, isLiked),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPostHeader(Post post) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            post.title,
+            style: const TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF3f5fd7),
+            ),
+          ),
+          const Divider(
+            height: 20,
+            thickness: 0.5,
+            color: Color(0xFF3f5fd7),
+          ),
+          Row(
+            children: [
+              const CircleAvatar(
+                radius: 25,
+                backgroundImage: NetworkImage(
+                  "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
+                ),
+                backgroundColor: Colors.grey,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Wong Xiu Ying",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    !post.editStatus
+                        ? "posted on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}"
+                        : "edited on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(255, 98, 98, 98),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostContent(Post post) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8.0),
+      child: Text(
+        post.content,
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
+  Widget _buildPostActions(Post post, ForumViewModel forumViewModel, bool isLiked) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFFECEFF1),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.favorite),
+                color: isLiked ? Colors.pinkAccent : const Color(0xFF757575),
+                onPressed: () async {
+                  final postID = post.postID;
+                  if (postID != null) {
+                    if (isLiked) {
+                      await forumViewModel.unlikePost(postID, userViewModel.userId!);
+                      setState(() {
+                        isLikedByUser[postID] = false;
+                      });
+                    } else {
+                      await forumViewModel.likePost(postID, userViewModel.userId!);
+                      setState(() {
+                        isLikedByUser[postID] = true;
+                      });
+                    }
+                  }
+                },
+              ),
+              Text(
+                '${post.likedByUserIds.length} likes',
+                style: const TextStyle(
+                  color: Color(0xFF757575),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            '${forumViewModel.posts.where((p) => p.postID == post.postID).first.replies.length} replies',
+            style: const TextStyle(
+              color: Color(0xFF757575),
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          if (post.creator == userViewModel.userId!)
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  color: const Color(0xFF757575),
+                  onPressed: () {
+                    confirmDelete(post.postID!);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  color: const Color(0xFF757575),
+                  onPressed: () {
+                    GoRouter.of(context).push("/student/forum/editPost/${post.postID}");
+                  },
+                ),
+              ],
+            )
+          else if (userViewModel.role == "admin")
+            IconButton(
+              icon: const Icon(Icons.delete),
+              color: const Color(0xFF757575),
+              onPressed: () {
+                confirmDelete(post.postID!);
+              },
+            )
+          else
+            const SizedBox(width: 100),
+        ],
       ),
     );
   }

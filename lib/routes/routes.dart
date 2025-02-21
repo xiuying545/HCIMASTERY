@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fyp1/model/notePage.dart';
+import 'package:fyp1/screen/admin/manageNote.dart';
+import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/authenication/loginScreen.dart';
@@ -20,6 +21,7 @@ import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/editProfile.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
+import 'package:fyp1/widget/adminnavbar.dart';
 import 'package:fyp1/widget/studentnavbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -30,13 +32,17 @@ GoRouter router() {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) {
-          final firebaseUser = context.watch<UserViewModel?>();
-          // if (firebaseUser != null) {
-          //   return const Homepage();
-          // }
-          return const SplashScreen();
-        },
+        // builder: (context, state) {
+        //   final firebaseUser = context.watch<UserViewModel?>();
+        //   // if (firebaseUser != null) {
+        //   //   return const Homepage();
+        //   // }
+        //   return const SplashScreen();
+        // },
+         builder: (context, state) {
+            final chapterId = "1tVIMjWSBHWuKDGQLWIA";
+            return ManageNotesPage(chapterId: chapterId);
+          }
       ),
       GoRoute(
           path: '/student/note/:noteID',
@@ -48,6 +54,10 @@ GoRouter router() {
         path: '/main',
         builder: (context, state) => const MainPage(),
       ),
+        GoRoute(
+        path: '/admin/main',
+        builder: (context, state) => const MainPage(),
+      ),
       GoRoute(
           path: '/student/notelist/:chapterId',
           builder: (context, state) {
@@ -57,6 +67,10 @@ GoRouter router() {
       GoRoute(
         path: '/studentNav',
         builder: (context, state) => const StudentNavBar(),
+      ),
+        GoRoute(
+        path: '/adminNav',
+        builder: (context, state) => const AdminNavBar(),
       ),
       GoRoute(
         path: '/signin',
@@ -87,14 +101,14 @@ GoRouter router() {
         },
       ),
       GoRoute(
-        path: '/student/forum/postDetail/:postId',
+        path: '/forum/postDetail/:postId',
         builder: (context, state) {
           final postId = state.pathParameters['postId']!;
           return PostDetailPage(postID: postId);
         },
       ),
       GoRoute(
-        path: '/student/practicalExercise',
+        path: '/practicalExercise',
         builder: (context, state) => const PracticalExercisePage(),
       ),
       GoRoute(
@@ -152,18 +166,18 @@ GoRouter router() {
       ),
       GoRoute(
         path: '/student/questionlist/:chapterID',
-          builder: (context, state) {
+        builder: (context, state) {
           final String chapterID = state.pathParameters['chapterID']!;
-     
+
           return QuestionListPage(chapterID: chapterID);
         },
       ),
       GoRoute(
-        path: '/student/profile',
+        path: '/profile',
         builder: (context, state) => const ProfilePage(),
       ),
       GoRoute(
-        path: '/student/editProfile/:userId',
+        path: '/editProfile/:userId',
         builder: (context, state) {
           final String userId = state.pathParameters['userId']!;
 

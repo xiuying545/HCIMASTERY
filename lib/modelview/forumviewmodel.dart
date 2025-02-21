@@ -118,4 +118,13 @@ class ForumViewModel extends ChangeNotifier {
     _isLoading = loading;
     notifyListeners();
   }
+
+  Future<void> deleteReply(String postID, int replyIndex) async {
+  try {
+    await _postService.deleteReply(postID, replyIndex);
+    // await fetchPosts(); // Refresh the posts list after deletion
+  } catch (e) {
+    print('Error deleting reply: $e');
+  }
+}
 }

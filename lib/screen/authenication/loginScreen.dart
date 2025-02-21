@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -14,29 +16,87 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
 
   Future<void> _signIn() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        // Perform sign-in with Firebase Authentication
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
+    if (!_formKey.currentState!.validate()) return;
 
-     UserViewModel userViewModel= Provider.of<UserViewModel>(context, listen: false);
-     userViewModel.setUserId(userCredential.user!.uid);
+    setState(() => _isLoading = true);
 
-        
-        context.go('/studentNav');  
-      } catch (e) {
-        // Handle authentication errors
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to sign in: $e')),
-        );
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await _redirectUserBasedOnRole(user.uid);
+      }
+    } on FirebaseAuthException catch (e) {
+      _handleAuthError(e);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
+  }
+
+  Future<void> _redirectUserBasedOnRole(String userId) async {
+    try {
+      String? role = await Provider.of<UserViewModel>(context, listen: false)
+          .getUserRole(userId);
+      if (role == null) {
+        _showSnackBar("User role not found.");
+        return;
+      }
+
+      if (mounted) {
+        Provider.of<UserViewModel>(context, listen: false).setUserId(userId);
+        String route = role == 'admin' ? '/adminNav' : '/studentNav';
+        GoRouter.of(context).go(route);
+      }
+    } catch (e) {
+      _showSnackBar("Error retrieving user role.");
+    }
+  }
+
+  void _handleAuthError(FirebaseAuthException e) {
+    String message;
+    switch (e.code) {
+      case 'user-not-found':
+        message = 'No user found with this email.';
+        break;
+      case 'wrong-password':
+        message = 'Incorrect password. Try again.';
+        break;
+      case 'invalid-email':
+        message = 'Invalid email format.';
+        break;
+      case 'too-many-requests':
+        message = 'Too many failed attempts. Try again later.';
+        break;
+      default:
+        message = 'Failed to sign in. Please try again.';
+    }
+    _showSnackBar(message);
+  }
+
+  void _showSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  void _navigateToRegister() {
+    GoRouter.of(context).go('/register');
+  }
+
+  void _navigateToForgotPassword() {
+    GoRouter.of(context).go('/forgotPassword');
   }
 
   @override
@@ -50,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  SizedBox(height: constraints.maxHeight * 0.1),
+                  SizedBox(height: constraints.maxHeight * 0.05),
                   Image.asset(
                     'assets/logo.jpg',
                     height: 200,
@@ -93,17 +153,30 @@ class _SignInScreenState extends State<SignInScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: TextFormField(
                             controller: _passwordController,
-                            obscureText: true,
-                            decoration: const InputDecoration(
+                            obscureText: _obscurePassword,
+                            decoration: InputDecoration(
                               hintText: 'Password',
                               filled: true,
-                              fillColor: Color.fromARGB(255, 247, 246, 252),
-                              contentPadding: EdgeInsets.symmetric(
+                              fillColor:
+                                  const Color.fromARGB(255, 247, 246, 252),
+                              contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16.0 * 1.5, vertical: 16.0),
-                              border: OutlineInputBorder(
+                              border: const OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(50)),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
                               ),
                             ),
                             validator: (value) {
@@ -114,61 +187,36 @@ class _SignInScreenState extends State<SignInScreen> {
                             },
                           ),
                         ),
+                        const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: _signIn,
+                          onPressed: _isLoading ? null : _signIn,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor: const Color(0xFF6a5ae0),
                             foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 48),
+                            minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.5, 48),
                             shape: const StadiumBorder(),
                           ),
-                          child: const Text("Sign in"),
-                        ),
-                        const SizedBox(height: 16.0),
-                        TextButton(
-                          onPressed: () {
-                            // Forgot password action
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .color!
-                                      .withOpacity(0.64),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : const Text(
+                                  "Sign In",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: _navigateToForgotPassword,
+                          child: const Text("Forgot Password?"),
                         ),
                         TextButton(
-                          onPressed: () {
-                            context.go("/register");
-                          },
-                          child: Text.rich(
-                            const TextSpan(
-                              text: "Don’t have an account? ",
-                              children: [
-                                TextSpan(
-                                  text: "Sign Up",
-                                  style: TextStyle(color: Color(0xFF6a5ae0)),
-                                ),
-                              ],
-                            ),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .color!
-                                      .withOpacity(0.64),
-                                ),
-                          ),
+                          onPressed: _navigateToRegister,
+                          child: const Text("Don't have an account? Register"),
                         ),
                       ],
                     ),

@@ -63,7 +63,7 @@ class QuizViewModel extends ChangeNotifier {
   }
 
   Future<void> saveAnswer(
-      int userID, int chapter, String quizId, int studentAnswer) async {
+      String userID, int chapter, String quizId, int studentAnswer) async {
     _isLoading = true;
     notifyListeners();
 
@@ -85,7 +85,7 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<int> getUserAnswer(int userID, int chapter, String quizID) async {
+  Future<int> getUserAnswer(String userID, int chapter, String quizID) async {
     _isLoading = true;
     notifyListeners();
 
@@ -107,12 +107,12 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<double> calculateScore(int chapter) async {
+  Future<double> calculateScore(int chapter,userId) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _score = await quizAnswerService.calculateScore(chapter);
+      _score = await quizAnswerService.calculateScore(chapter,userId);
 
       print('Score calculated: $_score');
     } catch (e) {

@@ -56,4 +56,29 @@ Future<Profile?> getUserById(String userID) async {
       return [];
     }
   }
+
+  Future<String?> getUserRole(String userID) async {
+    try {
+      DocumentSnapshot doc = await _usersCollection.doc(userID).get();
+      if (doc.exists) {
+        return (doc.data() as Map<String, dynamic>)['role'] as String?;
+      }
+    } catch (e) {
+      print("Error retrieving user role: $e");
+    }
+    return null;
+  }
+
+    Future<String> getUserName(String userID) async {
+    try {
+      DocumentSnapshot doc = await _usersCollection.doc(userID).get();
+      if (doc.exists) {
+        return (doc.data() as Map<String, dynamic>)['name'];
+      }
+    } catch (e) {
+      print("Error retrieving user name: $e");
+    }
+    return "unknown name";
+  }
+
 }

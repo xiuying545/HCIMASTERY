@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: ElevatedButton(
                     onPressed: () {
                        print("widgget:${userViewModel.user!.userId}");
-                       GoRouter.of(context).push("/student/editProfile/${userViewModel.userId??"1"}");
+                       GoRouter.of(context).push("/editProfile/${userViewModel.userId??"1"}");
                       
                     },
                     style: ElevatedButton.styleFrom(

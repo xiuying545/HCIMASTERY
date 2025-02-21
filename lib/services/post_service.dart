@@ -200,4 +200,25 @@ class PostService {
 
     return false; // If the post doesn't exist
   }
+
+  Future<void> deleteReply(String postID, int replyIndex) async {
+  final postRef = _firestore.collection('Forum').doc(postID);
+  final postSnapshot = await postRef.get();
+
+  if (postSnapshot.exists) {
+    final data = postSnapshot.data() as Map<String, dynamic>;
+    final replies = List<Map<String, dynamic>>.from(data['replies'] ?? []);
+
+    if (replyIndex >= 0 && replyIndex < replies.length) {
+      replies.removeAt(replyIndex);
+
+      await postRef.update({'replies': replies});
+    } else {
+      throw Exception('Reply index out of range');
+    }
+  } else {
+    throw Exception('Post not found');
+  }
+}
+
 }

@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +19,13 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   late int currentQuestionIndex;
+   late UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
     currentQuestionIndex = widget.questionIndex;
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
   }
 
   @override
@@ -89,7 +92,7 @@ class _QuizPageState extends State<QuizPage> {
                       ),
                       FutureBuilder<int>(
                         future: quizViewModel.getUserAnswer(
-                          1,
+                          userViewModel.userId!,
                           widget.quizzes[currentQuestionIndex].chapter,
                           widget.quizzes[currentQuestionIndex].quizzID ?? '-1',
                         ),
@@ -118,7 +121,7 @@ class _QuizPageState extends State<QuizPage> {
                                 child: GestureDetector(
                                   onTap: () async {
                                     await quizViewModel.saveAnswer(
-                                        1,
+                                        userViewModel.userId!,
                                         widget.quizzes[currentQuestionIndex].chapter,
                                         quizId,
                                         index);
@@ -275,7 +278,7 @@ class _QuizPageState extends State<QuizPage> {
             child: const Text('Submit', style: TextStyle(color: Colors.white)),
             onPressed: () {
               // Handle submission logic here
-              Navigator.of(ctx).pop();
+               GoRouter.of(context).push("/student/quizResult/${widget.quizzes[currentQuestionIndex].chapter}");
             },
           ),
           TextButton(

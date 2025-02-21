@@ -1,6 +1,6 @@
 class QuizAnswer {
   String? answerID; 
-  final int userID;
+  final String userID;
   final int chapter; // Add chapter field
   final List<String> quizzID;
   final List<int> studentAnswer;

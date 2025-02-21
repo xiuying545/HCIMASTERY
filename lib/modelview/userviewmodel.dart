@@ -6,8 +6,10 @@ class UserViewModel extends ChangeNotifier {
   final UserService _userService = UserService();
   Profile? _user;
   String? _userId;
+  String? _role;
   Profile? get user => _user;
   String? get userId => _userId;
+  String? get role => _role;
 
   void setUserId(String userId) {
     _userId = userId;
@@ -35,5 +37,15 @@ class UserViewModel extends ChangeNotifier {
 
   Future<List<Profile>> getAllUsers() async {
     return await _userService.getAllUsers();
+  }
+
+  Future<String?> getUserRole(String userID) async {
+    _role = await _userService.getUserRole(userID);
+    return _role;
+  }
+
+
+  Future<String> getUsername(String userId) async {
+   return await _userService.getUserName(userId);
   }
 }
