@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/screen/admin/addNote.dart';
+import 'package:fyp1/screen/admin/editNote.dart';
 import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
@@ -44,6 +46,22 @@ GoRouter router() {
             return ManageNotesPage(chapterId: chapterId);
           }
       ),
+      GoRoute(
+      path: '/admin/addNote/:chapterId',
+      builder: (context, state) {
+        final chapterId = state.pathParameters['chapterId']!;
+        return AddNotePage(chapterId: chapterId);
+      },
+    ),
+    // Route for EditNotePage
+    GoRoute(
+      path: '/admin/editNote/:chapterId/:noteId',
+      builder: (context, state) {
+        final chapterId = state.pathParameters['chapterId']!;
+        final noteId = state.pathParameters['noteId']!;
+        return EditNotePage(chapterId: chapterId, noteId: noteId);
+      },
+    ),
       GoRoute(
           path: '/student/note/:noteID',
           builder: (context, state) {

@@ -26,6 +26,28 @@ class NoteService {
     }
   }
 
+   Future<Note?> getNoteById(String chapterID, String noteID) async {
+    try {
+      DocumentSnapshot noteSnapshot = await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Notes')
+          .doc(noteID)
+          .get();
+
+      if (noteSnapshot.exists) {
+        var noteData = noteSnapshot.data() as Map<String, dynamic>;
+        return Note.fromJson(noteData);
+      } else {
+        print('Note with ID $noteID not found');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching note by ID: $e');
+      return null;
+    }
+  }
+
   // Get all chapters
   Future<List<Chapter>> getChapters() async {
     try {
@@ -89,15 +111,15 @@ class NoteService {
   }
 
   // Update an existing note
-  Future<void> updateNote(String chapterID, String noteID, Note note) async {
+  Future<void> updateNote(String chapterID,  Note note) async {
     try {
       await _db
           .collection('Chapters')
           .doc(chapterID)
           .collection('Notes')
-          .doc(noteID)
+          .doc(note.noteID)
           .update(note.toJson());
-      print('Note updated with ID: $noteID');
+      print('Note updated with ID: ${note.noteID}');
     } catch (e) {
       print('Error updating note: $e');
     }

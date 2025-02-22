@@ -69,6 +69,23 @@ class NoteViewModel extends ChangeNotifier {
     _isLoadingNotes = false;
   }
 
+   Future<Note?> getNoteById(String chapterID, String noteID) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final note = await _noteService.getNoteById(chapterID, noteID);
+      return note;
+    } catch (e) {
+      _errorMessage = 'Error fetching note: $e';
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<NoteProgress> fetchStudentProgress(
       String studentID, String chapterID) async {
     _isLoading = true;
@@ -142,9 +159,9 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   // Update an existing note
-  Future<void> updateNote(String chapterID, String noteID, Note note) async {
+  Future<void> updateNote(String chapterID, Note note) async {
     try {
-      await _noteService.updateNote(chapterID, noteID, note);
+      await _noteService.updateNote(chapterID,  note);
       await fetchNotesForChapter(chapterID);
     } catch (e) {
       _errorMessage = 'Error updating note: $e';
