@@ -26,7 +26,7 @@ class NoteService {
     }
   }
 
-   Future<Note?> getNoteById(String chapterID, String noteID) async {
+  Future<Note?> getNoteById(String chapterID, String noteID) async {
     try {
       DocumentSnapshot noteSnapshot = await _db
           .collection('Chapters')
@@ -74,7 +74,7 @@ class NoteService {
     }
   }
 
-  // Get all notes for a specific chapter
+// Get all notes for a specific chapter
   Future<List<Note>> getNotesForChapter(String chapterID) async {
     try {
       QuerySnapshot noteSnapshot = await _db
@@ -85,6 +85,7 @@ class NoteService {
 
       List<Note> noteList = noteSnapshot.docs.map((doc) {
         var noteData = Note.fromJson(doc.data() as Map<String, dynamic>);
+        noteData.noteID = doc.id; // Assign Firestore-generated document ID
         return noteData;
       }).toList();
 
@@ -111,7 +112,7 @@ class NoteService {
   }
 
   // Update an existing note
-  Future<void> updateNote(String chapterID,  Note note) async {
+  Future<void> updateNote(String chapterID, Note note) async {
     try {
       await _db
           .collection('Chapters')
@@ -173,24 +174,18 @@ class NoteService {
             title: "What is HCI?",
             content:
                 "Human-Computer Interaction (HCI) focuses on designing user-centered systems by understanding user needs, capabilities, and limitations.",
-         
-      
           ),
           Note(
             noteID: "note2",
             title: "Goals of HCI",
             content:
                 "The main goals of HCI are to improve usability, enhance user experience, and ensure accessibility for all users.",
-            
-          
           ),
           Note(
             noteID: "note3",
             title: "HCI and Interaction Design",
             content:
                 "HCI is closely linked to interaction design, which focuses on creating meaningful and intuitive interactions between users and systems.",
-        
-      
           ),
         ],
       ),
@@ -203,21 +198,18 @@ class NoteService {
             title: "Usability Principles",
             content:
                 "Usability principles, such as learnability, efficiency, and satisfaction, are core to HCI design.",
-
           ),
           Note(
             noteID: "note2",
             title: "Norman’s Design Principles",
             content:
                 "Don Norman's design principles include feedback, constraints, affordances, and mapping to create effective interfaces.",
-
           ),
           Note(
             noteID: "note3",
             title: "Cognitive Load in HCI",
             content:
                 "Minimizing cognitive load helps users process information efficiently and reduces errors.",
-
           ),
         ],
       ),
@@ -230,21 +222,18 @@ class NoteService {
             title: "Usability Testing",
             content:
                 "Usability testing involves observing users interact with a system to identify usability issues.",
-   
           ),
           Note(
             noteID: "note2",
             title: "Heuristic Evaluation",
             content:
                 "Heuristic evaluation uses predefined heuristics to identify usability flaws in interfaces.",
-
           ),
           Note(
             noteID: "note3",
             title: "Surveys and Feedback",
             content:
                 "Surveys and user feedback are crucial for understanding user satisfaction and collecting suggestions for improvement.",
-
           ),
         ],
       ),

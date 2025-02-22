@@ -83,9 +83,9 @@ class _ManageNotesPageState extends State<ManageNotesPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-         onPressed: () => GoRouter.of(context).push(
-                '/admin/addNote/${widget.chapterId}',
-              ),
+        onPressed: () => GoRouter.of(context).push(
+          '/admin/addNote/${widget.chapterId}',
+        ),
         backgroundColor: const Color(0xFF2980B9),
         child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
@@ -120,11 +120,67 @@ class _ManageNotesPageState extends State<ManageNotesPage> {
             ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.redAccent),
-              onPressed: () => {},
+              onPressed: () =>
+                  _showDeleteConfirmationDialog(note, noteViewModel),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(Note note, NoteViewModel noteViewModel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Delete Note',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'Are you sure you want to delete this note? This action cannot be undone.',
+            style: TextStyle(fontSize: 16),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Note deleted successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
