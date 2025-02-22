@@ -68,7 +68,10 @@ class _NoteListPageState extends State<NoteListPage> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.blue.shade700, Colors.blue.shade400],
+                            colors: [
+                              Colors.blue.shade700,
+                              Colors.blue.shade400
+                            ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -125,11 +128,31 @@ class _NoteListPageState extends State<NoteListPage> {
                       ),
                       child: Container(
                         color: Colors.white,
-                        padding: const EdgeInsets.all(30.0),
+                        padding: const EdgeInsets.symmetric(vertical: 30.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Text(
+                              "Course Detail",
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),),
+                           
+
+                            Divider(
+                              color: Colors.grey, 
+                              thickness: 2, 
+                              height:
+                                  20, 
+               
+                            ),
+                            SizedBox(height: 10),
                             // Step Indicator for Notes
+                            
                             ...List.generate(
                               notes.length,
                               (index) => _buildNoteProgress(
@@ -155,9 +178,12 @@ class _NoteListPageState extends State<NoteListPage> {
     required int index,
     required int totalNotes,
   }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return 
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -209,14 +235,9 @@ class _NoteListPageState extends State<NoteListPage> {
           ],
         ),
         // Progress Line
-        if (index < totalNotes - 1)
-          Container(
-            margin: const EdgeInsets.fromLTRB(34, 0, 0, 0),
-            width: 5,
-            height: 35,
-            color: _getStepColor(noteProgress.progress[note.noteID]),
-          ),
+        SizedBox(height: 15),
       ],
+      )
     );
   }
 
