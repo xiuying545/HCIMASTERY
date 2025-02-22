@@ -34,17 +34,18 @@ GoRouter router() {
     routes: [
       GoRoute(
         path: '/',
-        // builder: (context, state) {
-        //   final firebaseUser = context.watch<UserViewModel?>();
-        //   // if (firebaseUser != null) {
-        //   //   return const Homepage();
-        //   // }
-        //   return const SplashScreen();
-        // },
-         builder: (context, state) {
-            final chapterId = "1tVIMjWSBHWuKDGQLWIA";
-            return ManageNotesPage(chapterId: chapterId);
-          }
+        builder: (context, state) {
+          final firebaseUser = context.watch<UserViewModel?>();
+          // if (firebaseUser != null) {
+          //   return const Homepage();
+          // }
+          // return const SplashScreen();
+          return const StudentNavBar();
+        },
+        //  builder: (context, state) {
+        //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
+        //     return ManageNotesPage(chapterId: chapterId);
+        //   }
       ),
       GoRoute(
       path: '/admin/addNote/:chapterId',

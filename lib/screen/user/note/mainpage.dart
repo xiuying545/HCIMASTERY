@@ -2,82 +2,130 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/noteviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final viewModel = Provider.of<NoteViewModel>(context, listen: false);
+  State<MainPage> createState() => _MainPageState();
+}
 
-    // Fetch chapters when the page is loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch chapters once when the page loads
+    Future.microtask(() {
+      final viewModel = context.read<NoteViewModel>();
       viewModel.fetchChapters();
       viewModel.calculateAllProgress();
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6a5ae0),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildExercisesSection(context),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildHeader(),
+          _buildBanner(),
+          const SizedBox(height: 20),
+          Expanded(child: _buildCoursesSection()),
+        ],
       ),
     );
   }
 
-  // Header section with user greeting and search bar
-  Widget _buildHeader() {
+  // Banner Section
+  Widget _buildBanner() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF6a5ae0),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+      width: double.infinity,
+      height: 170,
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: [Colors.blue.shade700, Colors.blue.shade400],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       child: Stack(
         children: [
           Positioned(
-            top: 0,
-            right: 16,
-            child: Image.asset(
-              'assets/bck.png', // Replace with your image path
-              width: 100, // Adjust width as needed
-              height: 100, // Adjust height as needed
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            top: 30,
+            left: 15,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 20.0),
-                        Text(
-                          'Hi, Evelyn',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4.0),
-                      ],
-                    ),
-                  ],
+                const Text(
+                  "Learn HCI using\nHCI Mastery",
+                  style: TextStyle(
+                    height: 1.1,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-                const SizedBox(height: 5.0),
-                _buildSearchBar(),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 33),
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: () {},
+                  child: const Text(
+                    "Explore",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
+          Positioned(
+            top: 0,
+            right: -20,
+            child: Image.asset(
+              'assets/Animation/child.png',
+              width: 200,
+              height: 200,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Header with greeting and search bar
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hi, Evelyn 👋',
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Let\'s start learning!',
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildSearchBar(),
         ],
       ),
     );
@@ -86,23 +134,26 @@ class MainPage extends StatelessWidget {
   // Search bar widget
   Widget _buildSearchBar() {
     return Container(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 131, 117, 240),
+        color: Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Row(
-        children: [
-          Icon(
-            Icons.search,
-            color: Colors.white,
-            size: 28,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
-          SizedBox(width: 8.0),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search, color: Colors.grey, size: 24),
+          const SizedBox(width: 8),
           Text(
             'What are you looking for?',
-            style: TextStyle(
-              color: Colors.white,
+            style: GoogleFonts.poppins(
+              color: Colors.grey,
               fontSize: 16,
             ),
           ),
@@ -111,86 +162,80 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  // Exercises Section that dynamically loads chapters
-  Widget _buildExercisesSection(BuildContext context) {
-    return Expanded(
-      child: Consumer<NoteViewModel>(
-        builder: (context, viewModel, _) {
-          if (viewModel.isLoadingChapters) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (viewModel.hasError) {
-            return Center(
-              child: Text(
-                viewModel.errorMessage ?? 'An error occurred',
-                style: const TextStyle(color: Colors.red, fontSize: 16),
-              ),
-            );
-          }
-
-          if (viewModel.chapters.isEmpty) {
-            return const Center(
-              child: Text(
-                'No chapters found.',
-                style: TextStyle(fontSize: 18, color: Colors.black54),
-              ),
-            );
-          }
-
-          return Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFFefeefb),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+  Widget _buildCoursesSection() {
+    return Consumer<NoteViewModel>(
+      builder: (context, viewModel, _) {
+        if (viewModel.isLoadingChapters) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.blue,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Courses',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: viewModel.chapters.length,
-                      itemBuilder: (context, index) {
-                        final chapter = viewModel.chapters[index];
-                        return ExerciseTitle(
-                          icon: Icons.book,
-                          title: chapter.chapterName,
-                          subtitle: "${chapter.notes.length} lessons",
-                          chapterId: chapter.chapterID!,
-                          progress: viewModel.progressMap[chapter.chapterID] ?? 0.0,
-                          color: Colors.lightBlueAccent,
-                        );
-                      },
-                    ),
-                  ),
-                ],
+          );
+        }
+        if (viewModel.hasError) {
+          return Center(
+            child: Text(
+              viewModel.errorMessage ?? 'An error occurred',
+              style: GoogleFonts.poppins(
+                color: Colors.red,
+                fontSize: 16,
               ),
             ),
           );
-        },
-      ),
+        }
+        if (viewModel.chapters.isEmpty) {
+          return Center(
+            child: Text(
+              'No chapters found.',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                color: Colors.black54,
+              ),
+            ),
+          );
+        }
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Courses',
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: viewModel.chapters.length,
+                  itemBuilder: (context, index) {
+                    final chapter = viewModel.chapters[index];
+                    return CourseTile(
+                      icon: Icons.book,
+                      title: chapter.chapterName,
+                      subtitle: "${chapter.notes.length} lessons",
+                      chapterId: chapter.chapterID!,
+                      progress: viewModel.progressMap[chapter.chapterID] ?? 0.0,
+                      color: Colors.blue.shade400,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
-// Widget to represent each exercise (course) in the list
-class ExerciseTitle extends StatelessWidget {
+// Widget representing each chapter in the list
+class CourseTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final String chapterId;
@@ -198,7 +243,7 @@ class ExerciseTitle extends StatelessWidget {
   final double progress;
   final Color color;
 
-  const ExerciseTitle({
+  const CourseTile({
     super.key,
     required this.icon,
     required this.title,
@@ -213,54 +258,54 @@ class ExerciseTitle extends StatelessWidget {
     return GestureDetector(
       onTap: () => GoRouter.of(context).push('/student/notelist/$chapterId'),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16.0),
+        margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: Colors.white),
+              child: Icon(icon, color: Colors.white, size: 24),
             ),
-            const SizedBox(width: 12.0),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade800,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       color: Colors.black54,
                       fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 8),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10),
                     child: LinearProgressIndicator(
                       value: progress,
                       backgroundColor: Colors.grey[200],

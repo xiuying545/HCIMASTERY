@@ -49,11 +49,6 @@ class _NoteListPageState extends State<NoteListPage> {
         .chapterName;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(chapterName, style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF6a5ae0),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Consumer<NoteViewModel>(builder: (context, model, child) {
@@ -63,37 +58,112 @@ class _NoteListPageState extends State<NoteListPage> {
                 return const Center(child: Text('No notes available.'));
               }
 
-              return Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              return Column(
+                children: [
+                  // Top Section (Gradient Background with Back Button)
+                  Stack(
                     children: [
-                      // Step Indicator for Notes
-                      ...List.generate(
-                        notes.length,
-                        (index) => _buildNoteProgress(
-                          note: notes[index],
-                          index: index,
-                          totalNotes: notes.length,
+                      Container(
+                        height: 200, // Adjust height as needed
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue.shade700, Colors.blue.shade400],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 0,
+                              right: 50,
+                              child: Image.asset(
+                                'assets/Animation/book.png',
+                                width: 200,
+                                height: 200,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 20,
+                              left: 20,
+                              child: Text(
+                                chapterName,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      _buildQuizProgress(),
+                      // Back Button
+                      Positioned(
+                        top: 40, // Adjust position as needed
+                        left: 20,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Navigate back
+                          },
+                        ),
+                      ),
                     ],
-                  ));
+                  ),
+                  // Bottom Section (White with Rounded Corners)
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(30.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Step Indicator for Notes
+                            ...List.generate(
+                              notes.length,
+                              (index) => _buildNoteProgress(
+                                note: notes[index],
+                                index: index,
+                                totalNotes: notes.length,
+                              ),
+                            ),
+                            _buildQuizProgress(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
             }),
     );
   }
 
-Widget _buildNoteProgress(
-      {required Note note, required int index, required int totalNotes}) {
+  Widget _buildNoteProgress({
+    required Note note,
+    required int index,
+    required int totalNotes,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center, 
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Progress Circle
             Container(
               width: 70,
               height: 70,
@@ -106,7 +176,7 @@ Widget _buildNoteProgress(
               ),
             ),
             const SizedBox(width: 16),
-            // Note Title and Status Removed Card Design
+            // Note Title and Status
             Expanded(
               child: GestureDetector(
                 onTap: () {
@@ -126,7 +196,7 @@ Widget _buildNoteProgress(
                       Text(
                         note.title,
                         style: const TextStyle(
-                          fontSize: 18, // Bigger font size
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
@@ -138,34 +208,26 @@ Widget _buildNoteProgress(
             ),
           ],
         ),
-        Container(
-          margin: const EdgeInsets.fromLTRB(34, 0, 0, 0),
-          width: 5,
-          height: 35,
-          color: _getStepColor(noteProgress.progress[note.noteID]),
-        ),
+        // Progress Line
+        if (index < totalNotes - 1)
+          Container(
+            margin: const EdgeInsets.fromLTRB(34, 0, 0, 0),
+            width: 5,
+            height: 35,
+            color: _getStepColor(noteProgress.progress[note.noteID]),
+          ),
       ],
     );
   }
 
-  // Method to return icons based on progress status
-  Widget _getStepIcon(String? status) {
-    switch (status) {
-      case "Completed":
-        return const Icon(Icons.check, color: Colors.white, size: 30); // Check icon for completed
-      case "In Progress":
-        return const Icon(Icons.access_time, color: Colors.white, size: 30); // Progress icon for in progress
-      case "Not Started":
-      default:
-        return const SizedBox.shrink(); // No icon for not started
-    }
-  }
   Widget _buildQuizProgress() {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Center align the row
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Progress Circle
             Container(
               width: 70,
               height: 70,
@@ -174,11 +236,11 @@ Widget _buildNoteProgress(
                 shape: BoxShape.circle,
               ),
               child: const Center(
-                child: Icon(Icons.quiz,
-                    color: Colors.white, size: 30), // Bigger icon
+                child: Icon(Icons.quiz, color: Colors.white, size: 30),
               ),
             ),
             const SizedBox(width: 16),
+            // Quiz Title and Status
             Expanded(
               child: GestureDetector(
                 onTap: () {
@@ -196,7 +258,7 @@ Widget _buildNoteProgress(
                       Text(
                         "Quiz",
                         style: TextStyle(
-                          fontSize: 20, // Bigger font size
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
@@ -211,6 +273,18 @@ Widget _buildNoteProgress(
         ),
       ],
     );
+  }
+
+  Widget _getStepIcon(String? status) {
+    switch (status) {
+      case "Completed":
+        return const Icon(Icons.check, color: Colors.white, size: 30);
+      case "In Progress":
+        return const Icon(Icons.access_time, color: Colors.white, size: 30);
+      case "Not Started":
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Color _getStepColor(String? status) {

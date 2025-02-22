@@ -83,6 +83,8 @@ flutter:
   - assets/SplashScreen3.jpg
   - assets/logo.jpg
   - assets/
+  - assets/Animation/child.png
+  - assets/Animation/book.png
 
 
   # To add assets to your application, add an assets section, like this:
