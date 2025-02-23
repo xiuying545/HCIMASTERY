@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/noteviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,9 @@ class _MainPageState extends State<MainPage> {
       final viewModel = context.read<NoteViewModel>();
       viewModel.fetchChapters();
       viewModel.calculateAllProgress();
+
+      //todo 
+      Provider.of<UserViewModel>(context, listen: false).setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
     });
   }
 

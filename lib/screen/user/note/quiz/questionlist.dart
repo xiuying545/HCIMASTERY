@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 class QuestionListPage extends StatefulWidget {
   final String chapterID;
-  
+
   const QuestionListPage({super.key, required this.chapterID});
 
   @override
@@ -14,6 +16,8 @@ class QuestionListPage extends StatefulWidget {
 }
 
 class _QuestionListPageState extends State<QuestionListPage> {
+
+  
   @override
   void initState() {
     super.initState();
@@ -21,6 +25,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
     if (quizViewModel.quizzes.isEmpty) {
       quizViewModel.fetchQuizzes(1);
     }
+    
   }
 
   @override
@@ -35,21 +40,28 @@ class _QuestionListPageState extends State<QuestionListPage> {
         title: Text(
           'Question List',
           style: GoogleFonts.rubik(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 0, 0, 0),
+            fontSize: 22.0,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade700, // Primary color
+        elevation: 4, // Add shadow
+        iconTheme:
+            const IconThemeData(color: Colors.white), // Back button color
       ),
       body: quizViewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a5ae0)),
+              ),
+            )
           : Container(
-              color: const Color(0xFFefeefb),
+              color: const Color(0xFFf5f5f5), // Light background color
               child: Column(
                 children: <Widget>[
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
                       itemCount: quizViewModel.quizzes.length,
@@ -60,29 +72,49 @@ class _QuestionListPageState extends State<QuestionListPage> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              color: const Color(0xFFffffff),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 15),
+                                  vertical: 16, horizontal: 20),
                               leading: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF6a5ae0),
-                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.blue.shade700.withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: const Icon(
                                   Icons.question_answer,
                                   color: Colors.white,
                                   size: 28,
                                 ),
+                                // child: Image.asset(
+                                //   'assets/Animation/quiz.png',
+                                //   width: 28,
+                                //   height: 28,
+                                // ),
                               ),
                               title: Text(
-                               "${index+1}. ${ quizViewModel.quizzes[index].question}",
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                  color: Color.fromARGB(255, 0, 0, 0),
+                                "${index + 1}. ${quizViewModel.quizzes[index].question}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 17.0,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              subtitle: Text(
+                                "Tap to view details",
+                                style: GoogleFonts.rubik(
+                                  fontSize: 14.0,
+                                  color: Colors.grey[600],
                                 ),
                               ),
                               onTap: () {

@@ -8,9 +8,9 @@ class ManageNotesPage extends StatefulWidget {
   final String chapterId;
 
   const ManageNotesPage({
-    Key? key,
+    super.key,
     required this.chapterId,
-  }) : super(key: key);
+  });
 
   @override
   _ManageNotesPageState createState() => _ManageNotesPageState();
@@ -101,9 +101,9 @@ class _ManageNotesPageState extends State<ManageNotesPage> {
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        leading: CircleAvatar(
-          backgroundColor: const Color(0xFF3f5fd7),
-          child: const Icon(Icons.article, color: Colors.white),
+        leading: const CircleAvatar(
+          backgroundColor: Color(0xFF3f5fd7),
+          child: Icon(Icons.article, color: Colors.white),
         ),
         title: Text(
           note.title,

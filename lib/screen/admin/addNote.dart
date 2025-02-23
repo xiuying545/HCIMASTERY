@@ -22,7 +22,7 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePage extends State<AddNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  List<TextEditingController> _videoControllers = [TextEditingController()];
+  final List<TextEditingController> _videoControllers = [TextEditingController()];
   List<File> _images = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
@@ -94,7 +94,9 @@ class _AddNotePage extends State<AddNotePage> {
 
       _titleController.clear();
       _contentController.clear();
-      _videoControllers.forEach((controller) => controller.clear());
+      for (var controller in _videoControllers) {
+        controller.clear();
+      }
       setState(() {
         _images.clear();
       });
