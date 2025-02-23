@@ -34,8 +34,8 @@ class _AdminNavBar extends State<AdminNavBar> {
           return const MainPage();
         case 1:
           return const ForumPage();
-        case 2:
-          return const PracticalExercisePage();
+        // case 2:
+        //   return const PracticalExercisePage();
         case 3:
           return const ProfilePage();
 

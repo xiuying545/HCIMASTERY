@@ -38,8 +38,8 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return const SplashScreen();
-          // return const StudentNavBar();
+          // return const SplashScreen();
+          return const StudentNavBar();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
@@ -125,10 +125,10 @@ GoRouter router() {
           return PostDetailPage(postID: postId);
         },
       ),
-      GoRoute(
-        path: '/practicalExercise',
-        builder: (context, state) => const PracticalExercisePage(),
-      ),
+      // GoRoute(
+      //   path: '/practicalExercise',
+      //   builder: (context, state) => const PracticalExercisePage(),
+      // ),
       GoRoute(
         path: '/student/quiz',
         builder: (context, state) {

@@ -41,7 +41,7 @@ class _StudentNavBar extends State<StudentNavBar> {
         case 1:
           return const ForumPage();
         case 2:
-          return const PracticalExercisePage();
+          return const ProfileDesignChallengePage();
         case 3:
           return const ProfilePage();
 
