@@ -25,7 +25,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
     if (quizViewModel.quizzes.isEmpty) {
       quizViewModel.fetchQuizzes(1);
     }
-    
+
   }
 
   @override

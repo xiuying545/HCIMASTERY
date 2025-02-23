@@ -52,14 +52,14 @@ class _QuizResultPageState extends State<QuizResultPage> {
           onPressed: () => GoRouter.of(context).push('/studentNav'),
         ),
         title: Text(
-          'Quiz Result',
+          'Chapter ${widget.chapter}',
           style: GoogleFonts.rubik(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF6a5ae0),
+        backgroundColor: Colors.blue.shade800,
       ),
       body: FutureBuilder<void>(
         future: _quizDataFuture,
@@ -80,10 +80,10 @@ class _QuizResultPageState extends State<QuizResultPage> {
                   _buildHeader(widget.chapter, quizViewModel),
                   const SizedBox(height: 20),
                   Text(
-                    "Your Answers",
+                    "See your answer",
                     style: GoogleFonts.rubik(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w700,
                       color: Colors.black,
                     ),
                   ),
@@ -102,7 +102,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xFF6a5ae0),
+        color: Colors.blue.shade800,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -125,99 +125,208 @@ class _QuizResultPageState extends State<QuizResultPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            padding: const EdgeInsets.all(15),
-            child: Row(
-              children: [
-                CircularPercentIndicator(
-                  radius: 45.0,
-                  lineWidth: 7.0,
-                  percent: quizViewModel.score / 100,
-                  center: Text(
-                    "${quizViewModel.score}%",
-                    style: GoogleFonts.rubik(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                  progressColor: Colors.white,
-                  backgroundColor: Colors.white.withOpacity(0.3),
-                  circularStrokeCap: CircularStrokeCap.round,
+          Stack(
+            children: [
+              // Circular Progress Indicator
+             
+
+              // Image on Top
+              Positioned(
+                top: -60,
+                right: -10,
+                child: Image.asset(
+                  'assets/Animation/congratulation.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Text(
-                    "Great try, keep going up!",
-                    style: GoogleFonts.rubik(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
+              ),
+              Positioned(
+                top: -60,
+                left: -10,
+                child: Image.asset(
+                  'assets/Animation/congratulation.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                bottom: -70,
+                left: -60,
+                child: Image.asset(
+                  'assets/Animation/congratulation.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                bottom: -60,
+                right: -60,
+                child: Image.asset(
+                  'assets/Animation/congratulation.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+               Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularPercentIndicator(
+                      radius: 70.0,
+                      lineWidth: 7.0,
+                      percent: quizViewModel.score / 100,
+                      center: Container(
+                          height:140,
+                          width:140,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade900,
+                       borderRadius: BorderRadius.circular(80)
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${(quizViewModel.score / 100 * quizViewModel.quizzes.length).toInt()}",
+                              style: GoogleFonts.rubik(
+                                fontSize: 35.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "out of ${quizViewModel.quizzes.length}",
+                              style: GoogleFonts.rubik(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      progressColor: Colors.white,
+                      backgroundColor: Colors.white.withOpacity(0.3),
+                      circularStrokeCap: CircularStrokeCap.round,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+Widget _buildAnswerList(QuizViewModel quizViewModel) {
+  return Expanded(
+    child: ListView.builder(
+      itemCount: quizViewModel.quizzes.length,
+      itemBuilder: (context, index) {
+        final quiz = quizViewModel.quizzes[index];
+        final isCorrect = quiz.answer == _userAnswerCache[quiz.quizzID];
 
-  Widget _buildAnswerList(QuizViewModel quizViewModel) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: quizViewModel.quizzes.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 5),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              onTap: () async {
-                String encodedQuiz = jsonEncode(quizViewModel.quizzes[index]);
-                int? userAnswerIndex =
-                    _userAnswerCache[quizViewModel.quizzes[index].quizzID];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: InkWell(
+            onTap: () async {
+              String encodedQuiz = jsonEncode(quiz);
+              int? userAnswerIndex = _userAnswerCache[quiz.quizzID];
 
-                if (encodedQuiz.isNotEmpty && userAnswerIndex != null) {
-                  context.push(
-                    '/student/quizAnswer?quizz=$encodedQuiz&userAnswer=$userAnswerIndex',
-                  );
-                }
-              },
-              title: Text(
-                '${index + 1}. ${quizViewModel.quizzes[index].question}',
-                style: GoogleFonts.rubik(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
+              if (encodedQuiz.isNotEmpty && userAnswerIndex != null) {
+                context.push(
+                  '/student/quizAnswer?quizz=$encodedQuiz&userAnswer=$userAnswerIndex',
+                );
+              }
+            },
+            borderRadius: BorderRadius.circular(15),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Question Number
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isCorrect ? Colors.green.shade100 : Colors.red.shade100,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${index + 1}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: isCorrect ? Colors.green.shade800 : Colors.red.shade800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Question Text
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          quiz.question,
+                          style: GoogleFonts.rubik(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isCorrect ? 'Correct Answer' : 'Wrong Answer',
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: isCorrect ? Colors.green.shade800 : Colors.red.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+        
+                  
+                ],
               ),
-              trailing: _buildAnswerIcon(index, quizViewModel),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 
-  Widget _buildAnswerIcon(int index, QuizViewModel quizViewModel) {
-    final quizId = quizViewModel.quizzes[index].quizzID!;
-    final userAnswer = _userAnswerCache[quizId];
+  // Widget _buildAnswerIcon(int index, QuizViewModel quizViewModel) {
+  //   final quizId = quizViewModel.quizzes[index].quizzID!;
+  //   final userAnswer = _userAnswerCache[quizId];
 
-    return Icon(
-      quizViewModel.quizzes[index].answer == userAnswer
-          ? Icons.check_circle
-          : Icons.cancel,
-      color: quizViewModel.quizzes[index].answer == userAnswer
-          ? Colors.green
-          : Colors.red,
-    );
-  }
+  //   return Icon(
+  //     quizViewModel.quizzes[index].answer == userAnswer
+  //         ? Icons.check_circle
+  //         : Icons.cancel,
+  //     color: quizViewModel.quizzes[index].answer == userAnswer
+  //         ? Colors.green
+  //         : Colors.red,
+  //   );
+  // }
 }
