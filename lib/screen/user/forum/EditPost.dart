@@ -36,7 +36,7 @@ class _EditPostPageState extends State<EditPostPage> {
    
 
       final forumViewModel = ForumViewModel();
-      print("postiddddddd${widget.postId}");
+    
       _post = await forumViewModel.fetchPostById(widget.postId);
           _titleController.text = _post.title;
              _contentController.text = _post.content;

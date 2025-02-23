@@ -28,8 +28,7 @@ class _StudentNavBar extends State<StudentNavBar> {
   void initState() {
     super.initState();
     _selectedIndex = widget.bottomIndex;
-    //todo 
-      Provider.of<UserViewModel>(context, listen: false).setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
+  
   }
 
   @override
@@ -37,8 +36,8 @@ class _StudentNavBar extends State<StudentNavBar> {
     Widget getBodyWidget(int index) {
       switch (index) {
         case 0:
-          // return const MainPage();
-           return const ForumPage();
+          return const MainPage();
+           
         case 1:
           return const ForumPage();
         case 2:

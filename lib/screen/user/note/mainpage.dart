@@ -22,8 +22,6 @@ class _MainPageState extends State<MainPage> {
       viewModel.fetchChapters();
       viewModel.calculateAllProgress();
 
-      //todo 
-      Provider.of<UserViewModel>(context, listen: false).setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
     });
   }
 

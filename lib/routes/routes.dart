@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/admin/addNote.dart';
 import 'package:fyp1/screen/admin/editNote.dart';
+import 'package:fyp1/screen/mainScren.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
@@ -37,8 +38,8 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          // return const SplashScreen();
-          return const StudentNavBar();
+          return const SplashScreen();
+          // return const StudentNavBar();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";

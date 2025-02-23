@@ -4,10 +4,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/modelview/forumviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
+
+import 'package:provider/provider.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -21,7 +24,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _contentController = TextEditingController();
   List<File> _images = [];
   final _picker = ImagePicker();
+  late UserViewModel userViewModel;
 
+  @override
+  void initState() {
+    super.initState();
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+  }
+
+  // Function to pick images from the gallery
   Future<void> _pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
     setState(() {
@@ -29,58 +40,92 @@ class _CreatePostPageState extends State<CreatePostPage> {
     });
   }
 
+  // Function to remove an image from the list
   void _removeImage(int index) {
     setState(() {
       _images.removeAt(index);
     });
   }
+Future<void> _uploadPost() async {
+  if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please fill in all the fields.')),
+    );
+    return;
+  }
 
-  Future<void> _uploadPost() async {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
-      return;
-    }
-    List<String> imageUrls = [];
+  List<String> imageUrls = [];
 
-    try {
-      for (File image in _images) {
-        String fileName = image.path.split('/').last;
-        Reference storageRef =
-            FirebaseStorage.instance.ref().child('book_images/$fileName');
-        UploadTask uploadTask = storageRef.putFile(image);
-        TaskSnapshot taskSnapshot = await uploadTask;
-        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-        imageUrls.add(downloadUrl);
+  try {
+    for (File image in _images) {
+      // Verify the file exists
+      if (!image.existsSync()) {
+        print('File does not exist: ${image.path}');
+        continue; // Skip this file
       }
 
-      Post post = Post(
-          title: _titleController.text,
-          content: _titleController.text,
-          creator: "1",
-          timeCreated: DateTime.now(),
-          images: imageUrls,
-          editStatus:false);
+      // Generate a unique file name
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
 
-      await ForumViewModel().addPost(post);
+      // Reference to Firebase Storage
+      Reference storageRef = FirebaseStorage.instance.ref().child('/$fileName');
 
-      _titleController.clear();
-      _contentController.clear();
+      // Debug logs
+      print('Uploading file: ${image.path}');
+      print('File size: ${image.lengthSync()} bytes');
+      print('File name: $fileName');
 
-      setState(() {
-        _images.clear();
+      // Upload the file
+      UploadTask uploadTask = storageRef.putFile(image);
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {}).catchError((error) {
+        print('Error uploading file: $error');
+        throw error; // Rethrow the error to stop the process
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Post added successfully!')));
-     GoRouter.of(context).pop();
-    } catch (e) {
-      print('Error uploading book: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to add book.')));
+      // Check if the upload was successful
+      if (taskSnapshot.state == TaskState.success) {
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+        imageUrls.add(downloadUrl);
+        print('File uploaded successfully: $downloadUrl');
+      } else {
+        print('Upload failed for file: ${image.path}');
+      }
     }
+
+    // Create a new post object
+    Post post = Post(
+      title: _titleController.text,
+      content: _contentController.text,
+      creator: userViewModel.userId!,
+      timeCreated: DateTime.now(),
+      images: imageUrls,
+      editStatus: false,
+    );
+
+    // Add the post to the forum
+    await Provider.of<ForumViewModel>(context, listen: false).addPost(post);
+
+    // Clear the form
+    _titleController.clear();
+    _contentController.clear();
+    setState(() {
+      _images.clear();
+    });
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Post created successfully!')),
+    );
+
+    // Navigate back
+    GoRouter.of(context).pop();
+  } catch (e) {
+    print('Error uploading post: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Failed to create post. Please try again.')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -90,15 +135,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
         foregroundColor: Colors.black,
         title: Text(
           'Create Post',
-          style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Navigate back to the previous page
-            GoRouter.of(context).pop();
-          },
+          onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
       backgroundColor: const Color(0xFFefeefb),
@@ -108,6 +153,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title Field
               const Text(
                 'Title',
                 style: TextStyle(
@@ -119,20 +165,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
               Material(
                 elevation: 4,
                 shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
                   height: 63,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: const Color(0xfff4f4f4),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _titleController,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter post's title",
+                        hintText: "Enter post title",
                         hintStyle: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -140,8 +186,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Image Upload Section
               const Text(
-                'Upload book images',
+                'Upload post images',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -149,15 +197,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
               const SizedBox(height: 20),
               Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: IconButton(
-                    iconSize: 80,
-                    color: const Color(0xff4a56c1),
-                    onPressed: _pickImages,
-                    icon: const Icon(Icons.insert_photo),
+                child: GestureDetector(
+                  onTap: _pickImages,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: const Icon(
+                      Icons.add_photo_alternate,
+                      size: 40,
+                      color: Color(0xFF4a56c1),
+                    ),
                   ),
                 ),
               ),
@@ -170,12 +224,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         itemCount: _images.length,
                         itemBuilder: (context, index) => Stack(
                           children: [
-                            Image.file(_images[index]),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                _images[index],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             Positioned(
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -184,9 +247,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     )
                   : const Center(
-                      child: Text('No images selected'),
+                      child: Text(
+                        'No images selected',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
               const SizedBox(height: 30),
+
+              // Content Field
               const Text(
                 'Content',
                 style: TextStyle(
@@ -198,28 +266,30 @@ class _CreatePostPageState extends State<CreatePostPage> {
               Material(
                 elevation: 4,
                 shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  height: 150, // Increase height for multiline content
+                  height: 150,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: const Color(0xfff4f4f4),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _contentController,
-                      maxLines: null, // Allows for multiple lines
+                      maxLines: null,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter post's content",
+                        hintText: "Enter post content",
                         hintStyle: TextStyle(color: Colors.grey),
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
+
+              // Submit Button
               Center(
                 child: SizedBox(
                   width: 263,
@@ -227,13 +297,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   child: ElevatedButton(
                     onPressed: _uploadPost,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(fontSize: 18),
-                      backgroundColor: const Color(0xff4a56c1),
+                      backgroundColor: const Color(0xFF4a56c1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text(
                       'Submit',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

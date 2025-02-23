@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fyp1/modelview/forumviewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailPage extends StatefulWidget {
   final String postID;
@@ -88,7 +89,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           title: const Text('Post Details'),
           backgroundColor: const Color(0xFFefeefb),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, color: Colors.white,),
             onPressed: () => GoRouter.of(context).pop(),
           ),
         ),
@@ -98,10 +99,23 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Post Details'),
+        title:  Text('Post Details',    style: GoogleFonts.poppins(
+          color:Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),),
         backgroundColor: const Color(0xFFefeefb),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade400],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back,color: Colors.white,),
           onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
@@ -138,7 +152,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      color:Colors.white,
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -146,10 +160,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
           children: [
             Text(
               post.title,
-              style: const TextStyle(
+              style:  TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF3f5fd7),
+                color: Colors.blue.shade900,
               ),
             ),
             const SizedBox(height: 12),
