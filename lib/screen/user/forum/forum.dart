@@ -49,16 +49,39 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Deletion'),
-        content: const Text('Are you sure you want to delete this post?'),
+        title: Text(
+          'Confirm Deletion',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this post?',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),
@@ -84,12 +107,24 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
       appBar: AppBar(
         title: const Text(''), // Empty title to remove default behavior
         backgroundColor: const Color(0xFFefeefb),
-        elevation: 0,
-        flexibleSpace: Center(
-          child: Text(
-            'Forum',
-            style: GoogleFonts.rubik(
-                fontSize: 24, fontWeight: FontWeight.bold), // Larger font size
+        elevation: 2, // Slight elevation for shadow
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade400],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Forum',
+              style: GoogleFonts.poppins(
+                fontSize: 26, // Adjusted font size
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // White text for contrast
+              ),
+            ),
           ),
         ),
         bottom: TabBar(
@@ -98,21 +133,25 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
             Tab(
               child: Text(
                 'Posts',
-                style: GoogleFonts.rubik(
-                    fontSize: 18, fontWeight: FontWeight.w500),
+                style: GoogleFonts.poppins(
+                  fontSize: 16, // Adjusted font size
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             Tab(
               child: Text(
                 'My Posts',
-                style: GoogleFonts.rubik(
-                    fontSize: 18, fontWeight: FontWeight.w500),
+                style: GoogleFonts.poppins(
+                  fontSize: 16, // Adjusted font size
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],
-          indicatorColor: const Color(0xFF3f5fd7),
-          labelColor: const Color(0xFF3f5fd7),
-          unselectedLabelColor: Colors.black,
+          indicatorColor: Colors.white, // White indicator for contrast
+          labelColor: Colors.white, // White text for selected tab
+          unselectedLabelColor: Colors.white.withOpacity(0.7), // Slightly transparent for unselected
         ),
       ),
       body: TabBarView(
@@ -190,18 +229,27 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
       child: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: Card(
-          elevation: 5, // Added elevation for shadow
-          color: Colors.white,
+          elevation: 5, // Increased elevation for more depth
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16), // More rounded corners
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPostHeader(post),
-              _buildPostContent(post),
-              _buildPostActions(post, forumViewModel, isLiked),
-            ],
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.white, const Color(0xFFefeefb).withOpacity(0.5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPostHeader(post),
+                _buildPostContent(post),
+                _buildPostActions(post, forumViewModel, isLiked),
+              ],
+            ),
           ),
         ),
       ),
@@ -216,15 +264,15 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
         children: [
           Text(
             post.title,
-            style: const TextStyle(
-              fontSize: 21,
+            style: GoogleFonts.poppins(
+              fontSize: 20, // Adjusted font size
               fontWeight: FontWeight.bold,
-              color: Color(0xFF3f5fd7),
+              color: const Color(0xFF3f5fd7),
             ),
           ),
           const Divider(
             height: 20,
-            thickness: 0.5,
+            thickness: 1,
             color: Color(0xFF3f5fd7),
           ),
           Row(
@@ -240,10 +288,10 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Wong Xiu Ying",
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16, // Adjusted font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -251,10 +299,10 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
                     !post.editStatus
                         ? "posted on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}"
                         : "edited on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}",
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14, // Adjusted font size
                       fontWeight: FontWeight.w400,
-                      color: Color.fromARGB(255, 98, 98, 98),
+                      color: Colors.grey[600],
                     ),
                   ),
                 ],
@@ -268,32 +316,47 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
 
   Widget _buildPostContent(Post post) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8.0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Text(
         post.content,
-        style: const TextStyle(fontSize: 16),
+        style: GoogleFonts.poppins(
+          fontSize: 16, // Adjusted font size
+          color: Colors.grey[800],
+        ),
+        maxLines: 3, // Limit to 3 lines
+        overflow: TextOverflow.ellipsis, // Add ellipsis for overflow
       ),
     );
   }
 
   Widget _buildPostActions(Post post, ForumViewModel forumViewModel, bool isLiked) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFECEFF1),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.favorite),
-                color: isLiked ? Colors.pinkAccent : const Color(0xFF757575),
+                icon: Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.pinkAccent : const Color(0xFF757575),
+                ),
                 onPressed: () async {
                   final postID = post.postID;
                   if (postID != null) {
@@ -313,8 +376,9 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
               ),
               Text(
                 '${post.likedByUserIds.length} likes',
-                style: const TextStyle(
-                  color: Color(0xFF757575),
+                style: GoogleFonts.poppins(
+                  fontSize: 14, // Adjusted font size
+                  color: const Color(0xFF757575),
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -322,8 +386,9 @@ class _ForumPageState extends State<ForumPage> with SingleTickerProviderStateMix
           ),
           Text(
             '${forumViewModel.posts.where((p) => p.postID == post.postID).first.replies.length} replies',
-            style: const TextStyle(
-              color: Color(0xFF757575),
+            style: GoogleFonts.poppins(
+              fontSize: 14, // Adjusted font size
+              color: const Color(0xFF757575),
               fontWeight: FontWeight.w400,
             ),
           ),

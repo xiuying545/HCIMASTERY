@@ -38,7 +38,7 @@ class _StudentNavBar extends State<StudentNavBar> {
       switch (index) {
         case 0:
           // return const MainPage();
-           return const QuizResultPage(chapter: 1);
+           return const ForumPage();
         case 1:
           return const ForumPage();
         case 2:
