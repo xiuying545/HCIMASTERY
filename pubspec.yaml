@@ -78,10 +78,10 @@ flutter:
 
 
   assets:
-  - assets/SplashScreen1.jpg
-  - assets/SplashScreen2.jpg
-  - assets/SplashScreen3.jpg
-  - assets/logo.jpg
+  - assets/SplashScreen1.png
+  - assets/SplashScreen2.png
+  - assets/SplashScreen3.png
+  - assets/logo.png
   - assets/
   - assets/Animation/child.png
   - assets/Animation/book.png

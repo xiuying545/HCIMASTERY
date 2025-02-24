@@ -109,12 +109,12 @@ class _SignInScreenState extends State<SignInScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  SizedBox(height: constraints.maxHeight * 0.05),
+                  SizedBox(height: constraints.maxHeight * 0.03),
                   Image.asset(
-                    'assets/logo.jpg',
-                    height: 200,
+                    'assets/logo.png',
+                    height: 300,
                   ),
-                  SizedBox(height: constraints.maxHeight * 0.05),
+                  SizedBox(height: constraints.maxHeight * 0.03),
                   Text(
                     "Sign In",
                     style: Theme.of(context)
@@ -191,7 +191,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: _isLoading ? null : _signIn,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: const Color(0xFF6a5ae0),
+                            backgroundColor: Colors.blue.shade900,
                             foregroundColor: Colors.white,
                             minimumSize: Size(
                                 MediaQuery.of(context).size.width * 0.5, 48),

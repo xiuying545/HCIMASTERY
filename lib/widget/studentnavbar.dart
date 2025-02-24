@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/modelview/quizviewmodel.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
@@ -28,6 +29,9 @@ class _StudentNavBar extends State<StudentNavBar> {
   void initState() {
     super.initState();
     _selectedIndex = widget.bottomIndex;
+
+    //todo
+     Provider.of<UserViewModel>(context, listen: false).setUserId("fYD79MVprcRdfvTktnzEbbDued23");
   
   }
 

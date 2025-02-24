@@ -38,7 +38,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          // return const SplashScreen();
+          //  return const SplashScreen();
           return const StudentNavBar();
         },
         //  builder: (context, state) {

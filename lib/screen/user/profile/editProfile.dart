@@ -50,135 +50,170 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (user != null) {
       setState(() {
         _nameController.text = user.name;
-        _phoneController.text = user.phone??"";
+        _phoneController.text = user.phone ?? "";
         _emailController.text = user.email;
-        _profileImage =
-            user.profileImagePath; // Assuming User has a profileImage property
+        _profileImage = user.profileImagePath;
       });
     }
   }
 
   Future<void> _saveProfile() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    // Assuming User has a constructor or method to create an instance
     final user = Profile(
       userId: widget.userId,
       name: _nameController.text,
       phone: _phoneController.text,
       email: _emailController.text,
       profileImagePath: _profileImage,
-      role:"Student",
+      role: "Student",
     );
 
     await userViewModel.saveUser(user);
-    GoRouter.of(context).pop();// Navigate back after saving
+    GoRouter.of(context).pop(); // Navigate back after saving
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFefeefb),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             GoRouter.of(context).pop();
           },
         ),
         title: Text(
           "Edit Profile",
-          style: GoogleFonts.rubik(fontSize: 24),
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        backgroundColor: const Color(0xFF6a5ae0),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.blue.shade900,
+        elevation: 2,
       ),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+
+              // Profile photo and upload button
+              Stack(
+                alignment: Alignment.bottomRight,
                 children: [
-                  SizedBox(height: constraints.maxHeight * 0.08),
-
-                  // Profile photo and upload button
-                  Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(
-                                "https://i.postimg.cc/nz0YBQcH/Logo-light.png")
-                            as ImageProvider,
-                        backgroundColor: Colors.white,
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.blue.shade900,
+                        width: 3,
                       ),
-                      TextButton(
-                        onPressed: _pickImage,
-                        child: Text(
-                          "Upload Photo",
-                          style: GoogleFonts.rubik(
-                            fontSize: 18,
-                            color: const Color(0xFF6a5ae0),
-                            fontWeight: FontWeight.w600,
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 5),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: constraints.maxHeight * 0.05),
-
-                  // Editable fields
-                  _buildInputField("Name", _nameController, 18),
-                  const SizedBox(height: 5.0),
-                  _buildInputField("Phone", _phoneController, 18),
-                  const SizedBox(height: 5.0),
-                  _buildInputField("Email", _emailController, 18),
-                  SizedBox(height: constraints.maxHeight * 0.05),
-
-                  // Save button
-                  ElevatedButton(
-                    onPressed: _saveProfile,
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      backgroundColor: const Color(0xFF6a5ae0),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
+                      ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 24.0),
-                      child: Text(
-                        "Save Changes",
-                        style: GoogleFonts.rubik(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: _profileImage != null
+                          ? NetworkImage(_profileImage!)
+                          : const NetworkImage(
+                              "https://i.postimg.cc/nz0YBQcH/Logo-light.png",
+                            ) as ImageProvider,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _pickImage,
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade900,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 24,
                       ),
                     ),
                   ),
                 ],
               ),
-            );
-          },
+              const SizedBox(height: 20),
+
+              // Editable fields
+              _buildInputField(Icons.person, "Name", _nameController),
+              const SizedBox(height: 16),
+              _buildInputField(Icons.phone, "Phone", _phoneController),
+              const SizedBox(height: 16),
+              _buildInputField(Icons.email, "Email", _emailController),
+              const SizedBox(height: 30),
+
+              // Save button
+              ElevatedButton(
+                onPressed: _saveProfile,
+                style: ElevatedButton.styleFrom(
+                  elevation: 5,
+                  backgroundColor: Colors.blue.shade900,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 40,
+                  ),
+                ),
+                child: Text(
+                  "Save Changes",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Input field widget
+  // Input field widget with icons
   Widget _buildInputField(
-      String label, TextEditingController controller, double fontSize) {
+      IconData icon, String label, TextEditingController controller) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: TextFormField(
         controller: controller,
-        style: GoogleFonts.rubik(fontSize: fontSize, color: Colors.black87),
+        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.rubik(
-              fontSize: fontSize - 4, color: Colors.grey[600]),
+          labelStyle: GoogleFonts.poppins(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
+          prefixIcon: Icon(icon, color: Colors.blue.shade900),
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(

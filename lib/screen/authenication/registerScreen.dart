@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: [
                   SizedBox(height: constraints.maxHeight * 0.02),
                   Image.asset(
-                    'assets/logo.jpg',
+                    'assets/logo.png',
                     height: 200,
                   ),
                   SizedBox(height: constraints.maxHeight * 0.01),
@@ -204,7 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
-                              backgroundColor: const Color(0xFF6a5ae0),
+                              backgroundColor:  Colors.blue.shade900,
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 48),
                               shape: const StadiumBorder(),
