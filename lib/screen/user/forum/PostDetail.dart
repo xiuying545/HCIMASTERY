@@ -205,6 +205,44 @@ class _PostDetailPageState extends State<PostDetailPage> {
               post.content,
               style: const TextStyle(fontSize: 16, height: 1.5),
             ),
+            const SizedBox(height: 12),
+              if (post.images != null && post.images!.isNotEmpty)
+                SizedBox(
+                  height: 80, // Adjust height as needed
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: post.images!.length,
+
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            post.images![index], // Firebase Storage URL
+                          
+                            height: 80,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.error, color: Colors.red);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
           ],
         ),
       ),

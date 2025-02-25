@@ -46,7 +46,7 @@ class QuizAnswerService {
     }
   }
 
-Future<int?> getUserAnswer(String userID, int chapter, String quizID) async {
+Future<int?> getUserAnswer(String userID, String chapter, String quizID) async {
   final snapshot = await _firestore
       .collection('quizAnswers')
       .where('userID', isEqualTo: userID)
@@ -72,7 +72,7 @@ Future<int?> getUserAnswer(String userID, int chapter, String quizID) async {
 }
 
 
-Future<double> calculateScore(int chapter, String userId) async {
+Future<double> calculateScore(String chapter, String userId) async {
   QuizService quizService = QuizService();
   List<Quiz> quizzes = await quizService.getQuizzesByChapter(chapter);
   int correctAnswers = 0;

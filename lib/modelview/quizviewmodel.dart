@@ -35,9 +35,9 @@ class QuizViewModel extends ChangeNotifier {
   }
 
   QuizViewModel()
-      : _selectedQuiz = Quiz(chapter: 0, question: '', options: [], answer: 0);
+      : _selectedQuiz = Quiz(chapter: "", question: '', options: [], answer: 0);
 
-  Future<void> fetchQuizzes(int chapter) async {
+  Future<void> fetchQuizzes(String chapter) async {
     _isLoading = true;
     notifyListeners();
 
@@ -63,7 +63,7 @@ class QuizViewModel extends ChangeNotifier {
   }
 
   Future<void> saveAnswer(
-      String userID, int chapter, String quizId, int studentAnswer) async {
+      String userID, String chapter, String quizId, int studentAnswer) async {
     _isLoading = true;
     notifyListeners();
 
@@ -85,7 +85,7 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<int> getUserAnswer(String userID, int chapter, String quizID) async {
+  Future<int> getUserAnswer(String userID, String chapter, String quizID) async {
     _isLoading = true;
     notifyListeners();
 
@@ -107,7 +107,7 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<double> calculateScore(int chapter,userId) async {
+  Future<double> calculateScore(String chapter,userId) async {
     _isLoading = true;
     notifyListeners();
 

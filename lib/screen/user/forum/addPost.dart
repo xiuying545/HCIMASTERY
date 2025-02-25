@@ -46,93 +46,84 @@ class _CreatePostPageState extends State<CreatePostPage> {
       _images.removeAt(index);
     });
   }
-Future<void> _uploadPost() async {
-  if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please fill in all the fields.')),
-    );
-    return;
-  }
 
-  List<String> imageUrls = [];
-
-  try {
-    for (File image in _images) {
-      // Verify the file exists
-      if (!image.existsSync()) {
-        print('File does not exist: ${image.path}');
-        continue; // Skip this file
-      }
-
-      // Generate a unique file name
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
-
-      // Reference to Firebase Storage
-      Reference storageRef = FirebaseStorage.instance.ref().child('/$fileName');
-
-      // Debug logs
-      print('Uploading file: ${image.path}');
-      print('File size: ${image.lengthSync()} bytes');
-      print('File name: $fileName');
-
-      // Upload the file
-      UploadTask uploadTask = storageRef.putFile(image);
-      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {}).catchError((error) {
-        print('Error uploading file: $error');
-        throw error; // Rethrow the error to stop the process
-      });
-
-      // Check if the upload was successful
-      if (taskSnapshot.state == TaskState.success) {
-        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-        imageUrls.add(downloadUrl);
-        print('File uploaded successfully: $downloadUrl');
-      } else {
-        print('Upload failed for file: ${image.path}');
-      }
+  Future<void> _uploadPost() async {
+    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all the fields.')),
+      );
+      return;
     }
 
-    // Create a new post object
-    Post post = Post(
-      title: _titleController.text,
-      content: _contentController.text,
-      creator: userViewModel.userId!,
-      timeCreated: DateTime.now(),
-      images: imageUrls,
-      editStatus: false,
-    );
+    List<String> imageUrls = [];
 
-    // Add the post to the forum
-    await Provider.of<ForumViewModel>(context, listen: false).addPost(post);
+    try {
+      for (File image in _images) {
+        if (!image.existsSync()) {
+          print('File does not exist: ${image.path}');
+          continue;
+        }
 
-    // Clear the form
-    _titleController.clear();
-    _contentController.clear();
-    setState(() {
-      _images.clear();
-    });
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
+        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
 
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Post created successfully!')),
-    );
+        print('Uploading file: ${image.path}');
+        print('File size: ${image.lengthSync()} bytes');
+        print('File name: $fileName');
 
-    // Navigate back
-    GoRouter.of(context).pop();
-  } catch (e) {
-    print('Error uploading post: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Failed to create post. Please try again.')),
-    );
+        UploadTask uploadTask = storageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {}).catchError((error) {
+          print('Error uploading file: $error');
+          throw error;
+        });
+
+        if (taskSnapshot.state == TaskState.success) {
+          String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+          imageUrls.add(downloadUrl);
+          print('File uploaded successfully: $downloadUrl');
+        } else {
+          print('Upload failed for file: ${image.path}');
+        }
+      }
+
+      Post post = Post(
+        title: _titleController.text,
+        content: _contentController.text,
+        creator: userViewModel.userId!,
+        timeCreated: DateTime.now(),
+        images: imageUrls,
+        editStatus: false,
+      );
+
+      await Provider.of<ForumViewModel>(context, listen: false).addPost(post);
+
+      _titleController.clear();
+      _contentController.clear();
+      setState(() {
+        _images.clear();
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post created successfully!')),
+      );
+
+      GoRouter.of(context).pop();
+    } catch (e) {
+      print('Error uploading post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create post. Please try again.')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = Colors.blue.shade900;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFefeefb),
-        foregroundColor: Colors.black,
+        backgroundColor: themeColor,
+        foregroundColor: Colors.white,
         title: Text(
           'Create Post',
           style: GoogleFonts.poppins(
@@ -146,7 +137,7 @@ Future<void> _uploadPost() async {
           onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
-      backgroundColor: const Color(0xFFefeefb),
+      backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
@@ -154,10 +145,10 @@ Future<void> _uploadPost() async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title Field
-              const Text(
+              Text(
                 'Title',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -176,10 +167,11 @@ Future<void> _uploadPost() async {
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _titleController,
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post title",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -188,10 +180,10 @@ Future<void> _uploadPost() async {
               const SizedBox(height: 30),
 
               // Image Upload Section
-              const Text(
+              Text(
                 'Upload post images',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -207,10 +199,10 @@ Future<void> _uploadPost() async {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.add_photo_alternate,
                       size: 40,
-                      color: Color(0xFF4a56c1),
+                      color: themeColor,
                     ),
                   ),
                 ),
@@ -237,8 +229,7 @@ Future<void> _uploadPost() async {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon:
-                                    const Icon(Icons.close, color: Colors.red),
+                                icon: const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -246,19 +237,19 @@ Future<void> _uploadPost() async {
                         ),
                       ),
                     )
-                  : const Center(
+                  : Center(
                       child: Text(
                         'No images selected',
-                        style: TextStyle(color: Colors.grey),
+                        style: GoogleFonts.poppins(color: Colors.grey),
                       ),
                     ),
               const SizedBox(height: 30),
 
               // Content Field
-              const Text(
+              Text(
                 'Content',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -277,11 +268,12 @@ Future<void> _uploadPost() async {
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _contentController,
+                      style: GoogleFonts.poppins(fontSize: 16),
                       maxLines: null,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post content",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -297,15 +289,16 @@ Future<void> _uploadPost() async {
                   child: ElevatedButton(
                     onPressed: _uploadPost,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4a56c1),
+                      backgroundColor: themeColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Submit',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: GoogleFonts.poppins(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
                     ),

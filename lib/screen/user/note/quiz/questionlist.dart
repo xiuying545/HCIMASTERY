@@ -23,7 +23,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
     super.initState();
     final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     if (quizViewModel.quizzes.isEmpty) {
-      quizViewModel.fetchQuizzes(1);
+      quizViewModel.fetchQuizzes("1tVIMjWSBHWuKDGQLWIA");
     }
 
   }

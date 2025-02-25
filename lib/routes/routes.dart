@@ -177,8 +177,7 @@ GoRouter router() {
         path:
             '/student/quizResult/:chapter', // Define the chapter as a parameter
         builder: (context, state) {
-          final String chapterString = state.pathParameters['chapter']!;
-          final int chapter = int.parse(chapterString);
+          final String chapter = state.pathParameters['chapter']!;
           return QuizResultPage(chapter: chapter);
         },
       ),

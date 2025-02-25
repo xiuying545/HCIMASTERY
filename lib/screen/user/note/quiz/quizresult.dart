@@ -9,7 +9,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class QuizResultPage extends StatefulWidget {
-  final int chapter;
+  final String chapter;
 
   const QuizResultPage({super.key, required this.chapter});
 
@@ -98,7 +98,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
     );
   }
 
-  Widget _buildHeader(int chapter, QuizViewModel quizViewModel) {
+  Widget _buildHeader(String chapter, QuizViewModel quizViewModel) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

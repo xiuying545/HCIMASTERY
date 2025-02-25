@@ -9,7 +9,7 @@ class QuizService {
     print('Quiz added with ID: ${docRef.id}'); // Log the ID of the added quiz
   }
 
-  Future<List<Quiz>> getQuizzesByChapter(int chapter) async {
+  Future<List<Quiz>> getQuizzesByChapter(String chapter) async {
     try {
       QuerySnapshot querySnapshot = await _db
           .collection('Quiz')
@@ -46,7 +46,7 @@ class QuizService {
         // Return a default Quiz object if not found
         return Quiz(
           quizzID: quizId,
-          chapter: 0,
+          chapter: 'Default Chapter',
           question: 'Default Question',
           options: ['Option A', 'Option B', 'Option C', 'Option D'],
           answer: 0,
@@ -57,7 +57,7 @@ class QuizService {
       // Return a default Quiz object in case of an error
       return Quiz(
         quizzID: quizId,
-        chapter: 0,
+        chapter: 'Error fetching quiz',
         question: 'Error fetching quiz',
         options: [],
         answer: 0,
@@ -69,7 +69,7 @@ class QuizService {
     List<Quiz> predefinedQuizList = [
       // Chapter 1 Questions
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question: 'What is the main purpose of a user interface?',
         options: [
           'To perform calculations',
@@ -80,7 +80,7 @@ class QuizService {
         answer: 2, // To facilitate user interaction is at index 2
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question:
             'Which of the following is an example of a command line interface?',
         options: [
@@ -92,7 +92,7 @@ class QuizService {
         answer: 1, // Terminal is at index 1
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question: 'What does “feedback” refer to in HCI?',
         options: [
           'User responses to the system',
@@ -103,7 +103,7 @@ class QuizService {
         answer: 1, // System responses to user actions is at index 1
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question:
             'Which principle emphasizes designing for users with diverse abilities?',
         options: [
@@ -115,7 +115,7 @@ class QuizService {
         answer: 1, // Accessibility is at index 1
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question: 'What is a wireframe in UI design?',
         options: [
           'A detailed visual representation of the user interface',
@@ -126,7 +126,7 @@ class QuizService {
         answer: 1, // A low-fidelity blueprint is at index 1
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question:
             'Which type of testing involves observing real users interacting with a product?',
         options: [
@@ -138,7 +138,7 @@ class QuizService {
         answer: 2, // Usability testing is at index 2
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question: 'What does the term “cognitive load” refer to?',
         options: [
           'The amount of information a user can process at one time',
@@ -149,7 +149,7 @@ class QuizService {
         answer: 0, // The amount of information is at index 0
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question: 'What is the significance of a “mental model” in HCI?',
         options: [
           'It represents how users perceive and interact with a system',
@@ -160,14 +160,14 @@ class QuizService {
         answer: 0, // It represents how users perceive is at index 0
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question:
             'Which design principle involves making important functions easily accessible?',
         options: ['Hierarchy', 'Visibility', 'Affordance', 'Consistency'],
         answer: 1, // Visibility is at index 1
       ),
       Quiz(
-        chapter: 1,
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
         question:
             'What is a common method for improving user experience in HCI?',
         options: [

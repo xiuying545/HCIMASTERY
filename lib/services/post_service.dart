@@ -88,7 +88,7 @@ class PostService {
               postID: doc.id,
               title: data['title'],
               creator: data['creator'],
-              
+              images: (data['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
               content: data['content'],
               editStatus: data['editStatus'] ?? false,
               timeCreated: data['timeCreated'].toDate(),
@@ -112,7 +112,7 @@ class PostService {
       'title': post.title,
       'content': post.content,
       'creator': post.creator,
-      'image': post.images,
+      'images': post.images,
       'likes': [],
       'replies': [],
       'editStatus': false,

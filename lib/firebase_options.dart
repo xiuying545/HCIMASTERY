@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1009963429547',
     projectId: 'hcimastery',
     authDomain: 'hcimastery.firebaseapp.com',
-    storageBucket: 'hcimastery.appspot.com',
+    storageBucket: 'hcimastery.firebasestorage.app',
     measurementId: 'G-1HWXZC41RN',
   );
 
@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
     appId: '1:1009963429547:android:80796894c99ca55e1811ee',
     messagingSenderId: '1009963429547',
     projectId: 'hcimastery',
-    storageBucket: 'hcimastery.appspot.com',
+    storageBucket: 'hcimastery.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:1009963429547:ios:486fca81e8a5d4041811ee',
     messagingSenderId: '1009963429547',
     projectId: 'hcimastery',
-    storageBucket: 'hcimastery.appspot.com',
+    storageBucket: 'hcimastery.firebasestorage.app',
     iosBundleId: 'com.example.fyp1',
   );
 
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     appId: '1:1009963429547:ios:486fca81e8a5d4041811ee',
     messagingSenderId: '1009963429547',
     projectId: 'hcimastery',
-    storageBucket: 'hcimastery.appspot.com',
+    storageBucket: 'hcimastery.firebasestorage.app',
     iosBundleId: 'com.example.fyp1',
   );
 
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1009963429547',
     projectId: 'hcimastery',
     authDomain: 'hcimastery.firebaseapp.com',
-    storageBucket: 'hcimastery.appspot.com',
+    storageBucket: 'hcimastery.firebasestorage.app',
     measurementId: 'G-ZMSQ66KLP8',
   );
 }

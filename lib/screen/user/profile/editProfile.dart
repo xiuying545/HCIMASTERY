@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
@@ -20,27 +23,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  late String? _profileImage;
+  late String? _profileImage = "https://cdn-icons-png.flaticon.com/512/9368/9368192.png";
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserData();
+     Future.microtask(() => _loadUserData());
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _loadUserData();
+    // });
+
+    
+  }
+Future<void> _pickImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  if (image != null) {
+    // Upload to Firebase Storage
+    String fileName = '${widget.userId}_profile_image';
+    Reference storageRef = FirebaseStorage.instance.ref().child('profile_images/$fileName');
+    UploadTask uploadTask = storageRef.putFile(File(image.path));
+
+    // Get the download URL
+    TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+
+    setState(() {
+      _profileImage = downloadUrl;
     });
   }
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        _profileImage = image.path;
-      });
-    }
-  }
-
+}
   Future<void> _loadUserData() async {
     print("widget:${widget.userId}");
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
@@ -94,12 +107,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
         backgroundColor: Colors.blue.shade900,
         elevation: 2,
       ),
-      body: SafeArea(
+      body: Center(
+        child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+             
 
               // Profile photo and upload button
               Stack(
@@ -123,10 +139,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     child: CircleAvatar(
                       radius: 60,
-                      backgroundImage: _profileImage != null
+                      backgroundImage: 
+                      _profileImage != null
                           ? NetworkImage(_profileImage!)
-                          : const NetworkImage(
-                              "https://i.postimg.cc/nz0YBQcH/Logo-light.png",
+                          : 
+                          const NetworkImage(
+                              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fuser-profile_9368192&psig=AOvVaw0ol0ZiyQOGQUYWOX-dVsRP&ust=1740583943830000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKiphtCS34sDFQAAAAAdAAAAABAR",
                             ) as ImageProvider,
                       backgroundColor: Colors.white,
                     ),
@@ -148,15 +166,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
 
               // Editable fields
               _buildInputField(Icons.person, "Name", _nameController),
-              const SizedBox(height: 16),
-              _buildInputField(Icons.phone, "Phone", _phoneController),
-              const SizedBox(height: 16),
-              _buildInputField(Icons.email, "Email", _emailController),
               const SizedBox(height: 30),
+              _buildInputField(Icons.phone, "Phone", _phoneController),
+              const SizedBox(height: 30),
+              _buildInputField(Icons.email, "Email", _emailController),
+              const SizedBox(height: 35),
 
               // Save button
               ElevatedButton(
@@ -184,7 +202,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ],
           ),
         ),
-      ),
+      ),),
     );
   }
 
@@ -206,11 +224,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       child: TextFormField(
         controller: controller,
-        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
+        style: GoogleFonts.poppins(fontSize: 18, color: Colors.black87),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.poppins(
-            fontSize: 14,
+            fontSize: 16,
             color: Colors.grey[600],
           ),
           prefixIcon: Icon(icon, color: Colors.blue.shade900),

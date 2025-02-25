@@ -23,7 +23,7 @@ class _ForumPageState extends State<ForumPage> {
   void initState() {
     super.initState();
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    loadPosts();
+    Future.microtask(() => loadPosts());
   }
 
   Future<void> loadPosts() async {
@@ -292,10 +292,10 @@ Widget _buildPostCard(Post post, ForumViewModel forumViewModel) {
               SizedBox(height:10),
               Row(
                 children: [
-                  const CircleAvatar(
+                   CircleAvatar(
                     radius: 25,
                     backgroundImage: NetworkImage(
-                      "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
+                      post.creatorProfileImg!,
                     ),
                     backgroundColor: Colors.grey,
                   ),
@@ -304,7 +304,7 @@ Widget _buildPostCard(Post post, ForumViewModel forumViewModel) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Wong Xiu Ying",
+                       post.creator,
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -335,13 +335,43 @@ Widget _buildPostCard(Post post, ForumViewModel forumViewModel) {
               ),
               const SizedBox(height: 10),
               // Post Image (if any)
-              // if (post.imageUrl != null)
-              //   Image.network(
-              //     post.imageUrl!,
-              //     width: double.infinity,
-              //     height: 200,
-              //     fit: BoxFit.cover,
-              //   ),
+               if (post.images != null && post.images!.isNotEmpty)
+                SizedBox(
+                  height: 80, // Adjust height as needed
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: post.images!.length,
+
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            post.images![index], // Firebase Storage URL
+                          
+                            height: 80,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.error, color: Colors.red);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               const SizedBox(height: 10),
               // Like, Comment, Edit, and Delete Buttons
               Row(

@@ -1,9 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
+import 'package:fyp1/model/user.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/services/post_service.dart';
+import 'package:fyp1/services/user_service.dart';
+import 'package:provider/provider.dart';
 
 class ForumViewModel extends ChangeNotifier {
   final PostService _postService = PostService();
+  final UserService _userService = UserService();
+
   List<Post> _posts = [];
   bool _isLoading = false;
 
@@ -15,6 +22,7 @@ class ForumViewModel extends ChangeNotifier {
         title: "",
         creator: "",
         content: "",
+        images: [],
         timeCreated: DateTime.now(),
         editStatus: false);
     try {
@@ -27,14 +35,32 @@ class ForumViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchPosts() async {
-    //_postService.createPredefinedPosts();
     _setLoading(true);
     try {
-      // await _postService.createPredefinedPosts();
       _posts = await _postService.fetchPosts();
+      Set<String> creatorIds = _posts
+          .expand((post) =>
+              [post.creator, ...post.replies.map((reply) => reply.creator)])
+          .toSet();
+
+      if (creatorIds.isEmpty) return;
+
+      Map<String, Profile> userMap =
+          await _userService.fetchUsersByIds(creatorIds);
+
+      for (var post in _posts) {
+        var creatorProfile = userMap[post.creator];
+        post.creator = creatorProfile?.name ?? "Unknown";
+        post.creatorProfileImg = creatorProfile?.profileImagePath ?? "https://cdn-icons-png.flaticon.com/512/9368/9368192.png";
+
+        for (var reply in post.replies) {
+          var replyCreatorProfile = userMap[reply.creator];
+          reply.creator = replyCreatorProfile?.name ?? "Unknown";
+          reply.creatorProfileImg = replyCreatorProfile?.profileImagePath ?? "https://cdn-icons-png.flaticon.com/512/9368/9368192.png";
+        }
+      }
       notifyListeners();
     } catch (e) {
-      // Handle errors here (e.g., log the error)
       print('Error fetching posts: $e');
     } finally {
       _setLoading(false);
@@ -120,11 +146,11 @@ class ForumViewModel extends ChangeNotifier {
   }
 
   Future<void> deleteReply(String postID, int replyIndex) async {
-  try {
-    await _postService.deleteReply(postID, replyIndex);
-    // await fetchPosts(); // Refresh the posts list after deletion
-  } catch (e) {
-    print('Error deleting reply: $e');
+    try {
+      await _postService.deleteReply(postID, replyIndex);
+      // await fetchPosts(); // Refresh the posts list after deletion
+    } catch (e) {
+      print('Error deleting reply: $e');
+    }
   }
-}
 }

@@ -33,13 +33,10 @@ class _EditPostPageState extends State<EditPostPage> {
 
   Future<void> _loadPost() async {
     try {
-   
-
       final forumViewModel = ForumViewModel();
-    
       _post = await forumViewModel.fetchPostById(widget.postId);
-          _titleController.text = _post.title;
-             _contentController.text = _post.content;
+      _titleController.text = _post.title;
+      _contentController.text = _post.content;
     } catch (e) {
       print('Error loading post: $e');
       ScaffoldMessenger.of(context)
@@ -82,7 +79,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
       // Create the updated Post object
       Post post = Post(
-        postID:widget.postId,
+        postID: widget.postId,
         title: _titleController.text,
         content: _contentController.text,
         creator: _post.creator,
@@ -91,8 +88,7 @@ class _EditPostPageState extends State<EditPostPage> {
         editStatus: true,
       );
 
-      await PostService()
-          .editPost(post); 
+      await PostService().editPost(post);
 
       _titleController.clear();
       _contentController.clear();
@@ -102,7 +98,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Post updated successfully!')));
-   GoRouter.of(context).pop();
+      GoRouter.of(context).pop();
     } catch (e) {
       print('Error updating post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,34 +108,37 @@ class _EditPostPageState extends State<EditPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = Colors.blue.shade900;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFefeefb),
-        foregroundColor: Colors.black,
+        backgroundColor: themeColor,
+        foregroundColor: Colors.white,
         title: Text(
           'Edit Post',
-          style: GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-         
-           GoRouter.of(context).pop();
-          },
+          onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
-      backgroundColor: const Color(0xFFefeefb),
+      backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              // Title Field
+              Text(
                 'Title',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -147,46 +146,54 @@ class _EditPostPageState extends State<EditPostPage> {
               Material(
                 elevation: 4,
                 shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
                   height: 63,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: const Color(0xfff4f4f4),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _titleController,
-                     
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter post's title",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "Enter post title",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
-                'Upload book images',
-                style: TextStyle(
-                  fontSize: 16,
+
+              // Image Upload Section
+              Text(
+                'Upload post images',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 20),
               Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: IconButton(
-                    iconSize: 80,
-                    color: const Color(0xff4a56c1),
-                    onPressed: _pickImages,
-                    icon: const Icon(Icons.insert_photo),
+                child: GestureDetector(
+                  onTap: _pickImages,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Icon(
+                      Icons.add_photo_alternate,
+                      size: 40,
+                      color: themeColor,
+                    ),
                   ),
                 ),
               ),
@@ -199,12 +206,20 @@ class _EditPostPageState extends State<EditPostPage> {
                         itemCount: _images.length,
                         itemBuilder: (context, index) => Stack(
                           children: [
-                            Image.file(_images[index]),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                _images[index],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             Positioned(
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close),
+                                icon: const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -212,14 +227,19 @@ class _EditPostPageState extends State<EditPostPage> {
                         ),
                       ),
                     )
-                  : const Center(
-                      child: Text('No images selected'),
+                  : Center(
+                      child: Text(
+                        'No images selected',
+                        style: GoogleFonts.poppins(color: Colors.grey),
+                      ),
                     ),
               const SizedBox(height: 30),
-              const Text(
+
+              // Content Field
+              Text(
                 'Content',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -227,28 +247,31 @@ class _EditPostPageState extends State<EditPostPage> {
               Material(
                 elevation: 4,
                 shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  height: 150, // Increase height for multiline content
+                  height: 150,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: const Color(0xfff4f4f4),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _contentController,
-                      maxLines: null, // Allows for multiple lines
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      maxLines: null,
+                      decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter post's content",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "Enter post content",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
+
+              // Submit Button
               Center(
                 child: SizedBox(
                   width: 263,
@@ -256,13 +279,18 @@ class _EditPostPageState extends State<EditPostPage> {
                   child: ElevatedButton(
                     onPressed: _editPost,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(fontSize: 18),
-                      backgroundColor: const Color(0xff4a56c1),
+                      backgroundColor: themeColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Update',
-                      style: TextStyle(color: Colors.white),
+                      style: GoogleFonts.poppins(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

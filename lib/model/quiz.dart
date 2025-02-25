@@ -1,6 +1,6 @@
 class Quiz {
   String? quizzID; 
-  int chapter;
+  String chapter;
   String question;
   List<String> options;
   int answer;

@@ -81,4 +81,28 @@ Future<Profile?> getUserById(String userID) async {
     return "unknown name";
   }
 
+Future<Map<String, Profile>> fetchUsersByIds(Set<String> userIds) async {
+  try {
+    const int batchSize = 10;
+    Map<String, Profile> userMap = {};
+
+    for (int i = 0; i < userIds.length; i += batchSize) {
+      List<String> batch = userIds.skip(i).take(batchSize).toList();
+
+      QuerySnapshot querySnapshot = await _usersCollection
+          .where(FieldPath.documentId, whereIn: batch)
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        userMap[doc.id] = Profile.fromJson(doc.data() as Map<String, dynamic>);
+      }
+    }
+
+    return userMap;
+  } catch (e) {
+    print("Error fetching users by IDs: $e");
+    return {};
+  }
+}
+
 }
