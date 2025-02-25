@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
+import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
+import 'package:provider/provider.dart';
 
 class AdminNavBar extends StatefulWidget {
   final int bottomIndex;
@@ -24,6 +27,11 @@ class _AdminNavBar extends State<AdminNavBar> {
   void initState() {
     super.initState();
     _selectedIndex = widget.bottomIndex;
+    
+    //todo
+
+     Provider.of<UserViewModel>(context, listen: false).setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
+        Provider.of<UserViewModel>(context, listen: false).role="admin";
   }
 
   @override
@@ -31,7 +39,7 @@ class _AdminNavBar extends State<AdminNavBar> {
     Widget getBodyWidget(int index) {
       switch (index) {
         case 0:
-          return const MainPage();
+          return const ManageNotePage(chapterId:"1tVIMjWSBHWuKDGQLWIA");
         case 1:
           return const ForumPage();
         // case 2:

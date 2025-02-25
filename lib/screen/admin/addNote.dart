@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/note.dart';
@@ -74,9 +72,8 @@ class _AddNotePage extends State<AddNotePage> {
 
     try {
       for (File image in _images) {
-        String fileName = image.path.split('/').last;
-        Reference storageRef =
-            FirebaseStorage.instance.ref().child('notes/$fileName');
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
+        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -116,80 +113,92 @@ class _AddNotePage extends State<AddNotePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColor = Colors.blue.shade900;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFefeefb),
-        foregroundColor: Colors.black,
+        backgroundColor: themeColor,
+        foregroundColor: Colors.white,
         title: Text(
           'Create Note',
-          style:
-              GoogleFonts.rubik(fontSize: 24.0, fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            GoRouter.of(context).pop();
-          },
+          onPressed: () => GoRouter.of(context).pop(),
         ),
       ),
-      backgroundColor: const Color(0xFFefeefb),
+      backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              // Title Field
+              Text(
                 'Title',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Material(
-                elevation: 1,
+                elevation: 4,
                 shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
                   height: 63,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-           color:Colors.white
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _titleController,
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter note's title",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "Enter note title",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
+
+              // Image Upload Section
+              Text(
                 'Upload Images',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 20),
               Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: IconButton(
-                    iconSize: 80,
-                    color: const Color(0xff4a56c1),
-                    onPressed: _pickImages,
-                    icon: const Icon(Icons.insert_photo),
+                child: GestureDetector(
+                  onTap: _pickImages,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Icon(
+                      Icons.add_photo_alternate,
+                      size: 40,
+                      color: themeColor,
+                    ),
                   ),
                 ),
               ),
@@ -202,12 +211,20 @@ class _AddNotePage extends State<AddNotePage> {
                         itemCount: _images.length,
                         itemBuilder: (context, index) => Stack(
                           children: [
-                            Image.file(_images[index]),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                _images[index],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             Positioned(
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close),
+                                icon: const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -215,47 +232,55 @@ class _AddNotePage extends State<AddNotePage> {
                         ),
                       ),
                     )
-                  : const Center(
-                      child: Text('No images selected'),
+                  : Center(
+                      child: Text(
+                        'No images selected',
+                        style: GoogleFonts.poppins(color: Colors.grey),
+                      ),
                     ),
               const SizedBox(height: 30),
-              const Text(
+
+              // Content Field
+              Text(
                 'Content',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Material(
-                elevation: 1,
-            
-                borderRadius: BorderRadius.circular(4),
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  height: 150, // Increase height for multiline content
+                  height: 150,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                   color:Colors.white
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: TextField(
                       controller: _contentController,
-                      maxLines: null, // Allows for multiple lines
-                      decoration: const InputDecoration(
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      maxLines: null,
+                      decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Enter note's content",
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintText: "Enter note content",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
-              const Text(
+
+              // Video Links Section
+              Text(
                 'Video Links',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -264,29 +289,28 @@ class _AddNotePage extends State<AddNotePage> {
                     .asMap()
                     .entries
                     .map((entry) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Material(
-                                  elevation: 1,
+                                  elevation: 4,
                                   shadowColor: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(8),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      color:  Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                       child: TextField(
                                         controller: entry.value,
-                                        decoration: const InputDecoration(
+                                        style: GoogleFonts.poppins(fontSize: 16),
+                                        decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: "Enter video link",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
+                                          hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
@@ -294,7 +318,7 @@ class _AddNotePage extends State<AddNotePage> {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.remove_circle),
+                                icon: const Icon(Icons.remove_circle, color: Colors.red),
                                 onPressed: () => _removeVideoField(entry.key),
                               ),
                             ],
@@ -306,10 +330,26 @@ class _AddNotePage extends State<AddNotePage> {
               Center(
                 child: ElevatedButton(
                   onPressed: _addVideoField,
-                  child: const Text('Add Video Link'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: Text(
+                    'Add Video Link',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
+
+              // Submit Button
               Center(
                 child: SizedBox(
                   width: 263,
@@ -317,13 +357,18 @@ class _AddNotePage extends State<AddNotePage> {
                   child: ElevatedButton(
                     onPressed: _uploadNote,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(fontSize: 18),
-                      backgroundColor: const Color(0xff4a56c1),
+                      backgroundColor: themeColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Submit',
-                      style: TextStyle(color: Colors.white),
+                      style: GoogleFonts.poppins(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

@@ -11,6 +11,11 @@ class UserViewModel extends ChangeNotifier {
   String? get userId => _userId;
   String? get role => _role;
 
+
+ set role(String? role) {
+    _role = role;
+  }
+
   void setUserId(String userId) {
     _userId = userId;
     notifyListeners();

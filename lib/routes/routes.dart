@@ -39,7 +39,7 @@ GoRouter router() {
           //   return const Homepage();
           // }
           //  return const SplashScreen();
-          return const StudentNavBar();
+          return const AdminNavBar();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";

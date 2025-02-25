@@ -1,159 +1,295 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:fyp1/model/note.dart';
-import 'package:fyp1/modelview/noteviewmodel.dart';
+import '../../../model/note.dart';
+import '../../../modelview/noteviewmodel.dart';
 
-class ManageNotesPage extends StatefulWidget {
+class ManageNotePage extends StatefulWidget {
   final String chapterId;
 
-  const ManageNotesPage({
-    super.key,
-    required this.chapterId,
-  });
+  const ManageNotePage({super.key, required this.chapterId});
 
   @override
-  _ManageNotesPageState createState() => _ManageNotesPageState();
+  _ManageNotePage createState() => _ManageNotePage();
 }
 
-class _ManageNotesPageState extends State<ManageNotesPage> {
-  String chapterName = "loading";
+class _ManageNotePage extends State<ManageNotePage> {
+  late String chapterName;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<NoteViewModel>(context, listen: false)
-        .fetchNotesForChapter(widget.chapterId);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final chapter = Provider.of<NoteViewModel>(context, listen: false)
-          .chapters
-          .firstWhere(
-            (chapter) => chapter.chapterID == widget.chapterId,
-            orElse: () => Chapter(
-                chapterID: '', chapterName: 'Unknown Chapter', notes: []),
-          );
+    _fetchData();
+  }
 
-      setState(() {
-        chapterName = chapter.chapterName;
-      });
+  Future<void> _fetchData() async {
+    await Provider.of<NoteViewModel>(context, listen: false)
+        .fetchNotesForChapter(widget.chapterId);
+    setState(() {
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final noteViewModel = Provider.of<NoteViewModel>(context);
+    chapterName = Provider.of<NoteViewModel>(context, listen: false)
+        .chapters
+        .firstWhere(
+          (chapter) => chapter.chapterID == widget.chapterId,
+          orElse: () => Chapter(
+            chapterID: '',
+            chapterName: 'Unknown Chapter',
+            notes: [],
+          ),
+        )
+        .chapterName;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          chapterName,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // Correct way to set text color
-          ),
-        ),
-        backgroundColor: const Color(0xFF3f5fd7),
-      ),
-      backgroundColor: const Color(0xFFECF0F1),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: noteViewModel.isLoadingNotes
-                  ? const Center(child: CircularProgressIndicator())
-                  : noteViewModel.notes.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'No notes available.',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.black54),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Consumer<NoteViewModel>(builder: (context, model, child) {
+              final notes = model.notes;
+
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade700, Colors.blue.shade400],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    // Top Section (Gradient Background with Image)
+                    Stack(
+                      children: [
+                        Container(
+                          height: 300,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.blue.shade700,
+                                Colors.blue.shade400
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: noteViewModel.notes.length,
-                          itemBuilder: (context, index) {
-                            final note = noteViewModel.notes[index];
-                            return _buildNoteCard(note, noteViewModel);
-                          },
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 50,
+                                right: 40,
+                                child: Image.asset(
+                                  'assets/Animation/teacher.png',
+                                  width: 300,
+                                  height: 300,
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 20,
+                                left: 20,
+                                child: Text(
+                                  chapterName,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-            ),
-          ],
-        ),
-      ),
+                        // Back Button
+                        Positioned(
+                          top: 40,
+                          left: 20,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Bottom Section (White with Rounded Corners)
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 30.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30.0),
+                                child: Text(
+                                  "Notes",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+                              ),
+                              const Divider(
+                                color: Colors.grey,
+                                thickness: 2,
+                                height: 5,
+                              ),
+                             
+                              // List of Notes in Rows
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: notes.length,
+                                  itemBuilder: (context, index) {
+                                    final note = notes[index];
+                                    return _buildNoteRow(note);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => GoRouter.of(context).push(
           '/admin/addNote/${widget.chapterId}',
         ),
-        backgroundColor: const Color(0xFF2980B9),
+        backgroundColor: Colors.blue.shade700,
+        tooltip: 'Add Note',
         child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildNoteCard(Note note, NoteViewModel noteViewModel) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Colors.white,
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        leading: const CircleAvatar(
-          backgroundColor: Color(0xFF3f5fd7),
-          child: Icon(Icons.article, color: Colors.white),
-        ),
-        title: Text(
-          note.title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Color(0xFF2980B9)),
-              onPressed: () => GoRouter.of(context).push(
-                '/admin/editNote/${widget.chapterId}/${note.noteID}',
+  Widget _buildNoteRow(Note note) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          // Note Title
+          Expanded(
+            child: Text(
+              note.title,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.redAccent),
-              onPressed: () =>
-                  _showDeleteConfirmationDialog(note, noteViewModel),
-            ),
-          ],
-        ),
+          ),
+          // Edit and Delete Buttons
+          Row(
+            children: [
+              // Edit Button
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade400, Colors.blue.shade700],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                  onPressed: () => GoRouter.of(context).push(
+                    '/admin/editNote/${widget.chapterId}/${note.noteID}',
+                  ),
+                  tooltip: 'Edit Note',
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Delete Button
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.red.shade400, Colors.red.shade700],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                  onPressed: () => _showDeleteConfirmationDialog(note),
+                  tooltip: 'Delete Note',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  void _showDeleteConfirmationDialog(Note note, NoteViewModel noteViewModel) {
+  void _showDeleteConfirmationDialog(Note note) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Delete Note',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade700,
+            ),
           ),
-          content: const Text(
+          content: Text(
             'Are you sure you want to delete this note? This action cannot be undone.',
-            style: TextStyle(fontSize: 16),
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: Colors.grey.shade700,
+            ),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: Colors.white,
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: Colors.grey,
                 ),
@@ -162,17 +298,24 @@ class _ManageNotesPageState extends State<ManageNotesPage> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
-                await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
+                await Provider.of<NoteViewModel>(context, listen: false)
+                    .deleteNote(widget.chapterId, note.noteID!);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Note deleted successfully!'),
+                  SnackBar(
+                    content: Text(
+                      'Note deleted successfully!',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                     backgroundColor: Colors.green,
                   ),
                 );
               },
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: Colors.red,
                 ),
@@ -184,3 +327,6 @@ class _ManageNotesPageState extends State<ManageNotesPage> {
     );
   }
 }
+
+// Color Constants
+const Color textColor = Color(0xFF2D3436); // Dark Grey

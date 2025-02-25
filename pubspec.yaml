@@ -85,6 +85,7 @@ flutter:
   - assets/
   - assets/Animation/child.png
   - assets/Animation/book.png
+  - assets/Animation/teacher.png
   - assets/Animation/quiz.png
   - assets/Animation/congratulation.png
 
