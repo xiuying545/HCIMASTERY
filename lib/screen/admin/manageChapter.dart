@@ -180,7 +180,8 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                         ),
                         // Delete Button
                         IconButton(
-                          onPressed: () => _showDeleteConfirmationDialog(chapter),
+                          onPressed: () =>
+                              _showDeleteConfirmationDialog(chapter),
                           icon: Icon(Icons.delete,
                               size: 24, color: Colors.red.shade600),
                         ),
@@ -307,8 +308,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   }
 
   void _navigateToManageQuizzes(Chapter chapter) {
-    // Navigate to Manage Quizzes Page
-    print('Navigate to Manage Quizzes for ${chapter.chapterName}');
+    GoRouter.of(context).push('/admin/manageQuiz/${chapter.chapterID}');
   }
 
   void _showAddChapterDialog(BuildContext context) {

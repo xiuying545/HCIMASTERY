@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/screen/admin/Quiz/addQuiz.dart';
+import 'package:fyp1/screen/admin/Quiz/editQuiz.dart';
 import 'package:fyp1/screen/admin/addNote.dart';
 import 'package:fyp1/screen/admin/editNote.dart';
 import 'package:fyp1/screen/admin/manageNote.dart';
+import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
 import 'package:fyp1/screen/mainScren.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
@@ -48,28 +51,50 @@ GoRouter router() {
         //   }
       ),
       GoRoute(
-      path: '/admin/addNote/:chapterId',
-      builder: (context, state) {
-        final chapterId = state.pathParameters['chapterId']!;
-        return AddNotePage(chapterId: chapterId);
-      },
-    ),
-     GoRoute(
-      path: '/admin/manageNote/:chapterId',
-      builder: (context, state) {
-        final chapterId = state.pathParameters['chapterId']!;
-        return ManageNotePage(chapterId: chapterId);
-      },
-    ),
-    // Route for EditNotePage
-    GoRoute(
-      path: '/admin/editNote/:chapterId/:noteId',
-      builder: (context, state) {
-        final chapterId = state.pathParameters['chapterId']!;
-        final noteId = state.pathParameters['noteId']!;
-        return EditNotePage(chapterId: chapterId, noteId: noteId);
-      },
-    ),
+        path: '/admin/addNote/:chapterId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+          return AddNotePage(chapterId: chapterId);
+        },
+      ),
+      GoRoute(
+        path: '/admin/manageNote/:chapterId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+          return ManageNotePage(chapterId: chapterId);
+        },
+      ),
+      GoRoute(
+        path: '/admin/manageQuiz/:chapterId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+          return ManageQuizPage(chapterId: chapterId);
+        },
+      ),
+        GoRoute(
+        path: '/admin/addQuiz/:chapterId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+          return AddQuizPage(chapterId: chapterId);
+        },
+      ),
+        GoRoute(
+        path: '/admin/editQuiz/:chapterId/:quizId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+           final quizId = state.pathParameters['quizId']!;
+          return EditQuizPage(chapterId: chapterId, quizId: quizId);
+        },
+      ),
+      // Route for EditNotePage
+      GoRoute(
+        path: '/admin/editNote/:chapterId/:noteId',
+        builder: (context, state) {
+          final chapterId = state.pathParameters['chapterId']!;
+          final noteId = state.pathParameters['noteId']!;
+          return EditNotePage(chapterId: chapterId, noteId: noteId);
+        },
+      ),
       GoRoute(
           path: '/student/note/:noteID',
           builder: (context, state) {
@@ -80,7 +105,7 @@ GoRouter router() {
         path: '/main',
         builder: (context, state) => const MainPage(),
       ),
-        GoRoute(
+      GoRoute(
         path: '/admin/main',
         builder: (context, state) => const MainPage(),
       ),
@@ -94,7 +119,7 @@ GoRouter router() {
         path: '/studentNav',
         builder: (context, state) => const StudentNavBar(),
       ),
-        GoRoute(
+      GoRoute(
         path: '/adminNav',
         builder: (context, state) => const AdminNavBar(),
       ),

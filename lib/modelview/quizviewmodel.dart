@@ -2,24 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/quizanswer.dart';
-import 'package:fyp1/services/quiz_service.dart';
+import 'package:fyp1/services/chapter_service.dart';
+
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/services/quizanswer_service.dart';
 
 class QuizViewModel extends ChangeNotifier {
-  final QuizService _quizService = QuizService();
+  final ChapterService _quizService = ChapterService();
   final QuizAnswerService quizAnswerService = QuizAnswerService();
 
   List<Quiz> _quizzes = [];
   Quiz _selectedQuiz;
   double _score = 0.0;
 
-
-
   List<Quiz> get quizzes {
-  
-
-    
     return _quizzes;
   }
 
@@ -29,8 +25,6 @@ class QuizViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   double get score {
-
-   
     return _score;
   }
 
@@ -42,17 +36,18 @@ class QuizViewModel extends ChangeNotifier {
     notifyListeners();
 
     _quizzes = await _quizService.getQuizzesByChapter(chapter);
- 
+
     _isLoading = false;
     notifyListeners();
   }
 
-  Future<void> getQuizById(String quizId) async {
+  Future<void> getQuizById(String chapterID, String quizId) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _selectedQuiz = await _quizService.getQuizzById(quizId);
+      _selectedQuiz = await _quizService.getQuizById(chapterID, quizId) ??
+          Quiz(chapter: 'Not Found', question: 'Not Found', options: [], answer: 0);
     } catch (e) {
       print('Error fetching quiz: $e');
       // Handle the error as needed
@@ -85,7 +80,8 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<int> getUserAnswer(String userID, String chapter, String quizID) async {
+  Future<int> getUserAnswer(
+      String userID, String chapter, String quizID) async {
     _isLoading = true;
     notifyListeners();
 
@@ -107,21 +103,69 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-  Future<double> calculateScore(String chapter,userId) async {
+  Future<double> calculateScore(String chapter, userId) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _score = await quizAnswerService.calculateScore(chapter,userId);
+      _score = await quizAnswerService.calculateScore(chapter, userId);
 
       print('Score calculated: $_score');
     } catch (e) {
       print('Error calculating score: $e');
-      _score = 0.0; 
+      _score = 0.0;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
     return _score;
   }
+
+  Future<void> addQuiz(String chapterId, Quiz quiz) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _quizService.addQuizToChapter(chapterId, quiz);
+      await fetchQuizzes(chapterId); // Refresh the list of quizzes
+    } catch (e) {
+      print('Error adding quiz: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Update an existing quiz
+  Future<void> updateQuiz(String chapterId, String quizId, Quiz updatedQuiz) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _quizService.updateQuiz(chapterId, quizId, updatedQuiz);
+      await fetchQuizzes(chapterId); // Refresh the list of quizzes
+    } catch (e) {
+      print('Error updating quiz: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Delete a quiz
+  Future<void> deleteQuiz(String chapterId, String quizId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _quizService.deleteQuiz(chapterId, quizId);
+      await fetchQuizzes(chapterId); // Refresh the list of quizzes
+    } catch (e) {
+      print('Error deleting quiz: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
 }

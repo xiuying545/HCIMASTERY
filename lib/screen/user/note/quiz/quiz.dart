@@ -300,37 +300,104 @@ class _QuizPageState extends State<QuizPage> {
     });
   }
 
-  void _showCompletionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF6a5ae0),
-        title: const Row(
+ void _showCompletionDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (ctx) => Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Rounded corners
+      ),
+      elevation: 10, // Add shadow for depth
+      backgroundColor: Colors.white, // Light background for contrast
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Fit content
           children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Quiz Completed', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            // Icon and Title
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green.shade700, // Green for success
+                  size: 32,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Quiz Completed!',
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Message
+            Text(
+              'You have completed the quiz! Do you want to submit your answers?',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Review Button
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop(); // Close the dialog
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    side: BorderSide(color: Colors.grey.shade400),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Review',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                ),
+
+                // Submit Button
+                ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).push("/student/quizResult/${widget.quizzes[currentQuestionIndex].chapter}");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    backgroundColor: Colors.green.shade700, // Green for primary action
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Submit',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
-        content: const Text(
-          'You have completed the quiz! Do you want to submit your answers?',
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Submit', style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              GoRouter.of(context).push("/student/quizResult/${widget.quizzes[currentQuestionIndex].chapter}");
-            },
-          ),
-          TextButton(
-            child: const Text('Review', style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

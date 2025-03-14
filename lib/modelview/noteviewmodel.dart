@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/noteProgress.dart';
 import 'package:fyp1/services/noteProgress_service.dart';
-import 'package:fyp1/services/note_service.dart';
+import 'package:fyp1/services/chapter_service.dart';
 
 class NoteViewModel extends ChangeNotifier {
-  final NoteService _noteService = NoteService();
+  final ChapterService _noteService = ChapterService();
   final NoteProgressService _noteProgressService = NoteProgressService();
 
   List<Chapter> _chapters = [];

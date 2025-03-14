@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp1/model/note.dart';
+import 'package:fyp1/model/quiz.dart';
 
-class NoteService {
+class ChapterService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Update the chapter name in Firestore
@@ -280,6 +281,128 @@ class NoteService {
 
     for (var note in hciChapters) {
       await addChapter(note);
+    }
+  }
+
+   Future<void> addQuizToChapter(String chapterID, Quiz quiz) async {
+    try {
+      await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .add(quiz.toJson());
+      print('Quiz added to chapter $chapterID');
+    } catch (e) {
+      print('Error adding quiz to chapter $chapterID: $e');
+    }
+  }
+
+  // Update an existing quiz
+  Future<void> updateQuiz(String chapterID, String quizID, Quiz quiz) async {
+    try {
+      await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .doc(quizID)
+          .update(quiz.toJson());
+      print('Quiz updated with ID: $quizID');
+    } catch (e) {
+      print('Error updating quiz: $e');
+    }
+  }
+
+  // Delete a quiz
+  Future<void> deleteQuiz(String chapterID, String quizID) async {
+    try {
+      await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .doc(quizID)
+          .delete();
+      print('Quiz deleted with ID: $quizID');
+    } catch (e) {
+      print('Error deleting quiz: $e');
+    }
+  }
+
+  // Fetch all quizzes for a specific chapter
+  Future<List<Quiz>> getQuizzesByChapter(String chapterID) async {
+    try {
+      QuerySnapshot querySnapshot = await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .get();
+
+      List<Quiz> quizList = querySnapshot.docs.map((doc) {
+        var quizData = Quiz.fromJson(doc.data() as Map<String, dynamic>);
+        quizData.quizzID = doc.id; // Assign Firestore-generated document ID
+        return quizData;
+      }).toList();
+
+      print('Fetched quizzes for chapter $chapterID: ${quizList.length}');
+      return quizList;
+    } catch (e) {
+      print('Error fetching quizzes for chapter $chapterID: $e');
+      return [];
+    }
+  }
+
+  // Fetch a specific quiz by its ID
+  Future<Quiz?> getQuizById(String chapterID, String quizID) async {
+    try {
+      DocumentSnapshot quizSnapshot = await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .doc(quizID)
+          .get();
+
+      if (quizSnapshot.exists) {
+        var quizData = quizSnapshot.data() as Map<String, dynamic>;
+        return Quiz.fromJson(quizData);
+      } else {
+        print('Quiz with ID $quizID not found');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching quiz by ID: $e');
+      return null;
+    }
+  }
+
+  // Predefined quizzes to load into the database
+  Future<void> predefinedQuizzes() async {
+    List<Quiz> predefinedQuizList = [
+      Quiz(
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
+        question: 'What is the main purpose of a user interface?',
+        options: [
+          'To perform calculations',
+          'To manage system resources',
+          'To facilitate user interaction with the system',
+          'To store data'
+        ],
+        answer: 2,
+      ),
+      Quiz(
+        chapter: "1tVIMjWSBHWuKDGQLWIA",
+        question: 'Which of the following is an example of a command line interface?',
+        options: [
+          'Microsoft Word',
+          'Terminal',
+          'Adobe Photoshop',
+          'Web Browser'
+        ],
+        answer: 1,
+      ),
+      // More predefined quizzes...
+    ];
+
+    for (Quiz quiz in predefinedQuizList) {
+      await addQuizToChapter(quiz.chapter, quiz);
     }
   }
 }
