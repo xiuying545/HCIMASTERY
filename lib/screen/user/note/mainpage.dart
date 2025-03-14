@@ -30,6 +30,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: Column(
         children: [
+            const SizedBox(height: 20,),
           _buildHeader(),
           _buildBanner(),
           const SizedBox(height: 20),
@@ -124,6 +125,7 @@ class _MainPageState extends State<MainPage> {
             style: GoogleFonts.poppins(
               color: Colors.black,
               fontSize: 16,
+              fontWeight: FontWeight.w400
             ),
           ),
           const SizedBox(height: 20),

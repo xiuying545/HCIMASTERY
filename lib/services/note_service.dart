@@ -4,6 +4,20 @@ import 'package:fyp1/model/note.dart';
 class NoteService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  // Update the chapter name in Firestore
+  Future<void> updateChapterName(
+      String chapterID, String newChapterName) async {
+    try {
+      await _db.collection('Chapters').doc(chapterID).update({
+        'chapterName': newChapterName,
+      });
+      print('Chapter name updated for chapter ID: $chapterID');
+    } catch (e) {
+      print('Error updating chapter name: $e');
+      rethrow;
+    }
+  }
+
   // Add a new chapter
   Future<void> addChapter(Chapter chapter) async {
     try {
@@ -48,31 +62,56 @@ class NoteService {
     }
   }
 
-  // Get all chapters
+  // // Get all chapters
+  // Future<List<Chapter>> getChapters() async {
+  //   try {
+  //     QuerySnapshot querySnapshot = await _db.collection('Chapters').get();
+  //     List<Chapter> chapterList = [];
+
+  //     for (var doc in querySnapshot.docs) {
+  //       var chapterData = doc.data() as Map<String, dynamic>;
+  //       String chapterID = doc.id;
+  //       List<Note> notes = await getNotesForChapter(chapterID);
+
+  //       chapterList.add(Chapter(
+  //         chapterID: chapterID,
+  //         chapterName: chapterData['chapterName'],
+  //         notes: notes,
+  //       ));
+  //     }
+
+  //     print('Fetched chapters: ${chapterList.length}');
+  //     return chapterList;
+  //   } catch (e) {
+  //     print('Error fetching chapters: $e');
+  //     return [];
+  //   }
+  // }
+
   Future<List<Chapter>> getChapters() async {
-    try {
-      QuerySnapshot querySnapshot = await _db.collection('Chapters').get();
-      List<Chapter> chapterList = [];
+  try {
+    QuerySnapshot querySnapshot = await _db.collection('Chapters').get();
+    List<Chapter> chapterList = [];
 
-      for (var doc in querySnapshot.docs) {
-        var chapterData = doc.data() as Map<String, dynamic>;
-        String chapterID = doc.id;
-        List<Note> notes = await getNotesForChapter(chapterID);
+    for (var doc in querySnapshot.docs) {
+      var chapterData = doc.data() as Map<String, dynamic>;
+      String chapterID = doc.id;
 
-        chapterList.add(Chapter(
-          chapterID: chapterID,
-          chapterName: chapterData['chapterName'],
-          notes: notes,
-        ));
-      }
-
-      print('Fetched chapters: ${chapterList.length}');
-      return chapterList;
-    } catch (e) {
-      print('Error fetching chapters: $e');
-      return [];
+      // Only fetch the chapter name (no notes)
+      chapterList.add(Chapter(
+        chapterID: chapterID,
+        chapterName: chapterData['chapterName'],
+        notes: [], // Empty list since we're not fetching notes
+      ));
     }
+
+    print('Fetched chapter names: ${chapterList.length}');
+    return chapterList;
+  } catch (e) {
+    print('Error fetching chapter names: $e');
+    return [];
   }
+}
 
 // Get all notes for a specific chapter
   Future<List<Note>> getNotesForChapter(String chapterID) async {

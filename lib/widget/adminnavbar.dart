@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
+import 'package:fyp1/screen/admin/manageChapter.dart';
 import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
@@ -39,7 +40,8 @@ class _AdminNavBar extends State<AdminNavBar> {
     Widget getBodyWidget(int index) {
       switch (index) {
         case 0:
-          return const ManageNotePage(chapterId:"1tVIMjWSBHWuKDGQLWIA");
+          // return const ManageNotePage(chapterId:"1tVIMjWSBHWuKDGQLWIA");
+           return const ChapterDetailsPage();
         case 1:
           return const ForumPage();
         // case 2:

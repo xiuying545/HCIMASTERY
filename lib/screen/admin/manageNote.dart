@@ -93,7 +93,7 @@ class _ManageNotePage extends State<ManageNotePage> {
                                 bottom: 20,
                                 left: 20,
                                 child: Text(
-                                  chapterName,
+                                  "List of Notes",
                                   style: GoogleFonts.poppins(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -130,31 +130,32 @@ class _ManageNotePage extends State<ManageNotePage> {
                         ),
                         child: Container(
                           color: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 30.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Chapter Name
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0),
+                                padding: const EdgeInsets.only(
+                                    left: 30, top: 20, bottom: 10),
                                 child: Text(
-                                  "Notes",
+                                  chapterName,
                                   style: GoogleFonts.poppins(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
-                                    color: textColor,
+                                    color: Colors.blue.shade900,
                                   ),
                                 ),
                               ),
+                              // Divider
                               const Divider(
                                 color: Colors.grey,
                                 thickness: 2,
-                                height: 5,
+                                height: 0, // Remove extra space
                               ),
-                             
-                              // List of Notes in Rows
+                              // List of Notes
                               Expanded(
                                 child: ListView.builder(
+                                  padding: const EdgeInsets.only(top: 10),
                                   itemCount: notes.length,
                                   itemBuilder: (context, index) {
                                     final note = notes[index];
@@ -184,7 +185,7 @@ class _ManageNotePage extends State<ManageNotePage> {
 
   Widget _buildNoteRow(Note note) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
       child: Row(
         children: [
           // Note Title

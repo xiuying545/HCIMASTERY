@@ -232,4 +232,15 @@ class NoteViewModel extends ChangeNotifier {
       }
     }
   }
+
+  Future<void> updateChapterName(String chapterID, String newChapterName) async {
+  try {
+    await _noteService.updateChapterName(chapterID, newChapterName);
+    await fetchChapters();
+  } catch (e) {
+    _errorMessage = 'Error updating chapter name: $e';
+    notifyListeners();
+  }
+}
+
 }
