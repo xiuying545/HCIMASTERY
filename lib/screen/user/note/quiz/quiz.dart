@@ -191,7 +191,7 @@ class _QuizPageState extends State<QuizPage> {
             ],
           ),
           child: Padding(
-            padding:EdgeInsets.fromLTRB(10, 5, 5, 5),
+            padding:const EdgeInsets.fromLTRB(10, 5, 5, 5),
             child:Row(
             children: [
               Container(

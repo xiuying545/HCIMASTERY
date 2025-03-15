@@ -93,7 +93,7 @@ class _EditNotePageState extends State<EditNotePage> {
     try {
       // Upload new images
       for (File image in _images) {
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
+        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
         Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;

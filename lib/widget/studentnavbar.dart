@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/modelview/quizviewmodel.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
-import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
-import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
 import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:provider/provider.dart';

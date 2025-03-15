@@ -152,7 +152,7 @@ Widget _buildNoteContent(Note note) {
                       ),
                     ),
 
-                    SizedBox(height: 5,),
+                    const SizedBox(height: 5,),
         // Note Section (Book-Like Design)
         Card(
           elevation: 4,

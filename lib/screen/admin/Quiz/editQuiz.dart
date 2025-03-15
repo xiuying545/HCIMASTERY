@@ -106,9 +106,7 @@ class _EditQuizPageState extends State<EditQuizPage> {
     });
 
     try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() +
-          '_' +
-          _image!.path.split('/').last;
+      String fileName = '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
       Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
 
       print('Uploading file: ${_image!.path}');

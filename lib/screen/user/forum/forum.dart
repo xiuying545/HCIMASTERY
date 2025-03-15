@@ -289,7 +289,7 @@ Widget _buildPostCard(Post post, ForumViewModel forumViewModel) {
                   color: Colors.blue.shade900,
                 ),
               ),
-              SizedBox(height:10),
+              const SizedBox(height:10),
               Row(
                 children: [
                    CircleAvatar(

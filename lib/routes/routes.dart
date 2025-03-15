@@ -10,7 +10,6 @@ import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
 import 'package:fyp1/screen/mainScren.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
-import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/authenication/loginScreen.dart';
 import 'package:fyp1/screen/authenication/registerScreen.dart';
 import 'package:fyp1/screen/user/forum/EditPost.dart';
@@ -23,13 +22,12 @@ import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
 import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
-import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
+
 import 'package:fyp1/screen/user/profile/editProfile.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:fyp1/widget/adminnavbar.dart';
 import 'package:fyp1/widget/studentnavbar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 GoRouter router() {
   return GoRouter(
@@ -42,8 +40,8 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          //  return const SplashScreen();
-          return const AdminNavBar();
+            return const SplashScreen();
+          // return const ProfileDesignChallengePage();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";

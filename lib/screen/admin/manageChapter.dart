@@ -312,7 +312,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   }
 
   void _showAddChapterDialog(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
+    final TextEditingController controller = TextEditingController();
 
     showDialog(
       context: context,
@@ -336,7 +336,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                 ),
                 const SizedBox(height: 20),
                 TextField(
-                  controller: _controller,
+                  controller: controller,
                   decoration: InputDecoration(
                     hintText: 'Enter chapter name',
                     hintStyle: GoogleFonts.poppins(
@@ -367,7 +367,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () async {
-                        final chapterName = _controller.text.trim();
+                        final chapterName = controller.text.trim();
                         if (chapterName.isNotEmpty) {
                           final chapter = Chapter(
                             chapterID: DateTime.now().toString(),
@@ -405,7 +405,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   }
 
   void _showEditChapterDialog(BuildContext context, Chapter chapter) {
-    final TextEditingController _controller =
+    final TextEditingController controller =
         TextEditingController(text: chapter.chapterName);
 
     showDialog(
@@ -430,7 +430,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                 ),
                 const SizedBox(height: 20),
                 TextField(
-                  controller: _controller,
+                  controller: controller,
                   decoration: InputDecoration(
                     hintText: 'Enter new chapter name',
                     hintStyle: GoogleFonts.poppins(
@@ -461,7 +461,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                     const SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () async {
-                        final newChapterName = _controller.text.trim();
+                        final newChapterName = controller.text.trim();
                         if (newChapterName.isNotEmpty) {
                           await Provider.of<NoteViewModel>(context,
                                   listen: false)

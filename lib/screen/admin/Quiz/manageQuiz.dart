@@ -4,7 +4,6 @@ import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/modelview/noteviewmodel.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
-import 'package:fyp1/services/chapter_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -258,7 +257,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 12),
           ],
         ),

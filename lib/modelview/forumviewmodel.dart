@@ -1,11 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/model/user.dart';
-import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/services/post_service.dart';
 import 'package:fyp1/services/user_service.dart';
-import 'package:provider/provider.dart';
 
 class ForumViewModel extends ChangeNotifier {
   final PostService _postService = PostService();

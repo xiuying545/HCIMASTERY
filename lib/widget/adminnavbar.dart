@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/admin/manageChapter.dart';
-import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
-import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:provider/provider.dart';
 

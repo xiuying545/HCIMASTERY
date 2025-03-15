@@ -64,7 +64,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           continue;
         }
 
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '_' + image.path.split('/').last;
+        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
         Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
 
         print('Uploading file: ${image.path}');
