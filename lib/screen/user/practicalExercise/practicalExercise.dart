@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,7 +50,9 @@ class UIComponent {
   });
 }
 
-// Profile Picture Component
+// ------------------ Components ------------------
+
+// Profile Picture Component (unchanged)
 class ProfilePicture extends UIComponent {
   ProfilePicture()
       : super(
@@ -62,7 +65,7 @@ class ProfilePicture extends UIComponent {
           height: 120,
         );
 
-  Widget buildWidget() {
+  Widget buildWidget(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -76,14 +79,17 @@ class ProfilePicture extends UIComponent {
         ],
       ),
       child: CircleAvatar(
-        radius: 50,
-        backgroundColor: color,
-        child: const Icon(Icons.person, size: 60, color: Colors.white),
+        radius: 30,
+        backgroundImage: NetworkImage(
+          "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+        ),
+        backgroundColor: Colors.grey,
       ),
     );
   }
 }
 
+// Name Component (intended color: blue.shade900)
 class Name extends UIComponent {
   Name()
       : super(
@@ -96,64 +102,61 @@ class Name extends UIComponent {
           height: 90,
         );
 
-  Widget buildWidget() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(0.1),
-              color.withOpacity(0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
+  Widget buildWidget(BuildContext context) {
+    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
+    return Container(
+      width: calculatedWidth,
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.person, color: color, size: 26),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Name",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      text,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.person, color: color, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Name",
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize - 2,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  text,
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-// Updated Bio Component
+// Bio Component (intended color: blue.shade900)
 class Bio extends UIComponent {
   Bio()
       : super(
@@ -167,134 +170,62 @@ class Bio extends UIComponent {
           height: 90,
         );
 
-  Widget buildWidget() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(0.1),
-              color.withOpacity(0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
+  Widget buildWidget(BuildContext context) {
+    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
+    return Container(
+      width: calculatedWidth,
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.info_outline, color: color, size: 26),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Bio",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      text,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, color: color, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Bio",
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize - 2,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  text,
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-// Updated Social Media Component
-class SocialMedia extends UIComponent {
-  SocialMedia()
-      : super(
-          type: 'SocialMedia',
-          text: 'Instagram: @flutterdev',
-          color: Colors.purple,
-          x: 20,
-          y: 300,
-          width: 300,
-          height: 90,
-        );
 
-  Widget buildWidget() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(0.1),
-              color.withOpacity(0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.link, color: color, size: 26),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Social Media",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      text,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Updated Contact Info Component
+// Contact Info Component (intended color: green)
 class ContactInfo extends UIComponent {
   ContactInfo()
       : super(
@@ -307,94 +238,295 @@ class ContactInfo extends UIComponent {
           height: 90,
         );
 
-  Widget buildWidget() {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(0.1),
-              color.withOpacity(0.1),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
+  Widget buildWidget(BuildContext context) {
+    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
+    return Container(
+      width: calculatedWidth,
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.email, color: color, size: 26),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Contact Info",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      text,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.email, color: color, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Contact Info",
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize - 2,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  text,
+                  style: GoogleFonts.poppins(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class SubmitButton extends UIComponent {
-  SubmitButton()
+
+// New Address Component (intended color: orange)
+class Address extends UIComponent {
+  Address()
       : super(
-          type: 'SubmitButton',
-          text: 'Submit',
-          color: Colors.blue.shade900,
+          type: 'Address',
+          text: 'Address: 123 Main St',
+          color: Colors.orange,
+          fontSize: 16,
           x: 20,
-          y: 400,
-          width: 120,
-          height: 50,
+          y: 450,
+          width: 300,
+          height: 90,
         );
 
-  Widget buildWidget(VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        textStyle: GoogleFonts.poppins(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w600,
+  Widget buildWidget(BuildContext context) {
+    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
+    return Container(
+      width: calculatedWidth,
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        elevation: 5,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(text),
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.location_on, color: color, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.poppins(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+class Header extends UIComponent {
+  Header()
+      : super(
+          type: 'Header',
+          text: 'Welcome to My Profile',
+          color: Colors.blue.shade900,
+          x: 0,
+          y: 0,
+          width: 400,
+          height: 100,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [color, color.withOpacity(0.5)], // Dynamic gradient
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Text(
+          text,
+          style: GoogleFonts.poppins(
+            fontSize: 28, // Larger font size
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Project extends UIComponent {
+  final String description;
+  final String imageUrl;
+
+  Project({required this.description, required this.imageUrl})
+      : super(
+          type: 'Project',
+          text: 'Project',
+          color: Colors.purple,
+          x: 20,
+          y: 400,
+          width: 200,
+          height: 120,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.network(
+            imageUrl,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ------------------ Helper Functions ------------------
+
+// Returns the contrast ratio between two colors
+double getContrastRatio(Color a, Color b) {
+  double lumA = a.computeLuminance();
+  double lumB = b.computeLuminance();
+  double brightest = math.max(lumA, lumB);
+  double darkest = math.min(lumA, lumB);
+  return (brightest + 0.05) / (darkest + 0.05);
+}
+
+// Returns whether two colors are "close" in hue (within threshold degrees)
+bool isColorClose(Color a, Color b, double threshold) {
+  HSVColor hsvA = HSVColor.fromColor(a);
+  HSVColor hsvB = HSVColor.fromColor(b);
+  double diff = (hsvA.hue - hsvB.hue).abs();
+  if (diff > 180) diff = 360 - diff;
+  return diff < threshold;
+}
+
+// Color picker dialog helper
+Future<Color?> showColorPickerDialog(
+    BuildContext context, Color initialColor) async {
+  Color tempColor = initialColor;
+  return await showDialog<Color>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.blue.shade50,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        title: Text(
+          "Pick a color",
+          style: TextStyle(
+            color: Colors.blue.shade900,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: tempColor,
+            onColorChanged: (color) {
+              tempColor = color;
+            },
+            showLabel: true,
+            pickerAreaBorderRadius: BorderRadius.circular(8),
+            colorPickerWidth: 300,
+            pickerAreaHeightPercent: 0.7,
+            displayThumbColor: true,
+            enableAlpha: false,
+            portraitOnly: false,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.blue.shade900,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(tempColor);
+            },
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// ------------------ Main Page ------------------
 
 class ProfileDesignChallengePage extends StatefulWidget {
   const ProfileDesignChallengePage({super.key});
@@ -407,13 +539,14 @@ class ProfileDesignChallengePage extends StatefulWidget {
 class _ProfileDesignChallengePageState
     extends State<ProfileDesignChallengePage> {
   final List<UIComponent> components = [];
-  String feedbackText = "Design your profile page!";
+  String feedbackText = "";
   final double canvasWidth = 400;
   final double canvasHeight = 500;
   int score = 0;
   bool isSnapToGridEnabled = true;
   bool isDarkMode = false;
   int? selectedIndex;
+  Color canvasBackgroundColor = Colors.white;
 
   void _addComponent(String type) {
     setState(() {
@@ -426,109 +559,178 @@ class _ProfileDesignChallengePageState
           break;
         case 'Bio':
           components.add(Bio());
-          break;
-        case 'SubmitButton':
-          components.add(SubmitButton());
-          break;
-        case 'SocialMedia':
-          components.add(SocialMedia());
-          break;
+  
         case 'ContactInfo':
           components.add(ContactInfo());
+          break;
+        case 'Address':
+          components.add(Address());
+          break;
+        case 'Header':
+          components.add(Header());
+          break;
+        case 'Project':
+          components.add(Project(
+            description: 'Flutter App',
+            imageUrl: 'https://via.placeholder.com/80',
+          ));
           break;
       }
     });
   }
 
+  // Updated _submitDesign with additional HCI rules and color harmony check
   void _submitDesign() {
-    int newScore = 0;
-    String feedback = "HCI Design Feedback:\n";
+    int newScore = 100;
+    List<String> strengths = [];
+    List<String> improvements = [];
+
     bool hasProfilePicture =
         components.any((comp) => comp.type == 'ProfilePicture');
     bool hasName = components.any((comp) => comp.type == 'Name');
     bool hasBio = components.any((comp) => comp.type == 'Bio');
-    bool hasSubmitButton =
-        components.any((comp) => comp.type == 'SubmitButton');
+
     bool hasSocialMedia = components.any((comp) => comp.type == 'SocialMedia');
     bool hasContactInfo = components.any((comp) => comp.type == 'ContactInfo');
 
-    // HCI Rules for core components
+    // Core HCI Checks
     if (hasProfilePicture) {
-      feedback += "✅ Profile picture is present. (+10 points)\n";
-      newScore += 10;
+      strengths.add("includes a profile picture");
     } else {
-      feedback += "❌ Please add a profile picture for visual identity.\n";
+      improvements.add("add a profile picture");
+      newScore -= 10;
     }
     if (hasName) {
-      feedback += "✅ Name field is present. (+10 points)\n";
-      newScore += 10;
+      strengths.add("includes a name field");
+      // Check color harmony for Name (should be close to blue.shade900)
+      UIComponent name = components.firstWhere((comp) => comp.type == 'Name');
+      if (!isColorClose(name.color, Colors.blue.shade900, 20)) {
+        improvements.add("adjust Name color to match the blue theme");
+        newScore -= 5;
+      }
     } else {
-      feedback += "❌ A name field is needed to personalize the profile.\n";
+      improvements.add("add a name field");
+      newScore -= 10;
     }
     if (hasBio) {
-      feedback += "✅ Bio field is present. (+10 points)\n";
-      newScore += 10;
-    } else {
-      feedback +=
-          "❌ Consider adding a short bio to share more about yourself.\n";
-    }
-    if (hasSubmitButton) {
-      UIComponent submitButton =
-          components.firstWhere((comp) => comp.type == 'SubmitButton');
-      if (submitButton.y >= canvasHeight - 80) {
-        feedback +=
-            "✅ Submit button is well positioned at the bottom. (+20 points)\n";
-        newScore += 20;
-      } else {
-        feedback +=
-            "❌ The submit button should be placed at the bottom for easier access.\n";
+      strengths.add("includes a bio");
+      UIComponent bio = components.firstWhere((comp) => comp.type == 'Bio');
+      if (!isColorClose(bio.color, Colors.blue.shade900, 20)) {
+        improvements.add("adjust Bio color to match the blue theme");
+        newScore -= 5;
       }
     } else {
-      feedback +=
-          "❌ Include a submit button so users can save their profile.\n";
+      improvements.add("add a bio");
+      newScore -= 10;
     }
-
-    // Additional HCI Rules for Social Media
-    if (hasSocialMedia) {
-      UIComponent socialMedia =
-          components.firstWhere((comp) => comp.type == 'SocialMedia');
-      if (socialMedia.x == 20) {
-        feedback += "✅ Social media alignment is consistent. (+10 points)\n";
-        newScore += 10;
-      } else {
-        feedback +=
-            "❌ Adjust the social media component alignment to start at x=20.\n";
-      }
-      if (socialMedia.color == Colors.purple) {
-        feedback += "✅ Social media color is appropriate. (+5 points)\n";
-        newScore += 5;
-      } else {
-        feedback += "❌ Social media should use the designated purple color.\n";
-      }
-    } else {
-      feedback += "❌ Please add a social media section.\n";
-    }
-
-    // Additional HCI Rules for Contact Info
+    
     if (hasContactInfo) {
       UIComponent contactInfo =
           components.firstWhere((comp) => comp.type == 'ContactInfo');
       if (contactInfo.x == 20) {
-        feedback += "✅ Contact info alignment is consistent. (+10 points)\n";
-        newScore += 10;
+        strengths.add("has consistent contact info alignment");
       } else {
-        feedback +=
-            "❌ Adjust the contact info component alignment to start at x=20.\n";
+        improvements.add("align contact info component to x=20");
+        newScore -= 5;
       }
-      if (contactInfo.color == Colors.green) {
-        feedback += "✅ Contact info color is appropriate. (+5 points)\n";
-        newScore += 5;
-      } else {
-        feedback += "❌ Contact info should use the designated green color.\n";
+      if (contactInfo.color != Colors.green) {
+        improvements.add("use the designated green color for contact info");
+        newScore -= 5;
       }
     } else {
-      feedback += "❌ Please add a contact info section.\n";
+      improvements.add("add a contact info section");
+      newScore -= 10;
     }
+
+    // New HCI Rule: Check for overlapping components
+    bool hasOverlap = false;
+    for (int i = 0; i < components.length; i++) {
+      for (int j = i + 1; j < components.length; j++) {
+        if (_checkOverlap(components[i], components[j])) {
+          hasOverlap = true;
+          break;
+        }
+      }
+      if (hasOverlap) break;
+    }
+    if (hasOverlap) {
+      improvements.add("avoid overlapping components");
+      newScore -= 10;
+    } else {
+      strengths.add("components are well spaced");
+    }
+
+    // New HCI Rule: Check font size consistency
+    bool isFontSizeConsistent = true;
+    for (var comp in components) {
+      if (comp.type == 'Name' || comp.type == 'Bio') {
+        if (comp.fontSize < 14 || comp.fontSize > 24) {
+          isFontSizeConsistent = false;
+          break;
+        }
+      }
+    }
+    if (isFontSizeConsistent) {
+      strengths.add("font sizes are consistent");
+    } else {
+      improvements.add("ensure consistent font sizes");
+      newScore -= 10;
+    }
+
+    // New HCI Rule: Check overall color harmony for text-based components
+    // (For Name, Bio, SubmitButton, we expect a blue hue; for SocialMedia, purple; for ContactInfo, green)
+    for (var comp in components) {
+      if (comp.type == 'Name' ||
+          comp.type == 'Bio' ||
+          comp.type == 'SubmitButton') {
+        if (!isColorClose(comp.color, Colors.blue.shade900, 20)) {
+          improvements.add(
+              "adjust ${comp.type} color for better harmony with blue theme");
+          newScore -= 5;
+        }
+      }
+    }
+
+    // New HCI Rule: Check component alignment (x positions should be multiples of 20)
+    bool isAligned = true;
+    for (var comp in components) {
+      if (comp.x % 20 != 0) {
+        isAligned = false;
+        break;
+      }
+    }
+    if (isAligned) {
+      strengths.add("components are properly aligned");
+    } else {
+      improvements.add("align components properly (multiples of 20)");
+      newScore -= 10;
+    }
+
+    // New HCI Rule: Check responsiveness
+    bool isResponsive = true;
+    for (var comp in components) {
+      if (comp.x + comp.width > canvasWidth ||
+          comp.y + comp.height > canvasHeight) {
+        isResponsive = false;
+        break;
+      }
+    }
+    if (isResponsive) {
+      strengths.add("design is responsive");
+    } else {
+      improvements.add("ensure design fits within the screen");
+      newScore -= 10;
+    }
+
+    // Build feedback text
+    String feedback = "";
+    if (strengths.isNotEmpty) {
+      feedback += "Strengths: ${strengths.join(", ")}.\n";
+    }
+    if (improvements.isNotEmpty) {
+      feedback += "Improvements: ${improvements.join(", ")}.\n";
+    }
+    feedback += "Your current score is ${newScore.clamp(0, 100)}/100.";
 
     setState(() {
       feedbackText = feedback;
@@ -536,6 +738,15 @@ class _ProfileDesignChallengePageState
     });
   }
 
+  // Helper function to check if two components overlap
+  bool _checkOverlap(UIComponent a, UIComponent b) {
+    return a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y;
+  }
+
+  // Edit component dialog with Delete button
   void _editComponent(int index) {
     UIComponent comp = components[index];
     TextEditingController fontSizeController =
@@ -546,23 +757,22 @@ class _ProfileDesignChallengePageState
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.blue.shade50, // Light blue background
+          backgroundColor: Colors.blue.shade50,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0), // Rounded corners
+            borderRadius: BorderRadius.circular(20.0),
           ),
           title: Text(
             '${comp.type} Component',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.blue.shade900, // Dark blue text
+              color: Colors.blue.shade900,
             ),
           ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Font Size Input Field
                 TextField(
                   controller: fontSizeController,
                   keyboardType: TextInputType.number,
@@ -580,12 +790,12 @@ class _ProfileDesignChallengePageState
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.orange, width: 2),
+                      borderSide:
+                          const BorderSide(color: Colors.orange, width: 2),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 Text(
                   "Choose Color",
                   style: TextStyle(
@@ -596,63 +806,14 @@ class _ProfileDesignChallengePageState
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: Colors.blue.shade50,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        title: Text(
-                          "Pick a color",
-                          style: TextStyle(
-                            color: Colors.blue.shade900,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: currentColor,
-                            onColorChanged: (Color color) {
-                              setState(() {
-                                currentColor = color;
-                              });
-                            },
-                            showLabel: true,
-                            pickerAreaBorderRadius: BorderRadius.circular(8),
-                            colorPickerWidth: 300,
-                            pickerAreaHeightPercent: 0.7,
-                            displayThumbColor: true,
-                            enableAlpha: false,
-                            portraitOnly: false,
-                          ),
-                        ),
-                        actions: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange, // Orange button
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Save',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                  onTap: () async {
+                    Color? chosenColor =
+                        await showColorPickerDialog(context, currentColor);
+                    if (chosenColor != null) {
+                      setState(() {
+                        currentColor = chosenColor;
+                      });
+                    }
                   },
                   child: Container(
                     width: 60,
@@ -666,11 +827,11 @@ class _ProfileDesignChallengePageState
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 2,
                           blurRadius: 5,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.color_lens,
                       color: Colors.white,
                       size: 30,
@@ -681,6 +842,22 @@ class _ProfileDesignChallengePageState
             ),
           ),
           actions: [
+            // Delete button
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  components.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(
+                  color: Colors.red.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
@@ -693,11 +870,12 @@ class _ProfileDesignChallengePageState
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange, // Orange button
+                backgroundColor: Colors.orange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
               onPressed: () {
                 setState(() {
@@ -707,7 +885,7 @@ class _ProfileDesignChallengePageState
                 });
                 Navigator.of(context).pop();
               },
-              child: Text(
+              child: const Text(
                 'Save',
                 style: TextStyle(
                   color: Colors.white,
@@ -757,17 +935,19 @@ class _ProfileDesignChallengePageState
   Widget _buildComponentWidget(UIComponent comp) {
     switch (comp.type) {
       case 'ProfilePicture':
-        return (comp as ProfilePicture).buildWidget();
+        return (comp as ProfilePicture).buildWidget(context);
       case 'Name':
-        return (comp as Name).buildWidget();
+        return (comp as Name).buildWidget(context);
       case 'Bio':
-        return (comp as Bio).buildWidget();
-      case 'SubmitButton':
-        return (comp as SubmitButton).buildWidget(_submitDesign);
-      case 'SocialMedia':
-        return (comp as SocialMedia).buildWidget();
+        return (comp as Bio).buildWidget(context);
       case 'ContactInfo':
-        return (comp as ContactInfo).buildWidget();
+        return (comp as ContactInfo).buildWidget(context);
+      case 'Address':
+        return (comp as Address).buildWidget(context);
+      case 'Header':
+        return (comp as Header).buildWidget(context);
+      case 'Project':
+        return (comp as Project).buildWidget(context);
       default:
         return const SizedBox();
     }
@@ -788,72 +968,30 @@ class _ProfileDesignChallengePageState
               });
             },
           ),
+          IconButton(
+            tooltip: 'Change Background Color',
+            icon: const Icon(Icons.format_paint),
+            onPressed: () async {
+              Color? newColor =
+                  await showColorPickerDialog(context, canvasBackgroundColor);
+              if (newColor != null) {
+                setState(() {
+                  canvasBackgroundColor = newColor;
+                });
+              }
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.grey.shade200,
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.feedback, // Feedback icon
-                        color: Colors.blue.shade900,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8), // Spacing between icon and text
-                      Text(
-                        "Feedback",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12), // Spacing between title and list
-                  // Feedback List
-                  Text(
-                    feedbackText,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  Text(
-                    'Score: $score',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  LinearProgressIndicator(
-                    value: score / 100,
-                    backgroundColor: Colors.grey.shade300,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.blue.shade900),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
             Center(
               child: Container(
                 width: canvasWidth,
                 height: canvasHeight,
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+                  color: canvasBackgroundColor,
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Stack(
@@ -864,7 +1002,25 @@ class _ProfileDesignChallengePageState
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            // Feedback panel at bottom
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                feedbackText.isNotEmpty
+                    ? feedbackText
+                    : "Press 'Submit Design' to see feedback",
+                style: GoogleFonts.poppins(fontSize: 14),
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitDesign,
               style: ElevatedButton.styleFrom(
@@ -888,65 +1044,43 @@ class _ProfileDesignChallengePageState
         onPressed: () {
           showModalBottomSheet(
             context: context,
-            backgroundColor: Colors.white, // Light background for the modal
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20), // Rounded top corners
-              ),
+            backgroundColor: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             builder: (context) {
               return Container(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Fit content height
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Modal Title
                     Text(
                       "Add Component",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade900, // Theme color
+                        color: Colors.blue.shade900,
                       ),
                     ),
-                    SizedBox(height: 16), // Spacing between title and buttons
-                    // Grid of Buttons
+                    const SizedBox(height: 16),
                     GridView.count(
-                      shrinkWrap: true, // Fit content height
-                      crossAxisCount: 3, // 3 buttons per row
-                      crossAxisSpacing: 10, // Spacing between columns
-                      mainAxisSpacing: 10, // Spacing between rows
+                      shrinkWrap: true,
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
                       children: [
+                        _buildAddComponentButton(Icons.account_circle,
+                            'Profile Picture', 'ProfilePicture'),
+                        _buildAddComponentButton(Icons.person, 'Name', 'Name'),
+                        _buildAddComponentButton(Icons.info, 'Bio', 'Bio'),
                         _buildAddComponentButton(
-                          Icons.account_circle,
-                          'Profile Picture',
-                          'ProfilePicture',
-                        ),
+                            Icons.title, 'Header', 'Header'),
                         _buildAddComponentButton(
-                          Icons.person,
-                          'Name',
-                          'Name',
-                        ),
+                            Icons.phone, 'Contact Info', 'ContactInfo'),
                         _buildAddComponentButton(
-                          Icons.info,
-                          'Bio',
-                          'Bio',
-                        ),
+                            Icons.location_on, 'Address', 'Address'),
                         _buildAddComponentButton(
-                          Icons.check_circle,
-                          'Submit Button',
-                          'SubmitButton',
-                        ),
-                        _buildAddComponentButton(
-                          Icons.link,
-                          'Social Media',
-                          'SocialMedia',
-                        ),
-                        _buildAddComponentButton(
-                          Icons.phone,
-                          'Contact Info',
-                          'ContactInfo',
-                        ),
+                            Icons.work, 'Project', 'Project'),
                       ],
                     ),
                   ],
@@ -982,11 +1116,7 @@ class _ProfileDesignChallengePageState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 32,
-            color: Colors.white,
-          ),
+          Icon(icon, size: 32, color: Colors.white),
           const SizedBox(height: 8),
           Text(
             label,

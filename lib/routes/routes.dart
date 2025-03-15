@@ -7,6 +7,7 @@ import 'package:fyp1/screen/admin/addNote.dart';
 import 'package:fyp1/screen/admin/editNote.dart';
 import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
+import 'package:fyp1/screen/mainScren.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/authenication/loginScreen.dart';
@@ -40,8 +41,8 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          //  return const SplashScreen();
-          return const ProfileDesignChallengePage();
+           return const SplashScreen();
+          // return const ProfileDesignChallengePage();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
