@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class StudentNavBar extends StatefulWidget {
   final int bottomIndex;
-  const StudentNavBar({super.key, this.bottomIndex = 0});
+  const StudentNavBar({super.key, required this.bottomIndex});
 
   @override
   _StudentNavBar createState() => _StudentNavBar();

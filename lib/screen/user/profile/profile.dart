@@ -36,6 +36,62 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _showLogoutConfirmation() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            "Logout",
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            "Are you sure you want to logout?",
+            style: GoogleFonts.poppins(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                "Cancel",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _logout(); // Perform logout
+              },
+              child: Text(
+                "Logout",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.red.shade700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _logout() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    await userViewModel.logout(context);
+    if (mounted) {
+      GoRouter.of(context).go('/signIn'); // Navigate to the sign-in page
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = context.watch<UserViewModel>();
@@ -56,9 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              // Handle logout
-            },
+            onPressed: _showLogoutConfirmation, // Show confirmation dialog
           ),
         ],
       ),
@@ -67,7 +121,6 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
-              // Use SingleChildScrollView to avoid overflow
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           GoRouter.of(context)
-              .push("/editProfile/${userViewModel.userId ?? "1"}");
+              .push("/editProfile/${userViewModel.userId!}");
         },
         backgroundColor: Colors.blue.shade900,
         child: const Icon(Icons.edit, color: Colors.white),
@@ -140,57 +193,43 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildInfoRow(IconData icon, String title, String value) {
     return Container(
-      margin:
-          const EdgeInsets.symmetric(vertical: 2), // Add spacing between rows
+      margin: const EdgeInsets.symmetric(vertical: 2),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.blue.shade50,
-            Colors.blue.shade50
-          ], // Light blue gradient
+          colors: [Colors.blue.shade50, Colors.blue.shade50],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(12), // Rounded corners
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.grey.withOpacity(0.2), // Subtle shadow
-        //     spreadRadius: 2,
-        //     blurRadius: 4,
-        //     offset: const Offset(0, 2), // Shadow position
-        //   ),
-        // ],
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Inner padding
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: Colors.blue.shade900, size: 26), // Icon
-            const SizedBox(width: 12), // Spacing between icon and text
+            Icon(icon, color: Colors.blue.shade900, size: 26),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title (e.g., "Name", "Email")
                   Text(
                     title,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[700], // Slightly darker grey for title
+                      color: Colors.grey[700],
                     ),
                   ),
-                  const SizedBox(height: 4), // Spacing between title and value
-                  // Value (e.g., "John Doe", "john.doe@example.com")
+                  const SizedBox(height: 4),
                   Text(
                     value,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade900, // Dark blue for value
+                      color: Colors.blue.shade900,
                     ),
-                    overflow: TextOverflow.ellipsis, // Handle long text
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -201,7 +240,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Button Widget
   Widget _buildButton({
     required String text,
     required VoidCallback onPressed,

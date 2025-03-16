@@ -106,6 +106,7 @@ class _MainPageState extends State<MainPage> {
   // Header with greeting and search bar
   Widget _buildHeader() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,8 +128,8 @@ class _MainPageState extends State<MainPage> {
               fontWeight: FontWeight.w400
             ),
           ),
-          const SizedBox(height: 20),
-          _buildSearchBar(),
+          // const SizedBox(height: 20),
+          // _buildSearchBar(),
         ],
       ),
     );

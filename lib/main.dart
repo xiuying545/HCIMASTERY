@@ -5,7 +5,7 @@ import 'package:fyp1/modelview/noteviewmodel.dart';
 import 'package:fyp1/modelview/quizviewmodel.dart';
 import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/routes/routes.dart';
-import 'package:provider/provider.dart'; // Import the provider package
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-         ChangeNotifierProvider(create: (context) => NoteViewModel()),
+        ChangeNotifierProvider(create: (context) => NoteViewModel()),
         ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => QuizViewModel()),
         ChangeNotifierProvider(create: (context) => ForumViewModel()),

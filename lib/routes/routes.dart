@@ -7,7 +7,9 @@ import 'package:fyp1/screen/admin/addNote.dart';
 import 'package:fyp1/screen/admin/editNote.dart';
 import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
-import 'package:fyp1/screen/mainScren.dart';
+import 'package:fyp1/screen/authenication/editPassword.dart';
+import 'package:fyp1/screen/authenication/forgetPassword.dart';
+import 'package:fyp1/screen/splashscreen.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/authenication/loginScreen.dart';
@@ -41,7 +43,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-           return const SplashScreen();
+          return const SplashScreen();
           // return const ProfileDesignChallengePage();
         },
         //  builder: (context, state) {
@@ -70,18 +72,18 @@ GoRouter router() {
           return ManageQuizPage(chapterId: chapterId);
         },
       ),
-        GoRoute(
+      GoRoute(
         path: '/admin/addQuiz/:chapterId',
         builder: (context, state) {
           final chapterId = state.pathParameters['chapterId']!;
           return AddQuizPage(chapterId: chapterId);
         },
       ),
-        GoRoute(
+      GoRoute(
         path: '/admin/editQuiz/:chapterId/:quizId',
         builder: (context, state) {
           final chapterId = state.pathParameters['chapterId']!;
-           final quizId = state.pathParameters['quizId']!;
+          final quizId = state.pathParameters['quizId']!;
           return EditQuizPage(chapterId: chapterId, quizId: quizId);
         },
       ),
@@ -114,10 +116,7 @@ GoRouter router() {
             final chapterId = state.pathParameters['chapterId']!;
             return NoteListPage(chapterId: chapterId);
           }),
-      GoRoute(
-        path: '/studentNav',
-        builder: (context, state) => const StudentNavBar(),
-      ),
+
       GoRoute(
         path: '/adminNav',
         builder: (context, state) => const AdminNavBar(),
@@ -127,13 +126,24 @@ GoRouter router() {
         builder: (context, state) => const SignInScreen(),
       ),
       GoRoute(
+        path: '/forgotPassword',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/editPassword',
+        builder: (context, state) => const EditPasswordScreen(),
+      ),
+      GoRoute(
         path: '/register',
         builder: (context, state) => const SignUpScreen(),
       ),
 
       GoRoute(
-        path: '/nav',
-        builder: (context, state) => const StudentNavBar(),
+        path: '/studentNav',
+        builder: (context, state) {
+          final index = int.tryParse(state.uri.queryParameters['index'] ?? '');
+          return StudentNavBar(bottomIndex: index ?? 0);
+        },
       ),
       GoRoute(
         path: '/student/forum',
