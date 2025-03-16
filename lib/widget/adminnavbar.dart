@@ -3,6 +3,7 @@ import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:fyp1/screen/admin/manageChapter.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/user/note/mainpage.dart';
+import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
 import 'package:provider/provider.dart';
 
@@ -42,8 +43,8 @@ class _AdminNavBar extends State<AdminNavBar> {
            return const ChapterDetailsPage();
         case 1:
           return const ForumPage();
-        // case 2:
-        //   return const PracticalExercisePage();
+        case 2:
+          return const ProfileDesignChallengePage();
         case 3:
           return const ProfilePage();
 
