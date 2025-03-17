@@ -52,6 +52,7 @@ dependencies:
   video_player: ^2.5.1
   youtube_player_flutter: ^8.1.0
   flutter_colorpicker: ^1.0.3
+  tutorial_coach_mark: ^1.2.13
 
 
 
@@ -90,6 +91,10 @@ flutter:
   - assets/Animation/quiz.png
   - assets/Animation/chapter.png
   - assets/Animation/congratulation.png
+  - assets/Animation/design1.png
+  - assets/Animation/design2.png
+  - assets/Animation/design3.png
+  - assets/Animation/gamelogo.png
 
 
   # To add assets to your application, add an assets section, like this:

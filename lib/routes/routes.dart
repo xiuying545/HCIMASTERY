@@ -9,7 +9,6 @@ import 'package:fyp1/screen/admin/manageNote.dart';
 import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
 import 'package:fyp1/screen/authenication/editPassword.dart';
 import 'package:fyp1/screen/authenication/forgetPassword.dart';
-import 'package:fyp1/screen/splashscreen.dart';
 import 'package:fyp1/screen/user/note/notePage.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/authenication/loginScreen.dart';
@@ -43,8 +42,8 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return const SplashScreen();
-          // return const ProfileDesignChallengePage();
+          return const StudentNavBar(bottomIndex: 1,);
+          // return  DesignChallengesPage();
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
@@ -57,6 +56,10 @@ GoRouter router() {
           final chapterId = state.pathParameters['chapterId']!;
           return AddNotePage(chapterId: chapterId);
         },
+      ),
+       GoRoute(
+        path: '/practicalExercise/profilePage',
+           builder: (context, state) => const ProfileDesignChallengePage(),
       ),
       GoRoute(
         path: '/admin/manageNote/:chapterId',

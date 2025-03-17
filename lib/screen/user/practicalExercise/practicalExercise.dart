@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/practicalExercise/components.dart';
 import 'package:fyp1/screen/user/practicalExercise/helpers.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ------------------ Main Page ------------------
 class ProfileDesignChallengePage extends StatefulWidget {
@@ -14,16 +15,194 @@ class ProfileDesignChallengePage extends StatefulWidget {
 
 class _ProfileDesignChallengePageState
     extends State<ProfileDesignChallengePage> {
-  final List<UIComponent> components = [ProfilePicture(),Bio(),ContactInfo(),EditProfile()];
+  final List<UIComponent> components = [
+    ProfilePicture(),
+    Bio(),
+    ContactInfo(),
+    EditProfile(),
+    Name()
+  ];
+  Color primaryColor = Colors.orange;
   String feedbackText = "";
   double canvasWidth = 400; // Will be updated dynamically
   double canvasHeight = 600; // Will be updated dynamically
   int score = 0;
-  bool isSnapToGridEnabled = true;
+  bool isPlay = true;
   bool isDarkMode = false;
   int? selectedIndex;
   Color canvasBackgroundColor = Colors.white;
   OverlayEntry? _overlayEntry;
+  GlobalKey lockKey = GlobalKey();
+  GlobalKey checkButtonKey = GlobalKey();
+  GlobalKey addButtonKey = GlobalKey();
+  GlobalKey backgroundColorKey = GlobalKey();
+  GlobalKey componenetKey = GlobalKey();
+  late TutorialCoachMark tutorialCoachMark;
+
+  void showTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: [
+        // Step 1: Lock/Unlock Dragging
+        TargetFocus(
+          identify: "LockButton",
+          keyTarget: lockKey,
+          contents: [
+            _buildTutorialContent(
+              step: "Step 1 of 5",
+              message: "🔓 Click this button to enable or disable dragging.",
+              icon: Icons.lock_open,
+              position: ContentAlign.bottom,
+            ),
+          ],
+        ),
+
+        // Step 2: Change Background Color
+        TargetFocus(
+          identify: "BackgroundColorKey",
+          keyTarget: backgroundColorKey,
+          contents: [
+            _buildTutorialContent(
+              step: "Step 2 of 5",
+              message:
+                  "🎨 Click this button to change the background color of the canvas.",
+              icon: Icons.format_paint,
+              position: ContentAlign.bottom,
+            ),
+          ],
+        ),
+
+        // Step 3: Add New Component
+        TargetFocus(
+          identify: "AddButton",
+          keyTarget: addButtonKey,
+          contents: [
+            _buildTutorialContent(
+              step: "Step 3 of 5",
+              message: "➕ Click here to add a new draggable component.",
+              icon: Icons.add_circle,
+              position: ContentAlign.top,
+            ),
+          ],
+        ),
+
+        // Step 4: Edit Component
+        TargetFocus(
+          identify: "Component",
+          shape: ShapeLightFocus.RRect,
+          targetPosition: TargetPosition(
+            const Size(300, 90),
+            const Offset(40, 280), // Position (x, y)
+          ),
+          contents: [
+            _buildTutorialContent(
+              step: "Step 4 of 5",
+              message: "✏️ Tap on a component to edit its font size and color.",
+              icon: Icons.edit,
+              position: ContentAlign.top,
+            ),
+          ],
+        ),
+
+        // Step 5: Get Feedback
+        TargetFocus(
+          identify: "CheckButton",
+          keyTarget: checkButtonKey,
+          contents: [
+            _buildTutorialContent(
+              step: "Step 5 of 5",
+              message:
+                  "✅ Click this button to check your work and get feedback.",
+              icon: Icons.check_circle,
+              position: ContentAlign.top,
+            ),
+          ],
+        ),
+      ],
+
+      // Add a skip button
+      skipWidget: Text(
+        "SKIP",
+        style: GoogleFonts.comicNeue(
+          fontSize: 16,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+
+      // Callback when tutorial finishes
+      onFinish: () {
+        print("Tutorial Completed");
+      },
+    );
+
+    tutorialCoachMark.show(context: context);
+  }
+
+// Helper method to build consistent tutorial content
+  TargetContent _buildTutorialContent(
+      {required String step,
+      required String message,
+      required IconData icon,
+      required position}) {
+    return TargetContent(
+      align: position,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.orange, // Blue background
+          borderRadius: BorderRadius.circular(20), // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.shade800.withOpacity(0.3), // Soft shadow
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Step Number with a Cute Icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.star, // Cute star icon
+                  color: Colors.yellow,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  step, // Step number
+                  style: GoogleFonts.comicNeue(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Tutorial Message with Emoji
+            Text(
+              message, // Playful message
+              style: GoogleFonts.indieFlower(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            // Cute Decoration (Optional)
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _showCustomOverlay() {
     _overlayEntry = OverlayEntry(
@@ -83,8 +262,7 @@ class _ProfileDesignChallengePageState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         canvasWidth = MediaQuery.of(context).size.width;
-        canvasHeight =
-            MediaQuery.of(context).size.height * 0.8; // 80% of screen height
+        canvasHeight = MediaQuery.of(context).size.height * 0.8;
       });
     });
   }
@@ -92,100 +270,105 @@ class _ProfileDesignChallengePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade100, // Light grey background
-        appBar: AppBar(
-          backgroundColor: Colors.blue.shade900,
-          foregroundColor: Colors.white,
-          title: Text(
-            'Profile Page',
-            style: GoogleFonts.poppins(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w600,
-            ),
+      backgroundColor: Colors.grey.shade100, // Light grey background
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
+        foregroundColor: Colors.white,
+        title: Text(
+          'Profile Page',
+          style: GoogleFonts.poppins(
+            fontSize: 24.0,
+            fontWeight: FontWeight.w600,
           ),
-          actions: [
-            IconButton(
-              tooltip: 'Toggle Snap-to-Grid',
-              icon: Icon(isSnapToGridEnabled ? Icons.grid_on : Icons.grid_off),
-              onPressed: () {
-                setState(() {
-                  isSnapToGridEnabled = !isSnapToGridEnabled;
-                });
-              },
-            ),
-            IconButton(
-              tooltip: 'Change Background Color',
-              icon: const Icon(Icons.format_paint),
-              onPressed: () async {
-                Color? newColor =
-                    await showColorPickerDialog(context, canvasBackgroundColor);
-                if (newColor != null) {
-                  setState(() {
-                    canvasBackgroundColor = newColor;
-                  });
-                }
-              },
-            ),
-          ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Center(
-                      child: Container(
-                        width: canvasWidth,
-                        height: canvasHeight,
-                        decoration: BoxDecoration(
-                          color: canvasBackgroundColor,
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Stack(
-                          children: [
-                            if (components.isEmpty)
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(
-                                      16.0), // Add padding for better spacing
-                                  child: Text(
-                                    'Drag elements onto the canvas to design a profile page',
-                                    style: GoogleFonts.poppins(
-                                      // Use Poppins font
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors
-                                          .grey.shade700, // Subtle text color
-                                    ),
-                                    textAlign: TextAlign
-                                        .center, // Center-align the text
+        actions: [
+          IconButton(
+            key: lockKey,
+            tooltip: 'Lock the element',
+            icon: Icon(isPlay ? Icons.lock : Icons.pan_tool),
+            onPressed: () {
+              setState(() {
+                isPlay = !isPlay;
+              });
+            },
+          ),
+          IconButton(
+            key: backgroundColorKey,
+            tooltip: 'Change Background Color',
+            icon: const Icon(Icons.format_paint),
+            onPressed: () async {
+              Color? newColor =
+                  await showColorPickerDialog(context, canvasBackgroundColor);
+              if (newColor != null) {
+                setState(() {
+                  canvasBackgroundColor = newColor;
+                });
+              }
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: Container(
+                      width: canvasWidth,
+                      height: canvasHeight,
+                      decoration: BoxDecoration(
+                        color: canvasBackgroundColor,
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Stack(
+                        children: [
+                          if (components.isEmpty)
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                    16.0), // Add padding for better spacing
+                                child: Text(
+                                  'Drag elements onto the canvas to design a profile page',
+                                  style: GoogleFonts.poppins(
+                                    // Use Poppins font
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors
+                                        .grey.shade700, // Subtle text color
                                   ),
+                                  textAlign:
+                                      TextAlign.center, // Center-align the text
                                 ),
                               ),
-                            for (int i = 0; i < components.length; i++)
-                              _buildDraggableComponent(components[i], i),
-                          ],
-                        ),
+                            ),
+                          for (int i = 0; i < components.length; i++)
+                            _buildDraggableComponent(components[i], i),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+        ],
+      ),
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(35),
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.blue.shade900,
+        child: BottomAppBar(
+          color: primaryColor,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Feedback Button
               ElevatedButton.icon(
-                onPressed: _submitDesign,
-                icon: Icon(Icons.tips_and_updates, color: Colors.white),
+                onPressed: showTutorial,
+                icon: const Icon(Icons.tips_and_updates, color: Colors.white),
                 label: Text(
-                  'Feedback',
+                  'GUIDE',
                   style: GoogleFonts.luckiestGuy(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -198,13 +381,14 @@ class _ProfileDesignChallengePageState
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.orange, width: 2),
+                    side: const BorderSide(color: Colors.orange, width: 2),
                   ),
                   elevation: 0,
                 ),
               ),
               // Add Button
               ElevatedButton.icon(
+                key: addButtonKey,
                 onPressed: () {
                   if (_overlayEntry == null) {
                     _showCustomOverlay();
@@ -212,9 +396,9 @@ class _ProfileDesignChallengePageState
                     _hideCustomOverlay();
                   }
                 },
-                icon: Icon(Icons.widgets, color: Colors.white),
+                icon: const Icon(Icons.widgets, color: Colors.white),
                 label: Text(
-                  'Add',
+                  'ADD',
                   style: GoogleFonts.luckiestGuy(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -227,14 +411,40 @@ class _ProfileDesignChallengePageState
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.orange, width: 2),
+                    side: const BorderSide(color: Colors.orange, width: 2),
+                  ),
+                  elevation: 0,
+                ),
+              ),
+              // Feedback Button
+              ElevatedButton.icon(
+                key: checkButtonKey,
+                onPressed: _submitDesign,
+                icon: const Icon(Icons.rate_review, color: Colors.white),
+                label: Text(
+                  'CHECK',
+                  style: GoogleFonts.luckiestGuy(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(color: Colors.orange, width: 2),
                   ),
                   elevation: 0,
                 ),
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   // Edit component dialog with Delete button
@@ -399,13 +609,11 @@ class _ProfileDesignChallengePageState
       child: GestureDetector(
         onPanUpdate: (details) {
           setState(() {
-            comp.x =
-                (comp.x + details.delta.dx).clamp(0, canvasWidth - comp.width);
-            comp.y = (comp.y + details.delta.dy)
-                .clamp(0, canvasHeight - comp.height);
-            if (isSnapToGridEnabled) {
-              comp.x = (comp.x / 20).round() * 20.0;
-              comp.y = (comp.y / 20).round() * 20.0;
+            if (isPlay) {
+              comp.x = (comp.x + details.delta.dx)
+                  .clamp(0, canvasWidth - comp.width);
+              comp.y = (comp.y + details.delta.dy)
+                  .clamp(0, canvasHeight - comp.height);
             }
           });
         },
@@ -563,7 +771,6 @@ class _ProfileDesignChallengePageState
         improvements.add("align contact info component to x=20");
         newScore -= 5;
       }
-     
     } else {
       improvements.add("add a contact info section");
       newScore -= 10;
@@ -649,7 +856,6 @@ class _ProfileDesignChallengePageState
       newScore -= 10;
     }
 
-
     String feedback = "";
     if (strengths.isNotEmpty) {
       feedback += "✅ **Strengths**: ${strengths.join(", ")}.\n\n";
@@ -701,18 +907,16 @@ class _ProfileDesignChallengePageState
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ...strengths
-                          .map((strength) => Padding(
-                                padding: const EdgeInsets.only(left: 28.0),
-                                child: Text(
-                                  '• $strength',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: Colors.green.shade800,
-                                  ),
-                                ),
-                              ))
-                          .toList(),
+                      ...strengths.map((strength) => Padding(
+                            padding: const EdgeInsets.only(left: 28.0),
+                            child: Text(
+                              '• $strength',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.green.shade800,
+                              ),
+                            ),
+                          )),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -736,18 +940,16 @@ class _ProfileDesignChallengePageState
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ...improvements
-                          .map((improvement) => Padding(
-                                padding: const EdgeInsets.only(left: 28.0),
-                                child: Text(
-                                  '• $improvement',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: Colors.orange.shade800,
-                                  ),
-                                ),
-                              ))
-                          .toList(),
+                      ...improvements.map((improvement) => Padding(
+                            padding: const EdgeInsets.only(left: 28.0),
+                            child: Text(
+                              '• $improvement',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.orange.shade800,
+                              ),
+                            ),
+                          )),
                       const SizedBox(height: 16),
                     ],
                   ),
