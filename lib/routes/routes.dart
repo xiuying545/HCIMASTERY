@@ -23,7 +23,8 @@ import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
 import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
-import 'package:fyp1/screen/user/practicalExercise/practicalExercise.dart';
+import 'package:fyp1/screen/user/practicalExercise/ab.dart';
+import 'package:fyp1/screen/user/practicalExercise/profilepagedesign.dart';
 
 import 'package:fyp1/screen/user/profile/editProfile.dart';
 import 'package:fyp1/screen/user/profile/profile.dart';
@@ -42,7 +43,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return const StudentNavBar(bottomIndex: 1,);
+          return  CompareDesignsPage();
           // return  DesignChallengesPage();
         },
         //  builder: (context, state) {

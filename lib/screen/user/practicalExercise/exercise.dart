@@ -12,22 +12,22 @@ class DesignChallengesPage extends StatelessWidget {
       "routes": "/practicalExercise/profilePage"
     },
     {
-      "title": "Create a Logo",
-      "description": "Design a logo for your school club!",
+      "title": "Design a Login Page",
+      "description": "Add Suitable Component into login page",
       "icon": Icons.graphic_eq,
       "color": Colors.green.shade400,
       "routes": "/practicalExercise/profilePage"
     },
     {
-      "title": "Draw a Comic Strip",
-      "description": "Tell a story with your own comic!",
+      "title": "A/B Testing",
+      "description": "Learn how to make color harmony",
       "icon": Icons.auto_awesome,
       "color": Colors.purple.shade400,
       "routes": "/practicalExercise/profilePage"
     },
   ];
 
-  const DesignChallengesPage({super.key});
+   DesignChallengesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
