@@ -67,7 +67,7 @@ class Name extends UIComponent {
           y: 200,
           width: 300,
           height: 90,
-          color: Color.fromARGB(255, 204, 204, 204),
+          color: const Color.fromARGB(255, 204, 204, 204),
         );
 
   Widget buildWidget(BuildContext context) {

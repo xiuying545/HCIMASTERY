@@ -370,7 +370,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                         final chapterName = controller.text.trim();
                         if (chapterName.isNotEmpty) {
                           final chapter = Chapter(
-                            chapterID: DateTime.now().toString(),
+                           
                             chapterName: chapterName,
                             notes: [],
                           );

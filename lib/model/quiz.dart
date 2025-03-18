@@ -35,4 +35,15 @@ class Quiz {
       'imageUrl': imageUrl,
     };
   }
+
+    Map<String, dynamic> toJsonFrontend() {
+    return {
+       'quizzID': quizzID,
+      'chapter': chapter,
+      'question': question,
+      'options': options,
+      'answer': answer,
+      'imageUrl': imageUrl,
+    };
+  }
 }

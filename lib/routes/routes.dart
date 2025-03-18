@@ -23,7 +23,6 @@ import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
 import 'package:fyp1/screen/user/note/quiz/quiz.dart';
 import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
 import 'package:fyp1/screen/user/note/quiz/quizresult.dart';
-import 'package:fyp1/screen/user/practicalExercise/ab.dart';
 import 'package:fyp1/screen/user/practicalExercise/profilepagedesign.dart';
 
 import 'package:fyp1/screen/user/profile/editProfile.dart';
@@ -43,7 +42,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return  CompareDesignsPage();
+          return  const StudentNavBar(bottomIndex: 0,);
           // return  DesignChallengesPage();
         },
         //  builder: (context, state) {
@@ -221,10 +220,10 @@ GoRouter router() {
       ),
       GoRoute(
         path:
-            '/student/quizResult/:chapter', // Define the chapter as a parameter
+            '/student/quizResult/:chapterID', // Define the chapter as a parameter
         builder: (context, state) {
-          final String chapter = state.pathParameters['chapter']!;
-          return QuizResultPage(chapter: chapter);
+          final String chapterID = state.pathParameters['chapterID']!;
+          return QuizResultPage(chapterID: chapterID);
         },
       ),
       GoRoute(

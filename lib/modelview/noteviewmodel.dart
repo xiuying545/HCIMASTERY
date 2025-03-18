@@ -12,18 +12,17 @@ class NoteViewModel extends ChangeNotifier {
   List<Chapter> _chapters = [];
   List<Note> _notes = [];
   final Map<String, Map<String, String>> _studentProgress = {};
-  bool _isLoadingChapters = false;
-  bool _isLoadingNotes = false;
   bool _isLoading = false;
   Map<String, double> progressMap = {};
   String? _errorMessage;
 
+
   // Getters
   List<Chapter> get chapters => _chapters;
+
   List<Note> get notes => _notes;
   bool get isLoading => _isLoading;
-  bool get isLoadingChapters => _isLoadingChapters;
-  bool get isLoadingNotes => _isLoadingNotes;
+
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
   Map<String, Map<String, String>> get studentProgress => _studentProgress;
@@ -43,7 +42,7 @@ class NoteViewModel extends ChangeNotifier {
 
   // Fetch all chapters
   Future<void> fetchChapters() async {
-    _isLoadingChapters = true;
+    _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -52,24 +51,27 @@ class NoteViewModel extends ChangeNotifier {
       (data) => _chapters = data,
     );
 
-    _isLoadingChapters = false;
+    _isLoading = false;
   }
 
   // Fetch notes for a specific chapter
   Future<void> fetchNotesForChapter(String chapterID) async {
-    _isLoadingNotes = true;
+
+    
+    _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     await _performFetch(
       _noteService.getNotesForChapter(chapterID),
+
       (data) => _notes = data,
     );
 
-    _isLoadingNotes = false;
+    _isLoading = false;
   }
 
-   Future<Note?> getNoteById(String chapterID, String noteID) async {
+  Future<Note?> getNoteById(String chapterID, String noteID) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -105,8 +107,8 @@ class NoteViewModel extends ChangeNotifier {
       for (final note in notes) {
         noteProgress.progress[note.noteID!] ??= defaultValue;
       }
-      
-      noteProgress.progress["quiz"]??=defaultValue;
+
+      noteProgress.progress["quiz"] ??= defaultValue;
 
       return noteProgress;
     } catch (error) {
@@ -161,7 +163,7 @@ class NoteViewModel extends ChangeNotifier {
   // Update an existing note
   Future<void> updateNote(String chapterID, Note note) async {
     try {
-      await _noteService.updateNote(chapterID,  note);
+      await _noteService.updateNote(chapterID, note);
       await fetchNotesForChapter(chapterID);
     } catch (e) {
       _errorMessage = 'Error updating note: $e';
@@ -214,8 +216,9 @@ class NoteViewModel extends ChangeNotifier {
   // Load data
   Future<void> loadData() async {
     try {
-      await _noteService.loadData();
-      _noteProgressService.addSampleProgressData();
+      // await _noteService.loadData();
+      // await _noteService.predefinedQuizzes();
+      // _noteProgressService.addSampleProgressData();
     } catch (e) {
       _errorMessage = 'Error loading initial data: $e';
     } finally {
@@ -233,14 +236,14 @@ class NoteViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateChapterName(String chapterID, String newChapterName) async {
-  try {
-    await _noteService.updateChapterName(chapterID, newChapterName);
-    await fetchChapters();
-  } catch (e) {
-    _errorMessage = 'Error updating chapter name: $e';
-    notifyListeners();
+  Future<void> updateChapterName(
+      String chapterID, String newChapterName) async {
+    try {
+      await _noteService.updateChapterName(chapterID, newChapterName);
+      await fetchChapters();
+    } catch (e) {
+      _errorMessage = 'Error updating chapter name: $e';
+      notifyListeners();
+    }
   }
-}
-
 }

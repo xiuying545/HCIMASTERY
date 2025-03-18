@@ -9,9 +9,9 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class QuizResultPage extends StatefulWidget {
-  final String chapter;
+  final String chapterID;
 
-  const QuizResultPage({super.key, required this.chapter});
+  const QuizResultPage({super.key, required this.chapterID});
 
   @override
   _QuizResultPageState createState() => _QuizResultPageState();
@@ -20,26 +20,21 @@ class QuizResultPage extends StatefulWidget {
 class _QuizResultPageState extends State<QuizResultPage> {
   late Future<void> _quizDataFuture;
   late UserViewModel userViewModel;
-  // ignore: prefer_final_fields
-  Map<String, int> _userAnswerCache = {};
+
+  final Map<String, int> _userAnswerCache = {};
 
   @override
   void initState() {
     super.initState();
     _quizDataFuture = _loadQuizData();
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+   
   }
 
   Future<void> _loadQuizData() async {
     final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    await quizViewModel.fetchQuizzes(widget.chapter);
-    await quizViewModel.calculateScore(widget.chapter, userViewModel.userId);
-    for (var quiz in quizViewModel.quizzes) {
-      final quizId = quiz.quizzID!;
-      final userAnswer = await quizViewModel.getUserAnswer(
-          userViewModel.userId!, widget.chapter, quizId);
-      _userAnswerCache[quizId] = userAnswer;
-    }
+     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
+    await quizViewModel.calculateScore(widget.chapterID, userViewModel.userId!);
     print("Current Score: ${quizViewModel.score}");
   }
 
@@ -52,7 +47,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
           onPressed: () => GoRouter.of(context).push('/studentNav'),
         ),
         title: Text(
-          'Chapter ${widget.chapter}',
+          'Quiz Result',
           style: GoogleFonts.rubik(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -77,7 +72,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(widget.chapter, quizViewModel),
+                  _buildHeader(widget.chapterID, quizViewModel),
                   const SizedBox(height: 20),
                   Text(
                     "See your answer",
@@ -197,7 +192,8 @@ class _QuizResultPageState extends State<QuizResultPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "${(quizViewModel.score / 100 * quizViewModel.quizzes.length).toInt()}",
+                              // "${(quizViewModel.score / 100 * quizViewModel.quizzes.length).toInt()}",
+                              "try",
                               style: GoogleFonts.rubik(
                                 fontSize: 35.0,
                                 fontWeight: FontWeight.w500,

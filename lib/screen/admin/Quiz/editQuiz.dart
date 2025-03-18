@@ -35,8 +35,8 @@ class _EditQuizPageState extends State<EditQuizPage> {
   String? _currentImageUrl; // To store the current image URL
 
   Future<void> _fetchQuiz() async {
-    await quizViewModel.getQuizById(widget.chapterId, widget.quizId);
-    Quiz quiz = quizViewModel.selectedQuiz;
+    Quiz quiz = await quizViewModel.getQuizById(widget.chapterId, widget.quizId);
+
 
     if (mounted) {
       setState(() {

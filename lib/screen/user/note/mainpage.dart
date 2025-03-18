@@ -20,7 +20,6 @@ class _MainPageState extends State<MainPage> {
       final viewModel = context.read<NoteViewModel>();
       viewModel.fetchChapters();
       viewModel.calculateAllProgress();
-
     });
   }
 
@@ -169,7 +168,7 @@ class _MainPageState extends State<MainPage> {
   Widget _buildCoursesSection() {
     return Consumer<NoteViewModel>(
       builder: (context, viewModel, _) {
-        if (viewModel.isLoadingChapters) {
+        if (viewModel.isLoading) {
           return const Center(
             child: CircularProgressIndicator(
               color: Colors.blue,
@@ -222,7 +221,7 @@ class _MainPageState extends State<MainPage> {
                     return CourseTile(
                       icon: Icons.book,
                       title: chapter.chapterName,
-                      subtitle: "${chapter.notes.length} lessons",
+                      subtitle: "${chapter.notes?.length} lessons",
                       chapterId: chapter.chapterID!,
                       progress: viewModel.progressMap[chapter.chapterID] ?? 0.0,
                       color: Colors.blue.shade400,

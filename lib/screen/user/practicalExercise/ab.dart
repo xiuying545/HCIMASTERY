@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,30 +14,48 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CompareDesignsPage(),
+      home: const CompareDesignsPage(),
     );
   }
 }
 
 class CompareDesignsPage extends StatelessWidget {
+  const CompareDesignsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Compare UI Designs"),
+        title: const Text("Compare UI Designs"),
       ),
-      body: PageView(
-        children: [
-          BadForm(), // Page 1: Bad Design
-          GoodForm(), // Page 2: Good Design
-        ],
-      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔄 Swipe Section (Only this part changes)
+            const Text("Swipe to Compare Forms 👇", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: MediaQuery.of(context).size.height*0.65, // Fixed height for swipeable section
+              child: PageView(
+                children: [
+                  const BadForm(), // Page 1: Bad Design
+                  GoodForm(), // Page 2: Good Design
+                ],
+              ),
+            ),
+          ]
+        )
+      )
     );
   }
 }
 
 // ❌ Bad Form UI (Poor Design)
 class BadForm extends StatelessWidget {
+  const BadForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +66,7 @@ class BadForm extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "❌ Bad Form Design",
                     style: TextStyle(
                       fontSize: 20,
@@ -54,47 +74,40 @@ class BadForm extends StatelessWidget {
                       color: Colors.red,
                     ),
                   ),
-                  SizedBox(height: 20),
-                  TextField(
+                  const SizedBox(height: 20),
+                  const TextField(
                     decoration: InputDecoration(labelText: "Name"), // No border, no spacing
                   ),
-                  SizedBox(height: 10), // Poor spacing
-                  TextField(
+                  const SizedBox(height: 10), // Poor spacing
+                  const TextField(
                     decoration: InputDecoration(labelText: "Email"), // No validation
                   ),
-                  SizedBox(height: 10),
-                  TextField(
+                  const SizedBox(height: 10),
+                  const TextField(
                     decoration: InputDecoration(labelText: "Password"), // No error handling
                     obscureText: true,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
                       // No validation or error handling
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text("Form submitted without validation!"),
                           backgroundColor: Colors.red,
                         ),
                       );
                     },
-                    child: Text("Submit"),
+                    child: const Text("Submit"),
                   ),
                 ],
               ),
             ),
           ),
           // Chatbox for justification
-          JustificationChatbox(
-            questions: [
-              "1. What is wrong with the spacing in this form?",
-              "2. Why is the lack of input validation a problem?",
-              "3. How would you handle errors for invalid email or password?",
-              "4. What improvements would you suggest for the button design?",
-            ],
-          ),
-        ],
+        ]
       ),
+      
     );
   }
 }
@@ -105,6 +118,8 @@ class GoodForm extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  GoodForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,13 +128,13 @@ class GoodForm extends StatelessWidget {
           Expanded(
             child: Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "✅ Good Form Design",
                         style: TextStyle(
                           fontSize: 20,
@@ -127,9 +142,9 @@ class GoodForm extends StatelessWidget {
                           color: Colors.green,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Full Name",
                           border: OutlineInputBorder(),
                           helperText: "Enter your full name as per ID",
@@ -141,10 +156,10 @@ class GoodForm extends StatelessWidget {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Email",
                           border: OutlineInputBorder(),
                           helperText: "Enter a valid email address",
@@ -159,10 +174,10 @@ class GoodForm extends StatelessWidget {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Password",
                           border: OutlineInputBorder(),
                           helperText: "Password must be at least 6 characters",
@@ -178,12 +193,12 @@ class GoodForm extends StatelessWidget {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text("Form submitted successfully!"),
                                 backgroundColor: Colors.green,
                               ),
@@ -191,10 +206,10 @@ class GoodForm extends StatelessWidget {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                          textStyle: TextStyle(fontSize: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                          textStyle: const TextStyle(fontSize: 16),
                         ),
-                        child: Text("Submit"),
+                        child: const Text("Submit"),
                       ),
                     ],
                   ),
@@ -203,47 +218,7 @@ class GoodForm extends StatelessWidget {
             ),
           ),
           // Chatbox for justification
-          JustificationChatbox(
-            questions: [
-              "1. What makes the spacing in this form better?",
-              "2. How does input validation improve the user experience?",
-              "3. Why is error handling important for forms?",
-              "4. What makes the button design more effective here?",
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Chatbox Widget for Justification
-class JustificationChatbox extends StatelessWidget {
-  final List<String> questions;
-
-  const JustificationChatbox({required this.questions});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      color: Colors.grey[200],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Justify the Design:",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(height: 10),
-          ...questions.map((question) => Text(
-                "• $question",
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              )),
+        
         ],
       ),
     );

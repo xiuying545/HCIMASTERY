@@ -1,16 +1,18 @@
+import 'package:fyp1/model/quiz.dart';
+
 class Note {
-  String? noteID;        
-  final String title;       
-  final String content;     
-  final List<String>? images;      
-  final List<String>? videoLink;   
+  String? noteID;
+  final String title;
+  final String content;
+  final List<String>? images;
+  final List<String>? videoLink;
 
   Note({
     this.noteID,
     required this.title,
     required this.content,
     this.images,
-   this.videoLink,
+    this.videoLink,
   });
 
   factory Note.fromJson(Map<String, dynamic> json) {
@@ -18,14 +20,13 @@ class Note {
       noteID: json['noteID'],
       title: json['title'] as String,
       content: json['content'] as String,
-     images: List<String>.from(json['images'] ?? []),
+      images: List<String>.from(json['images'] ?? []),
       videoLink: List<String>.from(json['videoLink'] ?? []),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-
       'title': title,
       'content': content,
       'images': images,
@@ -35,15 +36,13 @@ class Note {
 }
 
 class Chapter {
-  String? chapterID;        
-  final String chapterName;    
-  final List<Note> notes;      // List of Note objects directly
+  String? chapterID;
+  final String chapterName;
+  List<Note>? notes;
+  List<Quiz>? quizzes;
 
-  Chapter({
-    this.chapterID,
-    required this.chapterName,
-    required this.notes,
-  });
+  Chapter(
+      {this.chapterID, required this.chapterName, this.notes, this.quizzes});
 
   factory Chapter.fromJson(Map<String, dynamic> json) {
     return Chapter(
@@ -51,7 +50,10 @@ class Chapter {
       chapterName: json['chapterName'] as String,
       notes: (json['notes'] as List<dynamic>)
           .map((note) => Note.fromJson(note as Map<String, dynamic>))
-          .toList(), // Convert List of maps to List of Note objects
+          .toList(),
+      quizzes: (json['quizzes'] as List<dynamic>)
+          .map((quiz) => Quiz.fromJson(quiz as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -59,7 +61,8 @@ class Chapter {
     return {
       'chapterID': chapterID,
       'chapterName': chapterName,
-      'notes': notes.map((note) => note.toJson()).toList(), // Convert List of Note objects to List of maps
+      'notes': notes?.map((note) => note.toJson()).toList(),
+      'quizzes': quizzes?.map((quiz) => quiz.toJson()).toList(),
     };
   }
 }

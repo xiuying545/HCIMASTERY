@@ -149,7 +149,8 @@ class _NoteListPageState extends State<NoteListPage> {
                         child: Container(
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 30.0),
-                          child: Column(
+                          child: SingleChildScrollView( 
+                            child:Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
@@ -184,6 +185,7 @@ class _NoteListPageState extends State<NoteListPage> {
                           ),
                         ),
                       ),
+                    ),
                     ),
                   ],
                 ),

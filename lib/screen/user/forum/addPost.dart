@@ -65,11 +65,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         }
 
         String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-
-        print('Uploading file: ${image.path}');
-        print('File size: ${image.lengthSync()} bytes');
-        print('File name: $fileName');
+        Reference storageRef = FirebaseStorage.instance.ref().child('forum/$fileName');
 
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {}).catchError((error) {
