@@ -200,22 +200,22 @@ GoRouter router() {
       GoRoute(
         path: '/student/quizAnswer',
         builder: (context, state) {
-          final String? quizJson = state.uri.queryParameters['quizz'];
-          final String? userAnswerString =
-              state.uri.queryParameters['userAnswer'];
+          final String? quizzID = state.uri.queryParameters['quizzID'];
+          // final String? userAnswerString =
+          //     state.uri.queryParameters['userAnswer'];
 
-          if (quizJson == null || userAnswerString == null) {
+          if (quizzID == null) {
             return const Scaffold(
               body: Center(child: Text('Error: Missing quiz data.')),
             );
           }
 
-          final userAnswer = int.tryParse(userAnswerString) ?? 0;
+          // final quizzIndex = int.tryParse(quizzIndexString);
 
-          final quizMap = jsonDecode(quizJson);
-          final quiz = Quiz.fromJson(quizMap);
+          // final quizMap = jsonDecode(quizJson);
+          // final quiz = Quiz.fromJson(quizMap);
 
-          return QuizAnswerPage(quiz: quiz, userAnswer: userAnswer);
+          return QuizAnswerPage(quizzID: quizzID);
         },
       ),
       GoRoute(

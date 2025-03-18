@@ -15,7 +15,7 @@ class QuizViewModel extends ChangeNotifier {
 
   final String _chapterName = "unknown";
   List<Quiz> _quizzes = [];
-  double _score = 0.0;
+  int _score = 0;
   bool _isLoading = false;
   late String _userId;
   late String _chapterId;
@@ -24,7 +24,7 @@ class QuizViewModel extends ChangeNotifier {
   List<Quiz> get quizzes => _quizzes;
   bool get isLoading => _isLoading;
   String get chapterName => _chapterName;
-  double get score => _score;
+  int get score => _score;
   Map<String, int> get cachedAnswers => _cachedAnswers;
 
   @override
@@ -43,7 +43,7 @@ class QuizViewModel extends ChangeNotifier {
 
     try {
       _quizzes = await _quizService.getQuizzesByChapter(chapterId);
-      
+
       _cachedAnswers =
           await _quizAnswerService.getChapterAnswers(userId, chapterId);
     } catch (e) {
@@ -137,12 +137,12 @@ print("heyyy ${_cachedAnswers}");
       // } else {
       //   _score = 0.0; // Avoid division by zero
       // }
-
+ _score = correctAnswers;
       print('Score calculated: $_score');
       
     } catch (e) {
       print('Error calculating score: $e');
-      _score = 0.0; // Reset score in case of error
+      _score = 0; // Reset score in case of error
     } finally {
       _isLoading = false;
       notifyListeners();

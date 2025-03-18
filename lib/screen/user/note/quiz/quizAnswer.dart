@@ -1,17 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/quiz.dart';
+import 'package:fyp1/modelview/quizviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class QuizAnswerPage extends StatefulWidget {
-  final Quiz quiz;
-  final int userAnswer;
+  final String quizzID;
 
   const QuizAnswerPage({
     super.key,
-    required this.quiz,
-    required this.userAnswer,
+    required this.quizzID,
   });
 
   @override
@@ -19,115 +20,150 @@ class QuizAnswerPage extends StatefulWidget {
 }
 
 class _QuizAnswerPage extends State<QuizAnswerPage> {
+  late QuizViewModel quizViewModel;
+  late UserViewModel userViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadQuizData();
+  }
+
+  Future<void> _loadQuizData() async {
+    quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> choice = ['A', 'B', 'C', 'D'];
+    Quiz quiz = quizViewModel.quizzes.firstWhere(
+      (quiz) => quiz.quizzID == widget.quizzID,
+    );
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6a5ae0),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Colors.blue.shade700.withOpacity(0.9)),
           onPressed: () {
             GoRouter.of(context).pop();
           },
         ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Text(
+          'Quiz Answer',
+          style: GoogleFonts.poppins(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w900,
+            color: Colors.black,
+          ),
+        ),
       ),
       body: Container(
-        color: const Color(0xFF6a5ae0),
+        color: Colors.white,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.8,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 3),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    // Question Text
+                    Text(
+                      quiz.question,
+                      style: GoogleFonts.poppins(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    // Options List
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: quiz.options.length,
+                      itemBuilder: (context, index) {
+                        Color optionColor;
+                        if (index == quiz.answer) {
+                          optionColor = Colors.green; // Correct answer
+                        } else if (index == quizViewModel.cachedAnswers[widget.quizzID] && index != quiz.answer) {
+                          optionColor = Colors.red; // Incorrect answer
+                        } else {
+                          optionColor = Colors.blue.shade100.withOpacity(0.5); // Default option color
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 5, 5, 15),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: optionColor,
+                              border: Border.all(
+                                color: Colors.blue.shade400.withOpacity(0.9),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 5,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: Colors.transparent,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 12),
+                                      child: Text(
+                                        choice[index],
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                      child: AutoSizeText(
+                                        quiz.options[index],
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                        ),
+                                        minFontSize: 10,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(25.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'Quiz',
-                        style: GoogleFonts.rubik(
-                            fontSize: 24.0, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        widget.quiz.question,
-                        style: GoogleFonts.rubik(
-                            fontSize: 24.0, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: widget.quiz.options.length,
-                          itemBuilder: (context, index) {
-                            Color optionColor;
-
-                            
-                            if ((index == widget.quiz.answer)) {
-                              optionColor = Colors.green; // Correct answer selected
-                            } else if ((index == widget.userAnswer) && (index != widget.quiz.answer)) {
-                              optionColor = Colors.red; // Incorrect answer selected
-                            } else {
-                              optionColor = const Color(0xFFfeb3b3); // Default option color
-                            }
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: optionColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                  child: Row(
-                                    children: [
-                                      // Option letter
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 10), // Spacing between letter and text
-                                        child: Text(
-                                          choice[index],
-                                          style: GoogleFonts.rubik(
-                                              fontSize: 24.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      // Option text
-                                      Expanded(
-                                        child: AutoSizeText(
-                                          widget.quiz.options[index],
-                                          style: GoogleFonts.rubik(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.w400),
-                                          minFontSize: 10,
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

@@ -18,20 +18,19 @@ class QuizResultPage extends StatefulWidget {
 }
 
 class _QuizResultPageState extends State<QuizResultPage> {
-  late Future<void> _quizDataFuture;
+  late QuizViewModel quizViewModel;
   late UserViewModel userViewModel;
 
-  final Map<String, int> _userAnswerCache = {};
 
   @override
   void initState() {
     super.initState();
-    _quizDataFuture = _loadQuizData();
+    _loadQuizData();
    
   }
 
   Future<void> _loadQuizData() async {
-    final quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
      userViewModel = Provider.of<UserViewModel>(context, listen: false);
     quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
     await quizViewModel.calculateScore(widget.chapterID, userViewModel.userId!);
@@ -56,23 +55,12 @@ class _QuizResultPageState extends State<QuizResultPage> {
         ),
         backgroundColor: Colors.blue.shade800,
       ),
-      body: FutureBuilder<void>(
-        future: _quizDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final quizViewModel =
-                Provider.of<QuizViewModel>(context, listen: false);
-
-            return Padding(
+      body:  Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(widget.chapterID, quizViewModel),
+                  _buildHeader(),
                   const SizedBox(height: 20),
                   Text(
                     "See your answer",
@@ -83,17 +71,16 @@ class _QuizResultPageState extends State<QuizResultPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildAnswerList(quizViewModel),
+                  _buildAnswerList(),
                 ],
               ),
-            );
-          }
-        },
-      ),
+            )
+            
+      
     );
   }
 
-  Widget _buildHeader(String chapter, QuizViewModel quizViewModel) {
+  Widget _buildHeader() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -192,8 +179,8 @@ class _QuizResultPageState extends State<QuizResultPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              // "${(quizViewModel.score / 100 * quizViewModel.quizzes.length).toInt()}",
-                              "try",
+                              "${quizViewModel.score }",
+                      
                               style: GoogleFonts.rubik(
                                 fontSize: 35.0,
                                 fontWeight: FontWeight.w500,
@@ -224,13 +211,13 @@ class _QuizResultPageState extends State<QuizResultPage> {
       ),
     );
   }
-Widget _buildAnswerList(QuizViewModel quizViewModel) {
+Widget _buildAnswerList() {
   return Expanded(
     child: ListView.builder(
       itemCount: quizViewModel.quizzes.length,
       itemBuilder: (context, index) {
         final quiz = quizViewModel.quizzes[index];
-        final isCorrect = quiz.answer == _userAnswerCache[quiz.quizzID];
+        final isCorrect = quiz.answer == quizViewModel.cachedAnswers[quiz.quizzID];
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -241,12 +228,12 @@ Widget _buildAnswerList(QuizViewModel quizViewModel) {
           child: InkWell(
             onTap: () async {
               String encodedQuiz = jsonEncode(quiz);
-              int? userAnswerIndex = _userAnswerCache[quiz.quizzID];
+              int? userAnswerIndex = quizViewModel.cachedAnswers[quiz.quizzID];
 
               if (encodedQuiz.isNotEmpty && userAnswerIndex != null) {
-                context.push(
-                  '/student/quizAnswer?quizz=$encodedQuiz&userAnswer=$userAnswerIndex',
-                );
+                 GoRouter.of(context).push(
+                          "/student/quizAnswer?quizzID=${quiz.quizzID}");
+         
               }
             },
             borderRadius: BorderRadius.circular(15),
