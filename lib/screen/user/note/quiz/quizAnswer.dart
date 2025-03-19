@@ -243,7 +243,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                         padding: const EdgeInsets.all(15),
                       ),
                       onPressed: isLastQuiz ? null : navigateToNextQuiz,
-       const                child: Icon(
+                      child: Icon(
                         Icons.arrow_forward,
                         color: Colors.white,
                       ),

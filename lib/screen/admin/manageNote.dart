@@ -186,7 +186,12 @@ class _ManageNotePage extends State<ManageNotePage> {
   Widget _buildNoteRow(Note note) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-      child: Row(
+      child: 
+      GestureDetector(
+       onTap: () {
+  GoRouter.of(context).push('/student/note/${note.noteID}');
+},
+      child:Row(
         children: [
           // Note Title
           Expanded(
@@ -256,6 +261,7 @@ class _ManageNotePage extends State<ManageNotePage> {
             ],
           ),
         ],
+      ),
       ),
     );
   }
