@@ -18,7 +18,7 @@ class QuizAnswerService {
           .collection('Chapters')
           .doc(chapterID)
           .set(quizAnswers, SetOptions(merge: true)); 
-print("hey:: ${quizAnswers}");
+print("hey:: $quizAnswers");
       print('Multiple quiz answers saved successfully.');
     } catch (e) {
       print('Error saving multiple quiz answers: $e');

@@ -11,7 +11,7 @@ class NoteViewModel extends ChangeNotifier {
   List<Chapter> _chapters = [];
   List<Note> _notes = [];
 
-  List<NoteProgress> _studentProgress = [];
+  final List<NoteProgress> _studentProgress = [];
   bool _isLoading = false;
   late String _userId;
   String _chapterId = "";
@@ -115,7 +115,7 @@ class NoteViewModel extends ChangeNotifier {
         // Add new progress
         _studentProgress.add(noteProgress);
       }
-       notifyListeners();
+  
     } catch (e) {
       print("Error updating note progress: $e");
     }

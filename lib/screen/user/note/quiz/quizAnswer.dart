@@ -71,8 +71,17 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          'Question ${currentIndex + 1}',
+          style: GoogleFonts.rubik(
+            fontSize: 22.0,
+            fontWeight: FontWeight.w600,
+            color: const Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9)),
+          icon: Icon(Icons.arrow_back,
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9)),
           onPressed: () {
             GoRouter.of(context).pop();
           },
@@ -110,7 +119,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-                      quiz.imageUrl != null
+                    quiz.imageUrl != null
                         ? Image.network(
                             quiz.imageUrl!,
                             width: 400,
@@ -126,11 +135,13 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                         Color optionColor;
                         if (index == quiz.answer) {
                           optionColor = Colors.green; // Correct answer
-                        } else if (index == quizViewModel.cachedAnswers[currentQuizID] &&
+                        } else if (index ==
+                                quizViewModel.cachedAnswers[currentQuizID] &&
                             index != quiz.answer) {
                           optionColor = Colors.red; // Incorrect answer
                         } else {
-                          optionColor = Colors.blue.shade100.withOpacity(0.5); // Default option color
+                          optionColor = Colors.blue.shade100
+                              .withOpacity(0.5); // Default option color
                         }
 
                         return Padding(
@@ -164,7 +175,8 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                                       color: Colors.transparent,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 12),
                                       child: Text(
                                         choice[index],
                                         style: GoogleFonts.poppins(
@@ -177,7 +189,8 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
                                       child: AutoSizeText(
                                         quiz.options[index],
                                         style: GoogleFonts.poppins(
@@ -204,46 +217,40 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
             // Navigation Buttons
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child:  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                      
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: 
-                                 isFirstQuiz ? null : navigateToPreviousQuiz,
-                              
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.blue.shade700.withOpacity(0.9),
-                                elevation: 4,
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(15),
-                              ),
-                              child: const Icon(Icons.arrow_back,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.blue.shade700.withOpacity(0.9),
-                              elevation: 4,
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(15),
-                            ),
-                            onPressed: isLastQuiz ? null : navigateToNextQuiz,
-                            child: Icon(
-                             Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: isFirstQuiz ? null : navigateToPreviousQuiz,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade700.withOpacity(0.9),
+                        elevation: 4,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(15),
+                      ),
+                      child: const Icon(Icons.arrow_back, color: Colors.white),
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade700.withOpacity(0.9),
+                        elevation: 4,
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(15),
+                      ),
+                      onPressed: isLastQuiz ? null : navigateToNextQuiz,
+       const                child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -42,7 +42,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return  StudentNavBar(bottomIndex: 0);
+          return  const StudentNavBar(bottomIndex: 0);
           // return  DesignChallengesPage();
         },
         //  builder: (context, state) {

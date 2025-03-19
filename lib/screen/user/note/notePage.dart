@@ -23,7 +23,7 @@ class _NotePageState extends State<NotePage> {
   late UserViewModel userViewModel;
   bool isPlaying = false;
   late String audioUrl;
-  //  late YoutubePlayerController _youtubePlayerController;
+  List<YoutubePlayerController> _youtubeControllers = [];
 
   @override
   void initState() {
@@ -35,7 +35,9 @@ class _NotePageState extends State<NotePage> {
   @override
   void dispose() {
     _audioPlayer.dispose();
-    // _youtubePlayerController.dispose();
+    for (var controller in _youtubeControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -50,12 +52,12 @@ class _NotePageState extends State<NotePage> {
     });
     // Initialize YouTube player if videoLink is available
     if (currentNote.videoLink != null && currentNote.videoLink!.isNotEmpty) {
-      audioUrl = currentNote.videoLink![0];
-      // _youtubePlayerController = YoutubePlayerController(
-      //   initialVideoId:
-      //       YoutubePlayer.convertUrlToId(currentNote.videoLink![0])!,
-      //   flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
-      // );
+      _youtubeControllers = currentNote.videoLink!.map((link) {
+        return YoutubePlayerController(
+          initialVideoId: YoutubePlayer.convertUrlToId(link)!,
+          flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+        );
+      }).toList();
     }
   }
 
@@ -74,8 +76,11 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(currentNote.title, style: GoogleFonts.poppins(fontSize: 18,color:Colors.white, fontWeight: FontWeight.w600)),
+        title: Text(currentNote.title,
+            style: GoogleFonts.poppins(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.w600)),
         backgroundColor: Colors.blue.shade900,
         iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Container(
@@ -104,15 +109,6 @@ class _NotePageState extends State<NotePage> {
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          // Text(
-          //   currentNote.title,
-          //   style: GoogleFonts.poppins(
-          //     fontSize: 24,
-          //     fontWeight: FontWeight.bold,
-          //     color: Colors.blue.shade800,
-          //   ),
-          // ),
-
           const SizedBox(
             height: 5,
           ),
@@ -231,7 +227,7 @@ class _NotePageState extends State<NotePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Video',
+                  'Videos',
                   style: GoogleFonts.merriweather(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -239,19 +235,26 @@ class _NotePageState extends State<NotePage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Card(
-                //   elevation: 4,
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(12),
-                //   ),
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: YoutubePlayer(
-                //       controller: _youtubePlayerController,
-                //       showVideoProgressIndicator: true,
-                //     ),
-                //   ),
-                // ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _youtubeControllers.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: YoutubePlayer(
+                          controller: _youtubeControllers[index],
+                          showVideoProgressIndicator: true,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
         ],

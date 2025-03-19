@@ -20,8 +20,13 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
+
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    quizViewModel.fetchQuizzes(widget.chapterID);
+    await quizViewModel.fetchQuizzes(widget.chapterID);
   }
 
   @override

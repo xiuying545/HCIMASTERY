@@ -110,7 +110,7 @@ class _NoteListPageState extends State<NoteListPage> {
                               Positioned(
                                 bottom: 20,
                                 left: 20,
-                                child: Container(
+                                child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.6,
                                   child: Text(
