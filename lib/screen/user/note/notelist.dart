@@ -31,26 +31,20 @@ class _NoteListPageState extends State<NoteListPage> {
 
   void _fetchData() {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
-     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     setState(() {
       chapter = noteViewModel.chapters.firstWhere(
         (chapter) => chapter.chapterID == widget.chapterId,
       );
-      print("chapter $chapter");
-      print("chapter2 ${noteViewModel.studentProgress}");
 
-      if (noteViewModel.studentProgress.isNotEmpty) {
-        noteProgress = Provider.of<NoteViewModel>(context, listen: false)
-            .studentProgress
-            .firstWhere(
-              (studentProgress) =>
-                  studentProgress.chapterID == widget.chapterId,
-            );
-     
-      } else {   noteProgress = NoteProgress(
-            studentID: userViewModel.userId!,
-            chapterID: widget.chapterId,
-            progress: {});}
+    noteProgress = noteViewModel.studentProgress.firstWhere(
+  (studentProgress) => studentProgress.chapterID == widget.chapterId,
+  orElse: () => NoteProgress(
+    studentID: userViewModel.userId!,
+    chapterID: widget.chapterId,
+    progress: {},
+  ),
+);
       print("chapter $chapter, noteprogress $noteProgress");
       isLoading = false;
     });
@@ -62,7 +56,7 @@ class _NoteListPageState extends State<NoteListPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Consumer<NoteViewModel>(builder: (context, model, child) {
-              final notes = chapter.notes;
+              var notes = chapter.notes;
 
               if (notes == null) {
                 return Center(
@@ -116,12 +110,18 @@ class _NoteListPageState extends State<NoteListPage> {
                               Positioned(
                                 bottom: 20,
                                 left: 20,
-                                child: Text(
-                                  chapter.chapterName,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Text(
+                                    chapter.chapterName,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
@@ -231,7 +231,7 @@ class _NoteListPageState extends State<NoteListPage> {
                     if (note.noteID != null) {
                       GoRouter.of(context).push('/student/note/${note.noteID}');
                       noteProgress.progress[note.noteID!] = "Completed";
-                      NoteViewModel().updateNoteProgress(noteProgress);
+                      noteViewModel.updateNoteProgress(noteProgress);
                     } else {
                       print('Error: noteID is null');
                     }
@@ -287,7 +287,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 child: GestureDetector(
                   onTap: () {
                     noteProgress.progress["quiz"] = "In Progress";
-                    NoteViewModel().updateNoteProgress(noteProgress);
+                    noteViewModel.updateNoteProgress(noteProgress);
                     GoRouter.of(context).push(
                       '/student/questionlist/${widget.chapterId}',
                     );

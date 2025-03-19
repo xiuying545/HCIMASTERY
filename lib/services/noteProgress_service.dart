@@ -7,7 +7,7 @@ class NoteProgressService {
   Future<NoteProgress?> getProgress(String studentID, String chapterID) async {
     try {
       DocumentSnapshot doc = await _db
-          .collection('note_progress') // ✅ Changed to lowercase
+          .collection('Note Progress') // ✅ Changed to lowercase
           .doc(studentID)
           .collection('chapters')
           .doc(chapterID)

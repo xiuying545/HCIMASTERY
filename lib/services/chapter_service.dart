@@ -26,15 +26,15 @@ class ChapterService {
         'chapterName': chapter.chapterName,
       });
 
-         // Add notes under the newly created chapter
-      if(chapter.notes!=null){
-      for (Note note in chapter.notes!) {
-        await _db
-            .collection('Chapters')
-            .doc(chapterRef.id)
-            .collection('Notes')
-            .add(note.toJson());
-      }
+      // Add notes under the newly created chapter
+      if (chapter.notes != null) {
+        for (Note note in chapter.notes!) {
+          await _db
+              .collection('Chapters')
+              .doc(chapterRef.id)
+              .collection('Notes')
+              .add(note.toJson());
+        }
       }
 
       print('Chapter added with ID: ${chapterRef.id}');
@@ -64,7 +64,8 @@ class ChapterService {
       return null;
     }
   }
-Future<List<Chapter>> getChapters() async {
+
+  Future<List<Chapter>> getChapters() async {
     try {
       QuerySnapshot chapterSnapshot = await _db.collection('Chapters').get();
       List<Chapter> chapterList = [];
@@ -90,7 +91,6 @@ Future<List<Chapter>> getChapters() async {
       return [];
     }
   }
-
 
 // Get all notes for a specific chapter
   Future<List<Note>> getNotesForChapter(String chapterID) async {
@@ -247,8 +247,6 @@ Future<List<Chapter>> getChapters() async {
     }
   }
 
-
-
   // Fetch a specific quiz by its ID
   Future<Quiz?> getQuizById(String chapterID, String quizID) async {
     try {
@@ -272,6 +270,31 @@ Future<List<Chapter>> getChapters() async {
     }
   }
 
+  Future<void> loadData() async {
+    List<Note> hciChapters = [
+       // Nota 1: Pengenalan kepada Paparan dan Reka Bentuk Skrin
+        Note(
+          title: "Apa Itu Paparan dan Reka Bentuk Skrin?",
+          content:
+              "Paparan dan reka bentuk skrin adalah elemen penting dalam pembangunan aplikasi atau sistem. Ia melibatkan susun atur teks, butang, menu, dan gambar pada skrin untuk memastikan pengguna dapat berinteraksi dengan mudah dan selesa. Contohnya, antara muka WhatsApp dan Instagram direka dengan paparan yang ringkas dan intuitif, menjadikannya mudah digunakan oleh semua lapisan masyarakat. **Tambah Point:** Reka bentuk skrin yang baik juga mengambil kira faktor aksesibiliti seperti saiz fon, kontras warna, dan susun atur yang mesra pengguna.",
+        ),
 
-  
+        // Nota 2: Proses Reka Bentuk Interaksi
+        Note(
+          title: "4 Langkah Reka Bentuk Interaksi",
+          content:
+              "Proses reka bentuk interaksi terdiri daripada 4 langkah utama: (1) **Mewujudkan Keperluan** - kenal pasti apa yang pengguna perlukan, (2) **Mereka Bentuk Alternatif** - hasilkan beberapa cadangan reka bentuk, (3) **Membina Prototaip** - buat gambaran awal produk untuk dinilai, dan (4) **Membuat Penilaian** - nilai reka bentuk berdasarkan maklum balas pengguna. Contohnya, dalam pembangunan 'Program Mengira Dua Nombor', keperluan pengguna dikenal pasti terlebih dahulu sebelum reka bentuk alternatif dihasilkan. **Tambah Point:** Penggunaan alat seperti wireframe dan mockup dapat memudahkan proses mereka bentuk alternatif.",
+        ),
+
+        // Nota 3: Kepentingan Reka Bentuk Skrin
+        Note(
+          title: "Kenapa Reka Bentuk Skrin Penting?",
+          content:
+              "Reka bentuk skrin yang baik memastikan aplikasi atau sistem mudah digunakan, menarik, dan memenuhi keperluan pengguna. Contohnya, mesin ATM dan sistem penempahan tiket tren memerlukan reka bentuk skrin yang intuitif supaya pengguna tidak keliru semasa menggunakannya. Reka bentuk yang baik juga meningkatkan kepuasan pengguna dan mengurangkan kesilapan semasa interaksi. **Tambah Point:** Reka bentuk skrin yang baik juga boleh meningkatkan kadar pengekalan pengguna dan mengurangkan kos sokongan pelanggan.",
+        ),
+    ];
+    for (Note note in hciChapters) {
+      await addNoteToChapter("CtGwccnQVc38I9UeX5cb",  note); // Use the existing addChapter function
+    }
+  }
 }

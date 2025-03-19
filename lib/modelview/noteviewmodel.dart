@@ -11,20 +11,23 @@ class NoteViewModel extends ChangeNotifier {
   List<Chapter> _chapters = [];
   List<Note> _notes = [];
 
-   List<NoteProgress> _studentProgress= [];
+  List<NoteProgress> _studentProgress = [];
   bool _isLoading = false;
   late String _userId;
+  String _chapterId = "";
 
   // Getters
   List<Chapter> get chapters => _chapters;
   List<Note> get notes => _notes;
   bool get isLoading => _isLoading;
   List<NoteProgress> get studentProgress => _studentProgress;
+  String get chapterId => _chapterId;
 
   Future<void> setupChapterData(String userId) async {
+    // _noteService.loadData();
     _userId = userId;
     await fetchChapters();
-    await fetchProgress(_userId);
+    await fetchProgress();
   }
 
   // Fetch all chapters
@@ -41,24 +44,27 @@ class NoteViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchProgress(String userId) async {
+  Future<void> fetchProgress() async {
     List<Future<NoteProgress?>> progressFutures = [];
     _isLoading = true;
     for (var chapter in _chapters) {
       if (chapter.chapterID != null) {
         progressFutures
-            .add(_noteProgressService.getProgress(userId, chapter.chapterID!));
+            .add(_noteProgressService.getProgress(_userId, chapter.chapterID!));
       }
     }
+
+
 
     List<NoteProgress?> progressResults = await Future.wait(progressFutures);
 
     _studentProgress.addAll(progressResults.whereType<NoteProgress>());
+
     _isLoading = false;
   }
 
   // Calculate progress for each chapter
-  Map<String, double> calculateProgressByChapter()  {
+  Map<String, double> calculateProgressByChapter() {
     Map<String, double> progressMap = {};
 
     try {
@@ -77,12 +83,13 @@ class NoteViewModel extends ChangeNotifier {
               .length;
 
           completionRate =
-              (totalNotes > 0) ? (completedCount / totalNotes) * 100 : 0.0;
+              (totalNotes > 0) ?  ((completedCount / totalNotes)) : 0.0;
           progressMap[chapter.chapterID!] = completionRate;
         } else {
           progressMap[chapter.chapterID!] = 0;
         }
       }
+ 
     } catch (e) {
       print("Error calculating progress: $e");
     }
@@ -91,26 +98,28 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   Future<void> updateNoteProgress(NoteProgress noteProgress) async {
-  try {
-    // Update Firestore or backend service
-    await _noteProgressService.addOrUpdateProgress(noteProgress);
+    try {
+      _chapterId = noteProgress.chapterID;
+      // Update Firestore or backend service
+   
+      await _noteProgressService.addOrUpdateProgress(noteProgress);
 
-    // Check if student progress already exists for the same chapter
-    int index = _studentProgress.indexWhere((progress) => progress.chapterID == noteProgress.chapterID);
+      // Check if student progress already exists for the same chapter
+      int index = _studentProgress.indexWhere(
+          (progress) => progress.chapterID == noteProgress.chapterID);
 
-    if (index != -1) {
-      // Update existing progress
-      _studentProgress[index] = noteProgress;
-    } else {
-      // Add new progress
-      _studentProgress.add(noteProgress);
+      if (index != -1) {
+        // Update existing progress
+        _studentProgress[index] = noteProgress;
+      } else {
+        // Add new progress
+        _studentProgress.add(noteProgress);
+      }
+       notifyListeners();
+    } catch (e) {
+      print("Error updating note progress: $e");
     }
-
-    notifyListeners();
-  } catch (e) {
-    print("Error updating note progress: $e");
   }
-}
 
   // Fetch notes for a specific chapter
   Future<void> fetchNotesForChapter(String chapterID) async {

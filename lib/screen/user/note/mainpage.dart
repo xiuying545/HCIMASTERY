@@ -26,7 +26,6 @@ class _MainPageState extends State<MainPage> {
   Future<void> _fetchData() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    print("useriddddddddddd ${userViewModel.userId!}");
     await noteViewModel.setupChapterData(userViewModel.userId!);
     setState(()  {
           progressMap =  noteViewModel.calculateProgressByChapter();
@@ -264,7 +263,9 @@ class CourseTile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.blue.shade800,
                     ),
-                    overflow: TextOverflow.ellipsis,
+                           maxLines: 2, 
+                                    overflow: TextOverflow
+                                        .ellipsis, 
                   ),
                   const SizedBox(height: 4),
                   Text(
