@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/noteProgress.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +17,11 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends State<NoteListPage> {
-  late NoteProgress noteProgress;
+  late NoteViewModel noteViewModel;
+  late UserViewModel userViewModel;
   bool isLoading = true;
-  late String chapterName;
+  late Chapter chapter;
+  late NoteProgress noteProgress;
 
   @override
   void initState() {
@@ -26,36 +29,42 @@ class _NoteListPageState extends State<NoteListPage> {
     _fetchData();
   }
 
-  Future<void> _fetchData() async {
-    await Provider.of<NoteViewModel>(context, listen: false)
-        .fetchNotesForChapter(widget.chapterId);
-
-    final fetchedProgress =
-        await Provider.of<NoteViewModel>(context, listen: false)
-            .fetchStudentProgress("1", widget.chapterId);
-
+  void _fetchData() {
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     setState(() {
-      noteProgress = fetchedProgress;
+      chapter = noteViewModel.chapters.firstWhere(
+        (chapter) => chapter.chapterID == widget.chapterId,
+      );
+      print("chapter $chapter");
+      print("chapter2 ${noteViewModel.studentProgress}");
+
+      if (noteViewModel.studentProgress.isNotEmpty) {
+        noteProgress = Provider.of<NoteViewModel>(context, listen: false)
+            .studentProgress
+            .firstWhere(
+              (studentProgress) =>
+                  studentProgress.chapterID == widget.chapterId,
+            );
+     
+      } else {   noteProgress = NoteProgress(
+            studentID: userViewModel.userId!,
+            chapterID: widget.chapterId,
+            progress: {});}
+      print("chapter $chapter, noteprogress $noteProgress");
       isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    chapterName = Provider.of<NoteViewModel>(context, listen: false)
-        .chapters
-        .firstWhere(
-          (chapter) => chapter.chapterID == widget.chapterId,
-        )
-        .chapterName;
-
     return Scaffold(
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Consumer<NoteViewModel>(builder: (context, model, child) {
-              final notes = model.notes;
+              final notes = chapter.notes;
 
-              if (notes.isEmpty) {
+              if (notes == null) {
                 return Center(
                   child: Text(
                     'No notes available.',
@@ -68,15 +77,12 @@ class _NoteListPageState extends State<NoteListPage> {
               }
 
               return Container(
-                decoration:  BoxDecoration(
-                   gradient: LinearGradient(
-                              colors: [
-                                Colors.blue.shade700,
-                                Colors.blue.shade400
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade700, Colors.blue.shade400],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -111,7 +117,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                 bottom: 20,
                                 left: 20,
                                 child: Text(
-                                  chapterName,
+                                  chapter.chapterName,
                                   style: GoogleFonts.poppins(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -149,43 +155,43 @@ class _NoteListPageState extends State<NoteListPage> {
                         child: Container(
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 30.0),
-                          child: SingleChildScrollView( 
-                            child:Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0),
-                                child: Text(
-                                  "Course Detail",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30.0),
+                                  child: Text(
+                                    "Course Detail",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Divider(
-                                color: Colors.grey,
-                                thickness: 2,
-                                height: 20,
-                              ),
-                              const SizedBox(height: 10),
-                              // Step Indicator for Notes
-                              ...List.generate(
-                                notes.length,
-                                (index) => _buildNoteProgress(
-                                  note: notes[index],
-                                  index: index,
-                                  totalNotes: notes.length,
+                                const Divider(
+                                  color: Colors.grey,
+                                  thickness: 2,
+                                  height: 20,
                                 ),
-                              ),
-                              _buildQuizProgress(),
-                            ],
+                                const SizedBox(height: 10),
+                                // Step Indicator for Notes
+                                ...List.generate(
+                                  notes.length,
+                                  (index) => _buildNoteProgress(
+                                    note: notes[index],
+                                    index: index,
+                                    totalNotes: notes.length,
+                                  ),
+                                ),
+                                _buildQuizProgress(),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     ),
                   ],
                 ),
@@ -225,7 +231,7 @@ class _NoteListPageState extends State<NoteListPage> {
                     if (note.noteID != null) {
                       GoRouter.of(context).push('/student/note/${note.noteID}');
                       noteProgress.progress[note.noteID!] = "Completed";
-                      NoteViewModel().addOrUpdateStudentProgress(noteProgress);
+                      NoteViewModel().updateNoteProgress(noteProgress);
                     } else {
                       print('Error: noteID is null');
                     }
@@ -281,7 +287,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 child: GestureDetector(
                   onTap: () {
                     noteProgress.progress["quiz"] = "In Progress";
-                    NoteViewModel().addOrUpdateStudentProgress(noteProgress);
+                    NoteViewModel().updateNoteProgress(noteProgress);
                     GoRouter.of(context).push(
                       '/student/questionlist/${widget.chapterId}',
                     );

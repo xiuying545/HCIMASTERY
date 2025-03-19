@@ -98,7 +98,7 @@ class _QuizPageState extends State<QuizPage> {
                   children: <Widget>[
                     // Quiz Image
                     quiz.imageUrl != null
-                        ? Image.asset(
+                        ? Image.network(
                             quiz.imageUrl!,
                             width: 400,
                             height: 200,

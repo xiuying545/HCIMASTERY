@@ -64,31 +64,33 @@ class ChapterService {
       return null;
     }
   }
-
-  Future<List<Chapter>> getChapters() async {
+Future<List<Chapter>> getChapters() async {
     try {
-      QuerySnapshot querySnapshot = await _db.collection('Chapters').get();
+      QuerySnapshot chapterSnapshot = await _db.collection('Chapters').get();
       List<Chapter> chapterList = [];
 
-      for (var doc in querySnapshot.docs) {
-        var chapterData = doc.data() as Map<String, dynamic>;
-        String chapterID = doc.id;
+      for (var chapterDoc in chapterSnapshot.docs) {
+        var chapterData = chapterDoc.data() as Map<String, dynamic>;
+        String chapterID = chapterDoc.id;
 
-        // Only fetch the chapter name (no notes)
+        // Fetch notes for the current chapter
+        List<Note> notes = await getNotesForChapter(chapterID);
+
         chapterList.add(Chapter(
           chapterID: chapterID,
           chapterName: chapterData['chapterName'],
-          notes: [], // Empty list since we're not fetching notes
+          notes: notes, // Include fetched notes
         ));
       }
 
-      print('Fetched chapter names: ${chapterList.length}');
+      print('Fetched chapters with notes: ${chapterList.length}');
       return chapterList;
     } catch (e) {
-      print('Error fetching chapter names: $e');
+      print('Error fetching chapters: $e');
       return [];
     }
   }
+
 
 // Get all notes for a specific chapter
   Future<List<Note>> getNotesForChapter(String chapterID) async {

@@ -58,7 +58,7 @@ class QuizViewModel extends ChangeNotifier {
   Future<void> saveAnswerLocally(String quizId, int answer) async {
     _cachedAnswers[quizId] = answer;
     notifyListeners();
-print("heyyy ${_cachedAnswers}");
+
     _debounceTimer?.cancel();
     _debounceTimer =
         Timer(const Duration(seconds: 5), saveAllAnswersToFirestore);
@@ -70,7 +70,7 @@ print("heyyy ${_cachedAnswers}");
     notifyListeners();
 
     try {
-      print("heyyydfdd ${_cachedAnswers}");
+     
       await _quizAnswerService.saveMultipleQuizAnswers(
           _userId, _chapterId, _cachedAnswers);
       print('Answer saved successfully');

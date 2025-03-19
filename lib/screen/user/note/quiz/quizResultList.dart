@@ -32,7 +32,10 @@ class _QuizResultPageState extends State<QuizResultPage> {
   Future<void> _loadQuizData() async {
      quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
      userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
+      // todo Set user ID (example)
+    Provider.of<UserViewModel>(context, listen: false)
+        .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
+   await quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
     await quizViewModel.calculateScore(widget.chapterID, userViewModel.userId!);
     print("Current Score: ${quizViewModel.score}");
   }
@@ -55,7 +58,29 @@ class _QuizResultPageState extends State<QuizResultPage> {
         ),
         backgroundColor: Colors.blue.shade800,
       ),
-      body:  Padding(
+      body:  
+      
+      Consumer<QuizViewModel>(
+        builder: (context, quizViewModel, child) {
+          if (quizViewModel.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a5ae0)),
+              ),
+            );
+          } else if (quizViewModel.quizzes.isEmpty) {
+            return Center(
+              child: Text(
+                'No quizzes available.',
+                style: GoogleFonts.poppins(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            );
+          } else {
+           return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,12 +99,15 @@ class _QuizResultPageState extends State<QuizResultPage> {
                   _buildAnswerList(),
                 ],
               ),
-            )
+            );
+          }
+        }
+      )
+    );}
+
             
       
-    );
-  }
-
+    
   Widget _buildHeader() {
     return Container(
       width: double.infinity,

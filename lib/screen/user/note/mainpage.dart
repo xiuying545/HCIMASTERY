@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/model/note.dart';
 import 'package:fyp1/modelview/noteviewmodel.dart';
+import 'package:fyp1/modelview/userviewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,14 +14,22 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  late NoteViewModel noteViewModel;
+  late UserViewModel userViewModel;
+  Map<String, double> progressMap = {};
   @override
   void initState() {
     super.initState();
-    // Fetch chapters once when the page loads
-    Future.microtask(() {
-      final viewModel = context.read<NoteViewModel>();
-      viewModel.fetchChapters();
-      viewModel.calculateAllProgress();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    print("useriddddddddddd ${userViewModel.userId!}");
+    await noteViewModel.setupChapterData(userViewModel.userId!);
+    setState(()  {
+          progressMap =  noteViewModel.calculateProgressByChapter();
     });
   }
 
@@ -28,7 +38,9 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: Column(
         children: [
-            const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           _buildHeader(),
           _buildBanner(),
           const SizedBox(height: 20),
@@ -122,44 +134,10 @@ class _MainPageState extends State<MainPage> {
           Text(
             'Let\'s start learning!',
             style: GoogleFonts.poppins(
-              color: Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.w400
-            ),
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
           ),
           // const SizedBox(height: 20),
           // _buildSearchBar(),
-        ],
-      ),
-    );
-  }
-
-  // Search bar widget
-  Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, color: Colors.grey, size: 24),
-          const SizedBox(width: 8),
-          Text(
-            'What are you looking for?',
-            style: GoogleFonts.poppins(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
-          ),
         ],
       ),
     );
@@ -175,17 +153,7 @@ class _MainPageState extends State<MainPage> {
             ),
           );
         }
-        if (viewModel.hasError) {
-          return Center(
-            child: Text(
-              viewModel.errorMessage ?? 'An error occurred',
-              style: GoogleFonts.poppins(
-                color: Colors.red,
-                fontSize: 16,
-              ),
-            ),
-          );
-        }
+
         if (viewModel.chapters.isEmpty) {
           return Center(
             child: Text(
@@ -217,13 +185,13 @@ class _MainPageState extends State<MainPage> {
                   physics: const BouncingScrollPhysics(),
                   itemCount: viewModel.chapters.length,
                   itemBuilder: (context, index) {
-                    final chapter = viewModel.chapters[index];
+                    Chapter chapter = viewModel.chapters[index];
                     return CourseTile(
                       icon: Icons.book,
                       title: chapter.chapterName,
                       subtitle: "${chapter.notes?.length} lessons",
                       chapterId: chapter.chapterID!,
-                      progress: viewModel.progressMap[chapter.chapterID] ?? 0.0,
+                      progress: progressMap[chapter.chapterID] ?? 0.0,
                       color: Colors.blue.shade400,
                     );
                   },

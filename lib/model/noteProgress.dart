@@ -12,19 +12,18 @@ class NoteProgress {
   });
 
   // Factory constructor for creating a NoteProgress from JSON
-  factory NoteProgress.fromJson(Map<String, dynamic> json) {
-    return NoteProgress(
-      progressID: json['progressID'] as String?,
-      studentID: json['studentID'] ,
-      chapterID: json['chapterID'] as String,
-      progress: Map<String, String>.from(json['progress'] as Map<String, dynamic>),
-    );
-  }
-
+ factory NoteProgress.fromJson(String progressID, Map<String, dynamic> json) {
+  return NoteProgress(
+    progressID: progressID,  // Assign the document ID as progressID
+    studentID: json['studentID'],
+    chapterID: json['chapterID'],
+    progress: Map<String, String>.from(json['progress']),
+  );
+}
   // Convert a NoteProgress instance to JSON
   Map<String, dynamic> toJson() {
     return {
-      'progressID': progressID,
+    
       'studentID': studentID,
       'chapterID': chapterID,
       'progress': progress,

@@ -22,6 +22,9 @@ class QuizAnswerPage extends StatefulWidget {
 class _QuizAnswerPage extends State<QuizAnswerPage> {
   late QuizViewModel quizViewModel;
   late UserViewModel userViewModel;
+  List<String> choice = ['A', 'B', 'C', 'D'];
+  late Quiz quiz;
+  late String currentQuizID;
 
   @override
   void initState() {
@@ -32,33 +35,58 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
   Future<void> _loadQuizData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    currentQuizID = widget.quizzID;
+    quiz = quizViewModel.quizzes.firstWhere(
+      (quiz) => quiz.quizzID == currentQuizID,
+    );
+  }
+
+  void navigateToNextQuiz() {
+    int currentIndex = quizViewModel.quizzes.indexOf(quiz);
+    if (currentIndex != -1 && currentIndex < quizViewModel.quizzes.length - 1) {
+      Quiz nextQuiz = quizViewModel.quizzes[currentIndex + 1];
+      setState(() {
+        quiz = nextQuiz;
+        currentQuizID = nextQuiz.quizzID!;
+      });
+    }
+  }
+
+  void navigateToPreviousQuiz() {
+    int currentIndex = quizViewModel.quizzes.indexOf(quiz);
+    if (currentIndex > 0) {
+      Quiz previousQuiz = quizViewModel.quizzes[currentIndex - 1];
+      setState(() {
+        quiz = previousQuiz;
+        currentQuizID = previousQuiz.quizzID!;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> choice = ['A', 'B', 'C', 'D'];
-    Quiz quiz = quizViewModel.quizzes.firstWhere(
-      (quiz) => quiz.quizzID == widget.quizzID,
-    );
+    int currentIndex = quizViewModel.quizzes.indexOf(quiz);
+    bool isFirstQuiz = currentIndex == 0;
+    bool isLastQuiz = currentIndex == quizViewModel.quizzes.length - 1;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.blue.shade700.withOpacity(0.9)),
+          icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9)),
           onPressed: () {
             GoRouter.of(context).pop();
           },
         ),
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Text(
-          'Quiz Answer',
-          style: GoogleFonts.poppins(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w900,
-            color: Colors.black,
-          ),
-        ),
+        // title: Text(
+        //   'Quiz Answer',
+        //   style: GoogleFonts.poppins(
+        //     fontSize: 22.0,
+        //     fontWeight: FontWeight.w900,
+        //     color: Colors.black,
+        //   ),
+        // ),
       ),
       body: Container(
         color: Colors.white,
@@ -75,13 +103,20 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                     Text(
                       quiz.question,
                       style: GoogleFonts.poppins(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 19.0,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
+                      quiz.imageUrl != null
+                        ? Image.network(
+                            quiz.imageUrl!,
+                            width: 400,
+                            height: 200,
+                          )
+                        : const SizedBox.shrink(),
                     // Options List
                     ListView.builder(
                       shrinkWrap: true,
@@ -91,7 +126,8 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                         Color optionColor;
                         if (index == quiz.answer) {
                           optionColor = Colors.green; // Correct answer
-                        } else if (index == quizViewModel.cachedAnswers[widget.quizzID] && index != quiz.answer) {
+                        } else if (index == quizViewModel.cachedAnswers[currentQuizID] &&
+                            index != quiz.answer) {
                           optionColor = Colors.red; // Incorrect answer
                         } else {
                           optionColor = Colors.blue.shade100.withOpacity(0.5); // Default option color
@@ -128,8 +164,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                                       color: Colors.transparent,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 12),
+                                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                                       child: Text(
                                         choice[index],
                                         style: GoogleFonts.poppins(
@@ -142,8 +177,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                                       child: AutoSizeText(
                                         quiz.options[index],
                                         style: GoogleFonts.poppins(
@@ -152,7 +186,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                                           color: Colors.black,
                                         ),
                                         minFontSize: 10,
-                                        maxLines: 2,
+                                        maxLines: 3,
                                       ),
                                     ),
                                   ),
@@ -166,6 +200,50 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                   ],
                 ),
               ),
+            ),
+            // Navigation Buttons
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: 
+                                 isFirstQuiz ? null : navigateToPreviousQuiz,
+                              
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.blue.shade700.withOpacity(0.9),
+                                elevation: 4,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(15),
+                              ),
+                              child: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.blue.shade700.withOpacity(0.9),
+                              elevation: 4,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(15),
+                            ),
+                            onPressed: isLastQuiz ? null : navigateToNextQuiz,
+                            child: Icon(
+                             Icons.arrow_forward,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ],
         ),
