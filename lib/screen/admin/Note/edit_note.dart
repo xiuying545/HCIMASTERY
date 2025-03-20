@@ -1,0 +1,395 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:fyp1/model/note.dart';
+import 'package:fyp1/view_model/note_view_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:io';
+
+import 'package:provider/provider.dart';
+
+class EditNotePage extends StatefulWidget {
+  final String noteId;
+  final String chapterId;
+  const EditNotePage({super.key, required this.noteId, required this.chapterId});
+
+  @override
+  _EditNotePageState createState() => _EditNotePageState();
+}
+
+class _EditNotePageState extends State<EditNotePage> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+  List<TextEditingController> _videoControllers = [TextEditingController()];
+  List<File> _images = [];
+  final _picker = ImagePicker();
+  late NoteViewModel noteViewModel;
+  Note? _existingNote;
+
+  @override
+  void initState() {
+    super.initState();
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+    _fetchNoteData();
+  }
+
+  Future<void> _fetchNoteData() async {
+    try {
+      _existingNote = await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
+      if (_existingNote != null) {
+        _titleController.text = _existingNote!.title;
+        _contentController.text = _existingNote!.content;
+        _videoControllers = _existingNote!.videoLink?.map((link) => TextEditingController(text: link)).toList() ?? [];
+        setState(() {}); // Refresh the UI
+      }
+    } catch (e) {
+      print('Error fetching note data: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to load note data.')),
+      );
+    }
+  }
+
+  void _addVideoField() {
+    setState(() {
+      _videoControllers.add(TextEditingController());
+    });
+  }
+
+  void _removeVideoField(int index) {
+    setState(() {
+      _videoControllers.removeAt(index);
+    });
+  }
+
+  Future<void> _pickImages() async {
+    final pickedFiles = await _picker.pickMultiImage();
+    setState(() {
+      _images = pickedFiles.map((file) => File(file.path)).toList();
+    });
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _images.removeAt(index);
+    });
+  }
+
+  Future<void> _uploadNote() async {
+    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all the fields.')),
+      );
+      return;
+    }
+
+    List<String> imageUrls = _existingNote?.images ?? [];
+    List<String> videoLinks = _videoControllers
+        .map((controller) => controller.text.trim())
+        .where((link) => link.isNotEmpty)
+        .toList();
+
+    try {
+      // Upload new images
+      for (File image in _images) {
+        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
+        UploadTask uploadTask = storageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+        imageUrls.add(downloadUrl);
+      }
+
+      Note updatedNote = Note(
+        noteID: widget.noteId,
+        title: _titleController.text,
+        content: _contentController.text,
+        images: imageUrls,
+        videoLink: videoLinks,
+      );
+
+      await noteViewModel.updateNote(widget.chapterId, updatedNote);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Note updated successfully!')),
+      );
+
+      GoRouter.of(context).pop();
+    } catch (e) {
+      print('Error updating note: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update note.')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColor = Colors.blue.shade900;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: themeColor,
+        foregroundColor: Colors.white,
+        title: Text(
+          'Edit Note',
+          style: GoogleFonts.poppins(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => GoRouter.of(context).pop(),
+        ),
+      ),
+      backgroundColor: Colors.grey.shade100,
+      body: Padding(
+        padding: const EdgeInsets.all(22.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title Field
+              Text(
+                'Title',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Material(
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  height: 63,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: TextField(
+                      controller: _titleController,
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter note title",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Image Upload Section
+              Text(
+                'Upload Images',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImages,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Icon(
+                      Icons.add_photo_alternate,
+                      size: 40,
+                      color: themeColor,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _images.isNotEmpty
+                  ? SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _images.length,
+                        itemBuilder: (context, index) => Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                _images[index],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, color: Colors.red),
+                                onPressed: () => _removeImage(index),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        'No images selected',
+                        style: GoogleFonts.poppins(color: Colors.grey),
+                      ),
+                    ),
+              const SizedBox(height: 30),
+
+              // Content Field
+              Text(
+                'Content',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Material(
+                elevation: 4,
+                shadowColor: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: TextField(
+                      controller: _contentController,
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter note content",
+                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Video Links Section
+              Text(
+                'Video Links',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Column(
+                children: _videoControllers
+                    .asMap()
+                    .entries
+                    .map((entry) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Material(
+                                  elevation: 4,
+                                  shadowColor: Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      child: TextField(
+                                        controller: entry.value,
+                                        style: GoogleFonts.poppins(fontSize: 16),
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Enter video link",
+                                          hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                onPressed: () => _removeVideoField(entry.key),
+                              ),
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _addVideoField,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: Text(
+                    'Add Video Link',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Submit Button
+              Center(
+                child: SizedBox(
+                  width: 263,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _uploadNote,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: themeColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    child: Text(
+                      'Update Note',
+                      style: GoogleFonts.poppins(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

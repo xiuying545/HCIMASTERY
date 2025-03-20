@@ -1,34 +1,33 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fyp1/screen/admin/Quiz/addQuiz.dart';
-import 'package:fyp1/screen/admin/Quiz/editQuiz.dart';
-import 'package:fyp1/screen/admin/addNote.dart';
-import 'package:fyp1/screen/admin/editNote.dart';
-import 'package:fyp1/screen/admin/manageNote.dart';
-import 'package:fyp1/screen/admin/Quiz/manageQuiz.dart';
-import 'package:fyp1/screen/authenication/editPassword.dart';
-import 'package:fyp1/screen/authenication/forgetPassword.dart';
-import 'package:fyp1/screen/user/note/notePage.dart';
+import 'package:fyp1/screen/admin/Quiz/add_quiz.dart';
+import 'package:fyp1/screen/admin/Quiz/edit_quiz.dart';
+import 'package:fyp1/screen/admin/Note/add_note.dart';
+import 'package:fyp1/screen/admin/Note/edit_note.dart';
+import 'package:fyp1/screen/admin/Note/manage_note.dart';
+import 'package:fyp1/screen/admin/Quiz/manage_quiz.dart';
+import 'package:fyp1/screen/user/authenication/edit_password.dart';
+import 'package:fyp1/screen/user/authenication/forget_password.dart';
+import 'package:fyp1/screen/student/note/note_detail.dart';
 import 'package:fyp1/model/quiz.dart';
-import 'package:fyp1/screen/authenication/loginScreen.dart';
-import 'package:fyp1/screen/authenication/registerScreen.dart';
-import 'package:fyp1/screen/user/forum/EditPost.dart';
-import 'package:fyp1/screen/user/forum/PostDetail.dart';
-import 'package:fyp1/screen/user/forum/addPost.dart';
+import 'package:fyp1/screen/user/authenication/login.dart';
+import 'package:fyp1/screen/user/authenication/register.dart';
+import 'package:fyp1/screen/user/forum/edit_post.dart';
+import 'package:fyp1/screen/user/forum/post_detail.dart';
+import 'package:fyp1/screen/user/forum/add_post.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
-import 'package:fyp1/screen/user/note/mainpage.dart';
-import 'package:fyp1/screen/user/note/notelist.dart';
-import 'package:fyp1/screen/user/note/quiz/questionlist.dart';
-import 'package:fyp1/screen/user/note/quiz/quiz.dart';
-import 'package:fyp1/screen/user/note/quiz/quizAnswer.dart';
-import 'package:fyp1/screen/user/note/quiz/quizResultList.dart';
-import 'package:fyp1/screen/user/practicalExercise/profilepagedesign.dart';
-
-import 'package:fyp1/screen/user/profile/editProfile.dart';
-import 'package:fyp1/screen/user/profile/profile.dart';
-import 'package:fyp1/widget/adminnavbar.dart';
-import 'package:fyp1/widget/studentnavbar.dart';
+import 'package:fyp1/screen/student/note/main_page.dart';
+import 'package:fyp1/screen/student/note/note_list.dart';
+import 'package:fyp1/screen/student/quiz/question_list.dart';
+import 'package:fyp1/screen/student/quiz/quiz_question.dart';
+import 'package:fyp1/screen/student/quiz/quiz_answer.dart';
+import 'package:fyp1/screen/student/quiz/quiz_score_list.dart';
+import 'package:fyp1/screen/user/design_challenge/profile_page_design.dart';
+import 'package:fyp1/screen/user/profile/edit_profile.dart';
+import 'package:fyp1/screen/user/profile/profile_page.dart';
+import 'package:fyp1/screen/admin/admin_navbar.dart';
+import 'package:fyp1/screen/student/student_navbar.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router() {
@@ -42,7 +41,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return  const AdminNavBar();
+          return  const StudentNavBar(bottomIndex: 0,);
           // return  DesignChallengesPage();
         },
         //  builder: (context, state) {

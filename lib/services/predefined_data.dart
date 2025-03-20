@@ -1,6 +1,6 @@
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/quiz.dart';
-import 'package:fyp1/services/chapter_service.dart';
+import 'package:fyp1/services/note_service.dart';
   Future<void> loadData() async {
   List<Chapter> hciChapters = [
     Chapter(

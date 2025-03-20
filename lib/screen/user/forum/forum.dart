@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
-import 'package:fyp1/modelview/forumviewmodel.dart';
-import 'package:fyp1/modelview/userviewmodel.dart';
+import 'package:fyp1/view_model/forum_view_model.dart';
+import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';

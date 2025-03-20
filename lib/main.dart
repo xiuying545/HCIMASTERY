@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:fyp1/modelview/forumviewmodel.dart';
-import 'package:fyp1/modelview/noteviewmodel.dart';
-import 'package:fyp1/modelview/quizviewmodel.dart';
-import 'package:fyp1/modelview/userviewmodel.dart';
+import 'package:fyp1/view_model/forum_view_model.dart';
+import 'package:fyp1/view_model/note_view_model.dart';
+import 'package:fyp1/view_model/quiz_view_model.dart';
+import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/routes/routes.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ForumViewModel()),
       ],
       child: MaterialApp.router(
-        title: 'Flutter Demo',
+        title: 'HCI Mastery',
         routerConfig: router(),
       ),
     );
