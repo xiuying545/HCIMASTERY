@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/custom_dialog.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,50 +38,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _showLogoutConfirmation() async {
-    return showDialog(
+    showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            "Logout",
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            "Are you sure you want to logout?",
-            style: GoogleFonts.poppins(fontSize: 16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                "Cancel",
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                _logout(); // Perform logout
-              },
-              child: Text(
-                "Logout",
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.red.shade700,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+      builder: (ctx) => CustomDialog(
+        ctx: ctx,
+        title: 'Logout',
+        content: 'Are you sure you want to logout?',
+        action: 'Alert',
+        onConfirm: () {
+          Navigator.of(context).pop();
+          _logout();
+        },
+      ),
     );
   }
 
@@ -182,8 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context)
-              .push("/editProfile/${userViewModel.userId!}");
+          GoRouter.of(context).push("/editProfile/${userViewModel.userId!}");
         },
         backgroundColor: Colors.blue.shade900,
         child: const Icon(Icons.edit, color: Colors.white),

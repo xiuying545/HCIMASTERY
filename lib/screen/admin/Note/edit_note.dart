@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 class EditNotePage extends StatefulWidget {
   final String noteId;
   final String chapterId;
-  const EditNotePage({super.key, required this.noteId, required this.chapterId});
+  const EditNotePage(
+      {super.key, required this.noteId, required this.chapterId});
 
   @override
   _EditNotePageState createState() => _EditNotePageState();
@@ -37,11 +38,15 @@ class _EditNotePageState extends State<EditNotePage> {
 
   Future<void> _fetchNoteData() async {
     try {
-      _existingNote = await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
+      _existingNote =
+          await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
       if (_existingNote != null) {
         _titleController.text = _existingNote!.title;
         _contentController.text = _existingNote!.content;
-        _videoControllers = _existingNote!.videoLink?.map((link) => TextEditingController(text: link)).toList() ?? [];
+        _videoControllers = _existingNote!.videoLink
+                ?.map((link) => TextEditingController(text: link))
+                .toList() ??
+            [];
         setState(() {}); // Refresh the UI
       }
     } catch (e) {
@@ -94,8 +99,10 @@ class _EditNotePageState extends State<EditNotePage> {
     try {
       // Upload new images
       for (File image in _images) {
-        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
+        String fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -130,7 +137,7 @@ class _EditNotePageState extends State<EditNotePage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-     appBar: const AppBarWithBackBtn(
+      appBar: const AppBarWithBackBtn(
         title: 'Edit Note',
       ),
       backgroundColor: Colors.grey.shade100,
@@ -167,7 +174,8 @@ class _EditNotePageState extends State<EditNotePage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter note title",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -225,7 +233,8 @@ class _EditNotePageState extends State<EditNotePage> {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -269,7 +278,8 @@ class _EditNotePageState extends State<EditNotePage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter note content",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -304,14 +314,18 @@ class _EditNotePageState extends State<EditNotePage> {
                                       color: Colors.white,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
                                       child: TextField(
                                         controller: entry.value,
-                                        style: GoogleFonts.poppins(fontSize: 16),
+                                        style:
+                                            GoogleFonts.poppins(fontSize: 16),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: "Enter video link",
-                                          hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                                          hintStyle: GoogleFonts.poppins(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
@@ -319,7 +333,8 @@ class _EditNotePageState extends State<EditNotePage> {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                icon: const Icon(Icons.remove_circle,
+                                    color: Colors.red),
                                 onPressed: () => _removeVideoField(entry.key),
                               ),
                             ],
@@ -336,7 +351,8 @@ class _EditNotePageState extends State<EditNotePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                   ),
                   child: Text(
                     'Add Video Link',

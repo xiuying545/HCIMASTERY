@@ -45,11 +45,9 @@ class _NotePageState extends State<NotePage> {
   Future<void> _loadNote() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
     setState(() {
-      currentNote = noteViewModel.chapters
-          .firstWhere((chapter) => chapter.chapterID == noteViewModel.chapterId)
-          .notes!
-          .firstWhere((note) => note.noteID == widget.noteID);
+      currentNote = noteViewModel.notes.firstWhere((note) => note.noteID == widget.noteID);
     });
     // Initialize YouTube player if videoLink is available
     if (currentNote.videoLink != null && currentNote.videoLink!.isNotEmpty) {

@@ -74,13 +74,13 @@ class ChapterService {
         var chapterData = chapterDoc.data() as Map<String, dynamic>;
         String chapterID = chapterDoc.id;
 
-        // Fetch notes for the current chapter
-        List<Note> notes = await getNotesForChapter(chapterID);
+        // // Fetch notes for the current chapter
+        // List<Note> notes = await getNotesForChapter(chapterID);
 
         chapterList.add(Chapter(
           chapterID: chapterID,
           chapterName: chapterData['chapterName'],
-          notes: notes, // Include fetched notes
+          notes: [], 
         ));
       }
 

@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:fyp1/model/note.dart';
 import '../../view_model/note_view_model.dart';
 
+//todo customized dialog
+
+
 class ChapterDetailsPage extends StatefulWidget {
   const ChapterDetailsPage({super.key});
 

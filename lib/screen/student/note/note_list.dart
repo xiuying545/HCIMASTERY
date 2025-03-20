@@ -21,6 +21,7 @@ class _NoteListPageState extends State<NoteListPage> {
   late UserViewModel userViewModel;
   bool isLoading = true;
   late Chapter chapter;
+
   late NoteProgress noteProgress;
 
   @override
@@ -29,9 +30,10 @@ class _NoteListPageState extends State<NoteListPage> {
     _fetchData();
   }
 
-  void _fetchData() {
+  Future<void> _fetchData() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    await noteViewModel.fetchNotesForChapter(widget.chapterId);
     setState(() {
       chapter = noteViewModel.chapters.firstWhere(
         (chapter) => chapter.chapterID == widget.chapterId,
@@ -56,9 +58,9 @@ class _NoteListPageState extends State<NoteListPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Consumer<NoteViewModel>(builder: (context, model, child) {
-              var notes = chapter.notes;
+              var notes = model.notes;
 
-              if (notes == null) {
+              if (notes.isEmpty) {
                 return Center(
                   child: Text(
                     'No notes available.',

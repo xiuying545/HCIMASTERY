@@ -41,7 +41,7 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return  const StudentNavBar(bottomIndex: 0,);
+          return  const AdminNavBar();
           // return  DesignChallengesPage();
         },
         //  builder: (context, state) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/custom_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -269,41 +270,12 @@ class _ManageNotePage extends State<ManageNotePage> {
   void _showDeleteConfirmationDialog(Note note) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Delete Note',
-            style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade700,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to delete this note? This action cannot be undone.',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.grey.shade700,
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
+      builder: (ctx) => CustomDialog(
+        ctx: ctx,
+        title:  'Delete Note',
+        content:    'Are you sure you want to delete this note? This action cannot be undone.',
+        action: 'Alert',
+        onConfirm: () async{
                 Navigator.of(context).pop(); // Close the dialog
                 await Provider.of<NoteViewModel>(context, listen: false)
                     .deleteNote(widget.chapterId, note.noteID!);
@@ -320,18 +292,9 @@ class _ManageNotePage extends State<ManageNotePage> {
                   ),
                 );
               },
-              child: Text(
-                'Delete',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+      ),
     );
+
   }
 }
 
