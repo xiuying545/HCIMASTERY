@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailPage extends StatefulWidget {
   final String postID;
@@ -17,28 +16,22 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
-  Post post = Post(
-    content: "",
-    title: "",
-    creator: "",
-    timeCreated: DateTime.now(),
-    editStatus: false,
-    replies: [],
-  );
+  late Post post;
+  late ForumViewModel forumViewModel;
   final TextEditingController _replyController = TextEditingController();
   late UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
     _fetchPostDetails();
   }
 
   Future<void> _fetchPostDetails() async {
     try {
-      final forumViewModel =
-          Provider.of<ForumViewModel>(context, listen: false);
+      userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
       final fetchedPost = await forumViewModel.fetchPostById(widget.postID);
       setState(() {
         post = fetchedPost;
@@ -83,66 +76,36 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget build(BuildContext context) {
     final ForumViewModel forumViewModel = Provider.of<ForumViewModel>(context);
 
-    if (post.title.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Post Details'),
-          backgroundColor: const Color(0xFFefeefb),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white,),
-            onPressed: () => GoRouter.of(context).pop(),
-          ),
-        ),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        title:  Text('Post Details',    style: GoogleFonts.poppins(
-          color:Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),),
-        backgroundColor: const Color(0xFFefeefb),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade700, Colors.blue.shade400],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+       appBar: const AppBarWithBackBtn(
+        title: 'Post Detail',
+      ),
+      body: forumViewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFefeefb), Colors.white],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildPostHeader(post),
+                    const SizedBox(height: 16),
+                    _buildRepliesHeader(post),
+                    const SizedBox(height: 8),
+                    _buildRepliesList(post, forumViewModel),
+                    const SizedBox(height: 16),
+                    _buildReplyInputField(forumViewModel),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFefeefb), Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPostHeader(post),
-              const SizedBox(height: 16),
-              _buildRepliesHeader(post),
-              const SizedBox(height: 8),
-              _buildRepliesList(post, forumViewModel),
-              const SizedBox(height: 16),
-              _buildReplyInputField(forumViewModel),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -160,7 +123,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           children: [
             Text(
               post.title,
-              style:  TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.blue.shade900,
@@ -206,43 +169,43 @@ class _PostDetailPageState extends State<PostDetailPage> {
               style: const TextStyle(fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 12),
-              if (post.images != null && post.images!.isNotEmpty)
-                SizedBox(
-                  height: 80, // Adjust height as needed
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: post.images!.length,
+            if (post.images != null && post.images!.isNotEmpty)
+              SizedBox(
+                height: 80, // Adjust height as needed
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: post.images!.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          post.images![index], // Firebase Storage URL
 
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            post.images![index], // Firebase Storage URL
-                          
-                            height: 80,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.error, color: Colors.red);
-                            },
-                          ),
+                          height: 80,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.error, color: Colors.red);
+                          },
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
+              ),
           ],
         ),
       ),

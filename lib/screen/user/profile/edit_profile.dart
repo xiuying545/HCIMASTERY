@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -89,23 +90,8 @@ Future<void> _pickImage() async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            GoRouter.of(context).pop();
-          },
-        ),
-        title: Text(
-          "Edit Profile",
-          style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.blue.shade900,
-        elevation: 2,
+       appBar: const AppBarWithBackBtn(
+        title: 'Edit Post',
       ),
       body: Center(
         child: SafeArea(

@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -70,32 +70,8 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
     bool isLastQuiz = currentIndex == quizViewModel.quizzes.length - 1;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Question ${currentIndex + 1}',
-          style: GoogleFonts.rubik(
-            fontSize: 22.0,
-            fontWeight: FontWeight.w600,
-            color: const Color.fromARGB(255, 0, 0, 0),
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9)),
-          onPressed: () {
-            GoRouter.of(context).pop();
-          },
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        // title: Text(
-        //   'Quiz Answer',
-        //   style: GoogleFonts.poppins(
-        //     fontSize: 22.0,
-        //     fontWeight: FontWeight.w900,
-        //     color: Colors.black,
-        //   ),
-        // ),
+      appBar:  AppBarWithBackBtn(
+        title: 'Question ${currentIndex + 1}',
       ),
       body: Container(
         color: Colors.white,
@@ -243,7 +219,7 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
                         padding: const EdgeInsets.all(15),
                       ),
                       onPressed: isLastQuiz ? null : navigateToNextQuiz,
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_forward,
                         color: Colors.white,
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -173,21 +174,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: themeColor,
-        foregroundColor: Colors.white,
-        title: Text(
-          'Create Quiz',
-          style: GoogleFonts.poppins(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
+  appBar: const AppBarWithBackBtn(
+        title: 'Create Quiz',
       ),
       backgroundColor: Colors.grey.shade100,
       body: Padding(

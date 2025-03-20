@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/services/post_service.dart';
@@ -111,21 +112,8 @@ class _EditPostPageState extends State<EditPostPage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: themeColor,
-        foregroundColor: Colors.white,
-        title: Text(
-          'Edit Post',
-          style: GoogleFonts.poppins(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
+      appBar: const AppBarWithBackBtn(
+        title: 'Edit Post',
       ),
       backgroundColor: Colors.grey.shade100,
       body: Padding(
@@ -161,7 +149,8 @@ class _EditPostPageState extends State<EditPostPage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post title",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -219,7 +208,8 @@ class _EditPostPageState extends State<EditPostPage> {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -263,7 +253,8 @@ class _EditPostPageState extends State<EditPostPage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post content",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),

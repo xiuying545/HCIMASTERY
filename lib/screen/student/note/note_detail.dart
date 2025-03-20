@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -75,23 +76,8 @@ class _NotePageState extends State<NotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(currentNote.title,
-            style: GoogleFonts.poppins(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.blue.shade900,
-        iconTheme: const IconThemeData(color: Colors.white),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade900, Colors.blue.shade700],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+   appBar:  AppBarWithBackBtn(
+        title: currentNote.title,
       ),
       body: _buildNoteContent(),
       floatingActionButton: FloatingActionButton(

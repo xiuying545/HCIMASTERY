@@ -44,7 +44,6 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     final quiz = widget.quizzes[currentQuestionIndex];
     final quizId = widget.quizzes[currentQuestionIndex].quizzID;
-    print("quiziddddddddddd: $quizId");
     final choices = ['A', 'B', 'C', 'D'];
 
     return Scaffold(

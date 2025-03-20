@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,19 +33,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Question List',
-          style: GoogleFonts.rubik(
-            fontSize: 22.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue.shade700,
-        elevation: 4,
-        iconTheme: const IconThemeData(color: Colors.white),
+       appBar:  const AppBarWithBackBtn(
+        title: "Question List",
       ),
       
       body: Consumer<QuizViewModel>(

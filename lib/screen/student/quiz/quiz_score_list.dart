@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -43,21 +44,11 @@ class _QuizResultPageState extends State<QuizResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => GoRouter.of(context).push('/studentNav'),
-        ),
-        title: Text(
-          'Quiz Result',
-          style: GoogleFonts.rubik(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.blue.shade800,
+       appBar: const AppBarWithBackBtn(
+        title: 'Quiz Result',
+        route: '/studentNav',
       ),
+     
       body:  
       
       Consumer<QuizViewModel>(

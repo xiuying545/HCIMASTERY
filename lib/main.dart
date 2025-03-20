@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/routes/routes.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -32,6 +34,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'HCI Mastery',
         routerConfig: router(),
+        theme: AppTheme.apptheme.copyWith(
+          textTheme: GoogleFonts.poppinsTextTheme(
+            Theme.of(context).textTheme,
+          ),
+        ),
       ),
     );
   }
