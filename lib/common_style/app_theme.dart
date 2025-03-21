@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-   AppTheme();
-   static Color primaryColor = Colors.blue.shade900;
+  AppTheme();
+  static Color primaryColor = Colors.blue.shade900;
+  static Color textColor = Color(0xFF2D3436);
 
   static ThemeData apptheme = ThemeData(
     primaryColor: primaryColor,
@@ -18,13 +19,41 @@ class AppTheme {
     ),
   );
 
-  static TextStyle h1Style =
-      const TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
-  static TextStyle h2Style = const TextStyle(fontSize: 22);
-  static TextStyle h3Style = const TextStyle(fontSize: 20);
-  static TextStyle h4Style = const TextStyle(fontSize: 18);
-  static TextStyle h5Style = const TextStyle(fontSize: 16);
-  static TextStyle h6Style = const TextStyle(fontSize: 14);
+  static TextStyle h1Style = GoogleFonts.poppins(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: primaryColor,
+  );
+  static TextStyle h2Style = GoogleFonts.poppins(
+    fontSize: 22,
+    color: primaryColor,
+    fontWeight: FontWeight.bold,
+  );
+  static TextStyle h3Style = GoogleFonts.poppins(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: textColor,
+  );
+  static TextStyle h4Style = GoogleFonts.poppins(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: textColor,
+  );
+  static TextStyle h5Style = GoogleFonts.poppins(
+    fontSize: 16,
+
+    color: textColor,
+  );
+  static TextStyle h6Style = GoogleFonts.poppins(
+    fontSize: 14,
+
+    color: textColor,
+  );
+
+  static TextStyle snackBarText = GoogleFonts.poppins(
+    fontSize: 16,
+    color: Colors.white,
+  );
 
   static List<BoxShadow> shadow = <BoxShadow>[
     const BoxShadow(color: Color(0xfff8f8f8), blurRadius: 10, spreadRadius: 15),

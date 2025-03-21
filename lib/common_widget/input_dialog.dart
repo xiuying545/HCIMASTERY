@@ -1,88 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common_style/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 
-class CustomDialog extends StatelessWidget {
-  final BuildContext ctx;
-
-  final VoidCallback onConfirm;
+class InputDialog extends StatefulWidget {
   final String title;
-  final String content;
-  final String action;
+  final String? initialValue;
+  final String hintText;
+  final void Function(String) onSave;
 
-  const CustomDialog({
-    super.key,
-    required this.ctx,
-    required this.onConfirm,
+  const InputDialog({
+    Key? key,
     required this.title,
-    required this.content,
-    required this.action,
-  });
+    this.initialValue,
+    required this.hintText,
+    required this.onSave,
+  }) : super(key: key);
+
+  @override
+  _InputDialogState createState() => _InputDialogState();
+}
+
+class _InputDialogState extends State<InputDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Icon icon;
-    Color color;
-    if (action == "Completion") {
-      icon = Icon(
-        Icons.check_circle,
-        color: Colors.green.shade700,
-        size: 32,
-      );
-      color = Colors.green.shade700;
-    } else {
-      icon = Icon(
-        Icons.help_outline,
-        color: Colors.red.shade700,
-        size: 32,
-      );
-      color = Colors.red.shade700;
-    }
     return Dialog(
-      shape: RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       elevation: 10,
       backgroundColor: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                icon,
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: AppTheme.h2Style.copyWith(
-                    color: color,
-                  ),
-                ),
-              ],
+            Text(
+              widget.title,
+              style: AppTheme.h1Style
             ),
             const SizedBox(height: 20),
-            Text(
-              content,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.grey.shade800,
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey.shade700,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                OutlinedButton(
+              OutlinedButton(
                   onPressed: () {
-                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pop();
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                        horizontal: 22, vertical: 12),
                     side: BorderSide(color: Colors.grey.shade400),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -96,24 +90,32 @@ class CustomDialog extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: onConfirm,
+                    onPressed: () {
+                    final newValue = _controller.text.trim();
+                    if (newValue.isNotEmpty) {
+                      widget.onSave(newValue);
+                      Navigator.of(context).pop();
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
-                    backgroundColor: color,
+                    backgroundColor: AppTheme.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: Text(
-                    'Sure',
+                    'Save',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       color: Colors.white,
                     ),
                   ),
                 ),
+             
               ],
             ),
           ],

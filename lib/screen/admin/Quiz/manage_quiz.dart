@@ -1,6 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_style/app_theme.dart';
+import 'package:fyp1/common_widget/action_button.dart';
+import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common_widget/custom_dialog.dart';
+import 'package:fyp1/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -19,21 +23,18 @@ class ManageQuizPage extends StatefulWidget {
 }
 
 class _ManageQuizPageState extends State<ManageQuizPage> {
-  bool isLoading = true;
   late String chapterName;
+  late QuizViewModel quizViewModel;
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    loadQuizData();
   }
 
-  Future<void> _fetchData() async {
-    await Provider.of<QuizViewModel>(context, listen: false)
-        .fetchQuizzes(widget.chapterId);
-    setState(() {
-      isLoading = false;
-    });
+  Future<void> loadQuizData() async {
+    quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    await quizViewModel.fetchQuizzes(widget.chapterId);
   }
 
   @override
@@ -51,58 +52,35 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
         .chapterName;
 
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade700, Colors.blue.shade900],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        elevation: 4,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      appBar: AppBarWithBackBtn(title: chapterName),
       body: Container(
         color: Colors.grey.shade100, // Light grey background for the page
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Consumer<QuizViewModel>(
-                builder: (context, model, child) {
-                  final quizzes = model.quizzes;
+        child: Consumer<QuizViewModel>(
+          builder: (context, model, child) {
+            if (model.isLoading) {
+              return const LoadingShimmer();
+            }
+            final quizzes = model.quizzes;
 
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          chapterName,
-                          style: GoogleFonts.comicNeue(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade900,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: quizzes.length,
-                            itemBuilder: (context, index) {
-                              final quiz = quizzes[index];
-                              return _buildQuizCard(quiz);
-                            },
-                          ),
-                        ),
-                      ],
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: quizzes.length,
+                      itemBuilder: (context, index) {
+                        final quiz = quizzes[index];
+                        return _buildQuizCard(quiz);
+                      },
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () =>
@@ -132,50 +110,17 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Quiz Question with Edit and Delete Icons
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: AutoSizeText(
                       '⭐ ${quiz.question}',
-                      style: GoogleFonts.comicNeue(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.blue.shade900,
-                      ),
-                      maxLines: 2,
+                      style: AppTheme.h4Style
+                          .copyWith(color: AppTheme.primaryColor),
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       minFontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Edit Button with Circular Background
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue.shade700),
-                      iconSize: 24,
-                      onPressed: () => GoRouter.of(context).push(
-                          '/admin/editQuiz/${widget.chapterId}/${quiz.quizzID}'),
-                      tooltip: 'Edit Quiz',
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Delete Button with Circular Background
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red.shade700),
-                      iconSize: 24,
-                      onPressed: () => _showDeleteConfirmationDialog(quiz),
-                      tooltip: 'Delete Quiz',
                     ),
                   ),
                 ],
@@ -217,7 +162,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                     },
                   ),
                 ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
               // Quiz Options with Icons
               ...quiz.options.asMap().entries.map((entry) {
@@ -256,10 +201,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                       Expanded(
                         child: Text(
                           option,
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.grey.shade800,
-                          ),
+                          style: AppTheme.h5Style,
                         ),
                       ),
                     ],
@@ -267,6 +209,26 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                 );
               }),
               const SizedBox(height: 12),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ActionButton(
+                    icon: Icons.edit,
+                    label: "Edit",
+                    color: Colors.green.shade800,
+                    onTap: () => GoRouter.of(context).push(
+                        '/admin/editQuiz/${widget.chapterId}/${quiz.quizzID}'),
+                  ),
+                  SizedBox(width: 8),
+                  ActionButton(
+                    icon: Icons.delete,
+                    label: "Delete",
+                    color: Colors.red.shade900,
+                    onTap: () => _showDeleteConfirmationDialog(quiz),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

@@ -22,10 +22,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
   void initState() {
     super.initState();
 
-    loadInitialData();
+    loadQuizData();
   }
 
-  Future<void> loadInitialData() async {
+  Future<void> loadQuizData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     await quizViewModel.fetchQuizzes(widget.chapterID);
   }
