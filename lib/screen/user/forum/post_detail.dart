@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common_widget/custom_dialog.dart';
+import 'package:fyp1/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +19,8 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
-  late Post post;
   late ForumViewModel forumViewModel;
+  late Post post;
   final TextEditingController _replyController = TextEditingController();
   late UserViewModel userViewModel;
 
@@ -25,16 +28,16 @@ class _PostDetailPageState extends State<PostDetailPage> {
   void initState() {
     super.initState();
 
-    _fetchPostDetails();
+    fetchPostDetails();
   }
 
-  Future<void> _fetchPostDetails() async {
+  Future<void> fetchPostDetails() async {
     try {
       userViewModel = Provider.of<UserViewModel>(context, listen: false);
       forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
-      final fetchedPost = await forumViewModel.fetchPostById(widget.postID);
+      await forumViewModel.fetchPostById(widget.postID);
       setState(() {
-        post = fetchedPost;
+        post = forumViewModel.post;
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,67 +48,67 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   void confirmDeleteReply(int index) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Delete Reply"),
-          content: const Text("Are you sure you want to delete this reply?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
+        context: context,
+        builder: (ctx) => CustomDialog(
+              ctx: ctx,
+              title: 'Delete Reply',
+              content: 'Are you sure you want to delete this reply?',
+              action: 'Alert',
+              onConfirm: () async {
                 setState(() {
                   post.replies.removeAt(index);
                 });
-                Provider.of<ForumViewModel>(context, listen: false)
-                    .deleteReply(post.postID!, index);
+
+                forumViewModel.deleteReply(post.postID!, index);
                 Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Reply deleted successfully!',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
               },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+            ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final ForumViewModel forumViewModel = Provider.of<ForumViewModel>(context);
-
     return Scaffold(
-       appBar: const AppBarWithBackBtn(
+      appBar: const AppBarWithBackBtn(
         title: 'Post Detail',
       ),
       body: forumViewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFFefeefb), Colors.white],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+          ? const LoadingShimmer()
+          : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPostHeader(post),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'Replies (${post.replies.length})',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPostHeader(post),
-                    const SizedBox(height: 16),
-                    _buildRepliesHeader(post),
-                    const SizedBox(height: 8),
-                    _buildRepliesList(post, forumViewModel),
-                    const SizedBox(height: 16),
-                    _buildReplyInputField(forumViewModel),
-                  ],
-                ),
-              ),
+                const SizedBox(height: 8),
+                _buildRepliesList(post, forumViewModel),
+                const SizedBox(height: 16),
+                _buildReplyInputField(forumViewModel),
+              ],
             ),
+          ),
     );
   }
 
@@ -143,8 +146,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Wong Xiu Ying",
+                    Text(
+                      post.creator,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -212,99 +215,69 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
   }
 
-  Widget _buildRepliesHeader(Post post) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Text(
-        'Replies (${post.replies.length})',
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
   Widget _buildRepliesList(Post post, ForumViewModel forumViewModel) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: post.replies.length,
-        itemBuilder: (context, index) {
-          var reply = post.replies[index];
-          return FutureBuilder<String>(
-            future: userViewModel.getUsername(reply.creator),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                String username = snapshot.data ?? 'Unknown User';
-                return _buildReplyCard(reply, username, index);
-              }
-            },
-          );
-        },
-      ),
-    );
-  }
+        child: ListView.builder(
+            itemCount: post.replies.length,
+            itemBuilder: (context, index) {
+              var reply = post.replies[index];
 
-  Widget _buildReplyCard(Reply reply, String username, int index) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(
-                "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
-              ),
-              backgroundColor: Colors.grey,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    username,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+              return Card(
+                elevation: 2,
+                margin: const EdgeInsets.only(bottom: 8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(
+                          "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
+                        ),
+                        backgroundColor: Colors.grey,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              reply.creator,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              reply.content,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (userViewModel.role == "admin")
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          color: const Color(0xFF757575),
+                          onPressed: () => confirmDeleteReply(index),
+                        ),
+                    ],
                   ),
-                  Text(
-                    "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    reply.content,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-            if (userViewModel.role == "admin")
-              IconButton(
-                icon: const Icon(Icons.delete),
-                color: const Color(0xFF757575),
-                onPressed: () => confirmDeleteReply(index),
-              ),
-          ],
-        ),
-      ),
-    );
+                ),
+              );
+            }));
   }
 
   Widget _buildReplyInputField(ForumViewModel forumViewModel) {

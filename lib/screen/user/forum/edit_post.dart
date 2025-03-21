@@ -5,11 +5,14 @@ import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/services/post_service.dart';
+import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+
+import 'package:provider/provider.dart';
 
 class EditPostPage extends StatefulWidget {
   final String postId; // Pass the post ID to edit
@@ -20,24 +23,29 @@ class EditPostPage extends StatefulWidget {
 }
 
 class _EditPostPageState extends State<EditPostPage> {
+    late ForumViewModel forumViewModel;
+      late UserViewModel userViewModel;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   List<File> _images = [];
   final _picker = ImagePicker();
-  late Post _post; // Store the post to be edited
+
 
   @override
   void initState() {
     super.initState();
-    _loadPost();
+    loadPosts();
   }
 
-  Future<void> _loadPost() async {
+  Future<void> loadPosts() async {
     try {
-      final forumViewModel = ForumViewModel();
-      _post = await forumViewModel.fetchPostById(widget.postId);
-      _titleController.text = _post.title;
-      _contentController.text = _post.content;
+        userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
+    
+    
+      await forumViewModel.fetchPostById(widget.postId);
+      _titleController.text =   forumViewModel.post.title;
+      _contentController.text = forumViewModel.post.content;
     } catch (e) {
       print('Error loading post: $e');
       ScaffoldMessenger.of(context)
@@ -83,7 +91,7 @@ class _EditPostPageState extends State<EditPostPage> {
         postID: widget.postId,
         title: _titleController.text,
         content: _contentController.text,
-        creator: _post.creator,
+        creator: forumViewModel.post.creator,
         timeCreated: DateTime.now(),
         images: imageUrls,
         editStatus: true,

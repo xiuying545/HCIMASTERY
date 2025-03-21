@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fyp1/model/post.dart';
@@ -76,7 +75,7 @@ class PostService {
 
   Future<List<Post>> fetchPosts() async {
     final snapshot = await _firestore.collection('Forum').get();
-    // createPredefinedPosts();
+
     return snapshot.docs
         .map((doc) {
           final data = doc.data();
@@ -85,17 +84,18 @@ class PostService {
               data['content'] != null &&
               data['creator'] != null) {
             return Post(
-              postID: doc.id,
-              title: data['title'],
-              creator: data['creator'],
-              images: (data['images'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-              content: data['content'],
-              editStatus: data['editStatus'] ?? false,
-              timeCreated: data['timeCreated'].toDate(),
-              likedByUserIds: List<String>.from(data['likes'] ?? []),
-              replies: List<Reply>.from(
-        (data['replies'] ?? []).map((replyData) => Reply.fromMap(replyData))
-            ));
+                postID: doc.id,
+                title: data['title'],
+                creator: data['creator'],
+                images: (data['images'] as List<dynamic>?)
+                    ?.map((e) => e.toString())
+                    .toList(),
+                content: data['content'],
+                editStatus: data['editStatus'] ?? false,
+                timeCreated: data['timeCreated'].toDate(),
+                likedByUserIds: List<String>.from(data['likes'] ?? []),
+                replies: List<Reply>.from((data['replies'] ?? [])
+                    .map((replyData) => Reply.fromMap(replyData))));
           } else {
             return null;
           }
@@ -148,7 +148,7 @@ class PostService {
 
   // Method to like a post
   Future<void> likePost(String postID, String userId) async {
-    final postRef = _firestore.collection('Forum').doc(postID.toString());
+    final postRef = _firestore.collection('Forum').doc(postID);
     await postRef.update({
       'likes': FieldValue.arrayUnion([userId]),
     });
@@ -202,23 +202,22 @@ class PostService {
   }
 
   Future<void> deleteReply(String postID, int replyIndex) async {
-  final postRef = _firestore.collection('Forum').doc(postID);
-  final postSnapshot = await postRef.get();
+    final postRef = _firestore.collection('Forum').doc(postID);
+    final postSnapshot = await postRef.get();
 
-  if (postSnapshot.exists) {
-    final data = postSnapshot.data() as Map<String, dynamic>;
-    final replies = List<Map<String, dynamic>>.from(data['replies'] ?? []);
+    if (postSnapshot.exists) {
+      final data = postSnapshot.data() as Map<String, dynamic>;
+      final replies = List<Map<String, dynamic>>.from(data['replies'] ?? []);
 
-    if (replyIndex >= 0 && replyIndex < replies.length) {
-      replies.removeAt(replyIndex);
+      if (replyIndex >= 0 && replyIndex < replies.length) {
+        replies.removeAt(replyIndex);
 
-      await postRef.update({'replies': replies});
+        await postRef.update({'replies': replies});
+      } else {
+        throw Exception('Reply index out of range');
+      }
     } else {
-      throw Exception('Reply index out of range');
+      throw Exception('Post not found');
     }
-  } else {
-    throw Exception('Post not found');
   }
-}
-
 }
