@@ -32,6 +32,8 @@ class _AdminNavBar extends State<AdminNavBar> {
 
     Provider.of<UserViewModel>(context, listen: false)
         .setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
+    Provider.of<UserViewModel>(context, listen: false)
+        .loadUser("0ZSgmWUYGOOzncPO3oiitqaekTM2");
     Provider.of<UserViewModel>(context, listen: false).role = "admin";
   }
 
@@ -45,7 +47,7 @@ class _AdminNavBar extends State<AdminNavBar> {
         case 1:
           return const ForumPage();
         case 2:
-          return  DesignChallengesPage();
+          return DesignChallengesPage();
         case 3:
           return const ProfilePage();
 
@@ -53,7 +55,8 @@ class _AdminNavBar extends State<AdminNavBar> {
           return const MainPage();
       }
     }
- return Scaffold(
+
+    return Scaffold(
       body: getBodyWidget(_selectedIndex),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

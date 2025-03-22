@@ -239,8 +239,8 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
   void _showDeleteConfirmationDialog(Quiz quiz) {
     showDialog(
         context: context,
-        builder: (ctx) => CustomDialog(
-              ctx: ctx,
+        builder: (context) => CustomDialog(
+
               title: 'Delete Quiz',
               content:
                   'Are you sure you want to delete this quiz? This action cannot be undone.',

@@ -31,6 +31,8 @@ class _StudentNavBar extends State<StudentNavBar> {
     // Set user ID (example)
     Provider.of<UserViewModel>(context, listen: false)
         .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
+                    Provider.of<UserViewModel>(context, listen: false)
+        .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
   }
 
   @override

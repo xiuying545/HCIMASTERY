@@ -4,7 +4,6 @@ class Post {
   final String? postID;
   final String title;
   String creator;
-  String? creatorProfileImg;
   final String content;
   final List<String>? images;
   final List<String> likedByUserIds;

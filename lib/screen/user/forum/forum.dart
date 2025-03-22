@@ -31,30 +31,24 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Future<void> loadPosts() async {
-    await forumViewModel.loadForumData(userViewModel.userId!);
+    await forumViewModel.loadForumData(userViewModel.user!);
   }
 
   Future<void> confirmDelete(String postID) async {
     showDialog(
         context: context,
-        builder: (ctx) => CustomDialog(
-              ctx: ctx,
+        builder: (context) => CustomDialog(
               title: 'Delete Post',
               content:
                   'Are you sure you want to delete this post? This action cannot be undone.',
               action: 'Alert',
-              onConfirm: () async {
+              onConfirm: () {
                 Navigator.of(context).pop();
-                await forumViewModel.deletePost(postID);
+                forumViewModel.deletePost(postID);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      'Post deleted successfully!',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
+                    content: Text('Post deleted successfully!',
+                        style: AppTheme.snackBarText),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -64,7 +58,7 @@ class _ForumPageState extends State<ForumPage> {
 
   @override
   Widget build(BuildContext context) {
-    final forumViewModel = Provider.of<ForumViewModel>(context, listen: true);
+    forumViewModel = Provider.of<ForumViewModel>(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -154,6 +148,12 @@ class _ForumPageState extends State<ForumPage> {
             if (model.isLoading) {
               return const LoadingShimmer();
             }
+            if (model.posts.isEmpty) {
+              return Expanded(
+                  child: Center(
+                      child:
+                          Text("No Post Available", style: AppTheme.h1Style)));
+            }
             return Expanded(
               child: showMyPosts
                   ? _buildMyPostsList(model)
@@ -242,7 +242,9 @@ class _ForumPageState extends State<ForumPage> {
                     CircleAvatar(
                       radius: 25,
                       backgroundImage: NetworkImage(
-                        post.creatorProfileImg!,
+                        forumViewModel
+                                .userMap[post.creator]?.profileImagePath ??
+                            "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                       ),
                       backgroundColor: Colors.grey,
                     ),
@@ -251,7 +253,8 @@ class _ForumPageState extends State<ForumPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          post.creator,
+                          forumViewModel.userMap[post.creator]?.name ??
+                              "unknown",
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -273,13 +276,12 @@ class _ForumPageState extends State<ForumPage> {
 
                 const SizedBox(height: 10),
                 // Post Content
-                Text(
-                  post.content,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.grey[800],
-                  ),
-                ),
+                Text(post.content, style: AppTheme.h5Style
+                    // style: GoogleFonts.poppins(
+                    //   fontSize: 16,
+                    //   color: Colors.grey[800],
+                    // ),
+                    ),
                 const SizedBox(height: 10),
                 // Post Image (if any)
                 if (post.images != null && post.images!.isNotEmpty)
@@ -338,10 +340,10 @@ class _ForumPageState extends State<ForumPage> {
                         if (postID != null) {
                           if (isLiked) {
                             await forumViewModel.unlikePost(
-                                postID, userViewModel.userId!);
+                                index, userViewModel.userId!);
                           } else {
                             await forumViewModel.likePost(
-                                postID, userViewModel.userId!);
+                                index, userViewModel.userId!);
                           }
                         }
                       },

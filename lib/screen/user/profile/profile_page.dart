@@ -40,8 +40,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showLogoutConfirmation() async {
     showDialog(
       context: context,
-      builder: (ctx) => CustomDialog(
-        ctx: ctx,
+      builder: (context) => CustomDialog(
+      
         title: 'Logout',
         content: 'Are you sure you want to logout?',
         action: 'Alert',
@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _showLogoutConfirmation, // Show confirmation dialog
+            onPressed: _showLogoutConfirmation, 
           ),
         ],
       ),

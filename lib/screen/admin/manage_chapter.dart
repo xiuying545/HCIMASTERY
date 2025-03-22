@@ -261,8 +261,8 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   void _showDeleteConfirmationDialog(Chapter chapter) {
     showDialog(
       context: context,
-      builder: (ctx) => CustomDialog(
-        ctx: ctx,
+      builder: (context) => CustomDialog(
+    
         title: 'Delete Chapter',
         content:
             'Are you sure you want to delete this chapter? This action cannot be undone.',

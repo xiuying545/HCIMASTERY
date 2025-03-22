@@ -291,8 +291,8 @@ class _QuizPageState extends State<QuizPage> {
   void _showCompletionDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => CustomDialog(
-        ctx: ctx,
+      builder: (context) => CustomDialog(
+
         title: 'Quiz Completed!',
         content:
             'You have completed the quiz! Do you want to submit your answers?',

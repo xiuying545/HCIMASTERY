@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomDialog extends StatelessWidget {
-  final BuildContext ctx;
+
 
   final VoidCallback onConfirm;
   final String title;
@@ -13,7 +13,7 @@ class CustomDialog extends StatelessWidget {
 
   const CustomDialog({
     super.key,
-    required this.ctx,
+
     required this.onConfirm,
     required this.title,
     required this.content,
@@ -78,7 +78,7 @@ class CustomDialog extends StatelessWidget {
               children: [
                 OutlinedButton(
                   onPressed: () {
-                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pop();
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

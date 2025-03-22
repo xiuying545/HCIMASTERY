@@ -247,7 +247,7 @@ class _ManageNotePage extends State<ManageNotePage> {
     showDialog(
       context: context,
       builder: (ctx) => CustomDialog(
-        ctx: ctx,
+
         title: 'Delete Note',
         content:
             'Are you sure you want to delete this note? This action cannot be undone.',

@@ -54,6 +54,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (mounted) {
         Provider.of<UserViewModel>(context, listen: false).setUserId(userId);
+        Provider.of<UserViewModel>(context, listen: false).loadUser(userId);
         String route = role == 'admin' ? '/adminNav' : '/studentNav';
         GoRouter.of(context).go(route);
       }

@@ -24,7 +24,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> loadUser(String userID) async {
-    _user = await _userService.getUserById(userID); // Load user by userID
+    _user = await _userService.getUserById(userID); 
     notifyListeners();
   }
 

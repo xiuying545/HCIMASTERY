@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common_widget/custom_dialog.dart';
 import 'package:fyp1/common_widget/loading_shimmer.dart';
@@ -49,8 +50,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   void confirmDeleteReply(int index) {
     showDialog(
         context: context,
-        builder: (ctx) => CustomDialog(
-              ctx: ctx,
+        builder: (context) => CustomDialog(
+      
               title: 'Delete Reply',
               content: 'Are you sure you want to delete this reply?',
               action: 'Alert',
@@ -96,10 +97,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     'Replies (${post.replies.length})',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                      style: AppTheme.h4Style,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -135,11 +133,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
             const SizedBox(height: 12),
             Row(
               children: [
-                const CircleAvatar(
+                 CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(
-                    "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
-                  ),
+                        forumViewModel.userMap[post.creator]?.profileImagePath ??  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+                      ),
                   backgroundColor: Colors.grey,
                 ),
                 const SizedBox(width: 12),
@@ -147,8 +145,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      post.creator,
-                      style: TextStyle(
+                     forumViewModel.userMap[post.creator]?.name ?? "unknown" ,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -233,10 +231,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      const CircleAvatar(
+                       CircleAvatar(
                         radius: 20,
                         backgroundImage: NetworkImage(
-                          "https://www.profilebakery.com/wp-content/uploads/2024/05/Profile-picture-created-with-ai.jpeg",
+                           forumViewModel.userMap[reply.creator]?.profileImagePath ??  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                         ),
                         backgroundColor: Colors.grey,
                       ),
@@ -246,7 +244,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              reply.creator,
+                             forumViewModel.userMap[reply.creator]?.name ??  "unknown",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
