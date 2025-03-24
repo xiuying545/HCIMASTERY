@@ -47,130 +47,116 @@ class _ManageNotePage extends State<ManageNotePage> {
         .chapterName;
 
     return Scaffold(
-      appBar: AppBarWithBackBtn(title: chapterName),
+      appBar: AppBarWithBackBtn(
+        title: chapterName,
+      ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
         final notes = model.notes;
         if (model.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            ),
+          );
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade700, Colors.blue.shade400],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Column(
-            children: [
-              // Top Section (Gradient Background with Image)
-              // Stack(
-              //   children: [
-              //     Container(
-              //       height: 300,
-              //       width: double.infinity,
-              //       decoration: BoxDecoration(
-              //         gradient: LinearGradient(
-              //           colors: [Colors.blue.shade700, Colors.blue.shade400],
-              //           begin: Alignment.topLeft,
-              //           end: Alignment.bottomRight,
-              //         ),
-              //       ),
-              //       child: Stack(
-              //         children: [
-              //           Positioned(
-              //             top: 50,
-              //             right: 40,
-              //             child: Image.asset(
-              //               'assets/Animation/teacher.png',
-              //               width: 300,
-              //               height: 300,
-              //             ),
-              //           ),
-              //           Positioned(
-              //             bottom: 20,
-              //             left: 20,
-              //             child: Text("List of Notes",
-              //                 style: AppTheme.h1Style
-              //                     .copyWith(color: Colors.white)),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     // Back Button
-              //     Positioned(
-              //       top: 40,
-              //       left: 20,
-              //       child: IconButton(
-              //         icon: const Icon(
-              //           Icons.arrow_back,
-              //           color: Colors.white,
-              //           size: 30,
-              //         ),
-              //         onPressed: () {
-              //           Navigator.of(context).pop();
-              //         },
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // Bottom Section (White with Rounded Corners)
-              Expanded(
-                // child: ClipRRect(
-                //   borderRadius: const BorderRadius.only(
-                //     topLeft: Radius.circular(30),
-                //     topRight: Radius.circular(30),
-                //   ),
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Chapter Name
-                      // Padding(
-                      //   padding: const EdgeInsets.only(
-                      //       left: 30, top: 20, bottom: 10),
-                      //   child: Text(chapterName, style: AppTheme.h1Style),
-                      // ),
-                      // Divider
-                      // const Divider(
-                      //   color: Colors.grey,
-                      //   thickness: 2,
-                      //   height: 0, // Remove extra space
-                      // ),
-                      // List of Notes
-                      Expanded(
-                        child: ReorderableListView.builder(
-                          padding: const EdgeInsets.only(top: 10),
-                          itemCount: notes.length,
-                          itemBuilder: (context, index) {
-                            final note = notes[index];
-                            return _buildNoteRow(note, index);
-                          },
-                          onReorder: (int oldIndex, int newIndex) {
-                            if (oldIndex < newIndex) {
-                              newIndex -= 1;
-                            }
-                            final Note item = notes.removeAt(oldIndex);
-                            notes.insert(newIndex, item);
-                          },
-                        ),
-                      ),
-                    ],
+        return Column(
+          children: [
+            // Header with chapter info
+            // Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            //   color: Colors.blue.shade700,
+            //   child: Row(
+            //     children: [
+            //       Icon(Icons.menu_book_rounded, color: Colors.white, size: 28),
+            //       SizedBox(width: 12),
+            //       Expanded(
+            //         child: Text(
+            //           chapterName,
+            //           style: GoogleFonts.poppins(
+            //             color: Colors.white,
+            //             fontSize: 18,
+            //             fontWeight: FontWeight.w600,
+            //           ),
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+            //       ),
+            //       Text(
+            //         '${notes.length} ${notes.length == 1 ? 'Note' : 'Notes'}',
+            //         style: GoogleFonts.poppins(
+            //           color: Colors.white.withOpacity(0.9),
+            //           fontSize: 14,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            // Notes list
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
                 ),
-                // ),
+                child: notes.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.note_add,
+                                size: 64, color: Colors.grey.shade400),
+                            SizedBox(height: 16),
+                            Text(
+                              'No notes yet',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey.shade600,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Tap the + button to add a new note',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey.shade500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ReorderableListView.builder(
+                        padding: const EdgeInsets.only(top: 16, bottom: 80),
+                        itemCount: notes.length,
+                        itemBuilder: (context, index) {
+                          final note = notes[index];
+                          return _buildNoteRow(note, index);
+                        },
+                        onReorder: (int oldIndex, int newIndex) {
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          final Note item = notes.removeAt(oldIndex);
+                          notes.insert(newIndex, item);
+                        },
+                      ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => GoRouter.of(context).push(
           '/admin/addNote/${widget.chapterId}',
         ),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: AppTheme.primaryColor,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         tooltip: 'Add Note',
         child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
@@ -178,70 +164,129 @@ class _ManageNotePage extends State<ManageNotePage> {
   }
 
   Widget _buildNoteRow(Note note, int index) {
-    return Card(
+    return Container(
       key: Key('$index'),
-      margin: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-      elevation: 4,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => GoRouter.of(context).push('/student/note/${note.noteID}'),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(children: [
+      child: Material(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () =>
+              GoRouter.of(context).push('/student/note/${note.noteID}'),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-            
+                    // Note icon
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.article,
+                        color: Colors.blue.shade700,
+                        size: 20,
+                      ),
+                    ),
+                    SizedBox(width: 12),
 
-                    // Note title
+                    // Note title and content preview
                     Expanded(
-                      child: Text('⭐ ${note.title}', style: AppTheme.h4Style.copyWith(color: AppTheme.primaryColor)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            note.title,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade800,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            note.content.length > 100
+                                ? '${note.content.substring(0, 100)}...'
+                                : note.content,
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
 
-                    // Action buttons
+                    // Drag handle
                     ReorderableDragStartListener(
                       index: index,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: Icon(Icons.drag_indicator_rounded,
-                         color: AppTheme.primaryColor, size: 30),
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Icon(
+                          Icons.drag_handle_rounded,
+                          color: Colors.grey.shade400,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // Edit button
 
-                    ActionButton(
-                      icon: Icons.edit,
-                      label: 'Edit',
-                      color: Colors.green.shade700,
-                      onTap: () => GoRouter.of(context).push(
-                          '/admin/editNote/${widget.chapterId}/${note.noteID}'),
-                    ),
-                    SizedBox(width: 10),
+                // Divider and action buttons
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    children: [
+                      Divider(height: 1, color: Colors.grey.shade200),
+                      SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Edit button
+                          ActionButton(
+                            icon: Icons.edit_outlined,
+                            label: 'Edit',
+                            color: Colors.blue.shade600,
+                            onTap: () => GoRouter.of(context).push(
+                                '/admin/editNote/${widget.chapterId}/${note.noteID}'),
+                          ),
+                          SizedBox(width: 8),
 
-                    // Delete button
-
-                    ActionButton(
-                      icon: Icons.delete,
-                      label: 'Delete',
-                      color: Colors.red.shade700,
-                      onTap: () => _showDeleteConfirmationDialog(note),
-                    ),
-                  ],
+                          // Delete button
+                          ActionButton(
+                            icon: Icons.delete_outline_rounded,
+                            label: 'Delete',
+                            color: Colors.red.shade600,
+                            onTap: () => _showDeleteConfirmationDialog(note),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ]),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -254,8 +299,8 @@ class _ManageNotePage extends State<ManageNotePage> {
       builder: (ctx) => CustomDialog(
         title: 'Delete Note',
         content:
-            'Are you sure you want to delete this note? This action cannot be undone.',
-        action: 'Alert',
+            'Are you sure you want to delete "${note.title}"? This action cannot be undone.',
+        action: 'Delete',
         onConfirm: () async {
           Navigator.of(context).pop(); // Close the dialog
           await Provider.of<NoteViewModel>(context, listen: false)
@@ -266,6 +311,10 @@ class _ManageNotePage extends State<ManageNotePage> {
                 content: Text('Note deleted successfully!',
                     style: AppTheme.snackBarText),
                 backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             );
           }

@@ -93,18 +93,26 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
   }
 
   Widget _buildQuizCard(Quiz quiz) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
+   return Container(
+
+      margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white,
-      child: InkWell(
+      child: Material(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          // Handle card tap
-        },
+        color: Colors.white,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+     
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -117,7 +125,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                     child: AutoSizeText(
                       '⭐ ${quiz.question}',
                       style: AppTheme.h4Style
-                          .copyWith(color: AppTheme.primaryColor),
+                          .copyWith(  color: Colors.blue.shade800),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       minFontSize: 16,
@@ -213,25 +221,29 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ActionButton(
-                    icon: Icons.edit,
-                    label: "Edit",
-                    color: Colors.green.shade800,
-                    onTap: () => GoRouter.of(context).push(
+                     ActionButton(
+                            icon: Icons.edit_outlined,
+                            label: 'Edit',
+                            color: Colors.blue.shade600,
+                           onTap: () => GoRouter.of(context).push(
                         '/admin/editQuiz/${widget.chapterId}/${quiz.quizzID}'),
-                  ),
-                  SizedBox(width: 8),
-                  ActionButton(
-                    icon: Icons.delete,
-                    label: "Delete",
-                    color: Colors.red.shade900,
-                    onTap: () => _showDeleteConfirmationDialog(quiz),
-                  ),
+                          ),
+                          SizedBox(width: 8),
+
+                          // Delete button
+                          ActionButton(
+                            icon: Icons.delete_outline_rounded,
+                            label: 'Delete',
+                            color: Colors.red.shade600,
+                            onTap: () => _showDeleteConfirmationDialog(quiz),
+                          ),
+                 
                 ],
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }
