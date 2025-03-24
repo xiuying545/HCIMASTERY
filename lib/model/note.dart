@@ -6,6 +6,7 @@ class Note {
   final String content;
   final List<String>? images;
   final List<String>? videoLink;
+  final int order;
 
   Note({
     this.noteID,
@@ -13,6 +14,7 @@ class Note {
     required this.content,
     this.images,
     this.videoLink,
+    required this.order,
   });
 
   factory Note.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Note {
       noteID: json['noteID'],
       title: json['title'] as String,
       content: json['content'] as String,
+      order : json ['order'] as int,
       images: List<String>.from(json['images'] ?? []),
       videoLink: List<String>.from(json['videoLink'] ?? []),
     );
@@ -30,6 +33,7 @@ class Note {
       'title': title,
       'content': content,
       'images': images,
+      'order' : order,
       'videoLink': videoLink,
     };
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -64,10 +65,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 return Center(
                   child: Text(
                     'No notes available.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: textColor,
-                    ),
+                   style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
                   ),
                 );
               }
@@ -117,11 +115,7 @@ class _NoteListPageState extends State<NoteListPage> {
                                       MediaQuery.of(context).size.width * 0.6,
                                   child: Text(
                                     chapter.chapterName,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                   style: AppTheme.h1Style.copyWith(color: Colors.white),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -165,12 +159,9 @@ class _NoteListPageState extends State<NoteListPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 30.0),
                                   child: Text(
+                                         style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
                                     "Course Detail",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor,
-                                    ),
+                                 
                                   ),
                                 ),
                                 const Divider(
@@ -245,11 +236,7 @@ class _NoteListPageState extends State<NoteListPage> {
                       children: [
                         Text(
                           note.title,
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
+                          style: AppTheme.h4Style,
                         ),
                       ],
                     ),
@@ -294,18 +281,14 @@ class _NoteListPageState extends State<NoteListPage> {
                       '/student/questionlist/${widget.chapterId}',
                     );
                   },
-                  child: const Padding(
+                  child:  Padding(
                     padding: EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Quiz",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                       style: AppTheme.h4Style,
                         ),
                         SizedBox(height: 4),
                       ],

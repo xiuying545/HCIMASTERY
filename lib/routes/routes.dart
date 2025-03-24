@@ -28,6 +28,7 @@ import 'package:fyp1/screen/user/profile/edit_profile.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
 import 'package:fyp1/screen/admin/admin_navbar.dart';
 import 'package:fyp1/screen/student/student_navbar.dart';
+import 'package:fyp1/screen/user/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router() {
@@ -41,12 +42,14 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-          return  const AdminNavBar();
+          return AdminNavBar();
+          // return   StudentNavBar(bottomIndex: 0,);
           // return  DesignChallengesPage();
+                      // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
-        //     return ManageNotesPage(chapterId: chapterId);
+            // return ManageNotesPage(chapterId: "1tVIMjWSBHWuKDGQLWIA");
         //   }
       ),
       GoRoute(

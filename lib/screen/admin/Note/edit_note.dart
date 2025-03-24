@@ -38,8 +38,10 @@ class _EditNotePageState extends State<EditNotePage> {
 
   Future<void> _fetchNoteData() async {
     try {
-      _existingNote =
-          await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
+
+         setState(() async {  _existingNote =
+          await noteViewModel.getNoteById(widget.chapterId, widget.noteId);});
+    
       if (_existingNote != null) {
         _titleController.text = _existingNote!.title;
         _contentController.text = _existingNote!.content;
@@ -47,7 +49,7 @@ class _EditNotePageState extends State<EditNotePage> {
                 ?.map((link) => TextEditingController(text: link))
                 .toList() ??
             [];
-        setState(() {}); // Refresh the UI
+      // Refresh the UI
       }
     } catch (e) {
       print('Error fetching note data: $e');
@@ -115,6 +117,7 @@ class _EditNotePageState extends State<EditNotePage> {
         content: _contentController.text,
         images: imageUrls,
         videoLink: videoLinks,
+        order : _existingNote!.order,
       );
 
       await noteViewModel.updateNote(widget.chapterId, updatedNote);

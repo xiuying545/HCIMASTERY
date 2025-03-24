@@ -152,7 +152,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                           Text(
                             chapter.chapterName,
                             style: GoogleFonts.poppins(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.w600,
                               color: Colors.blue.shade900,
                             ),
