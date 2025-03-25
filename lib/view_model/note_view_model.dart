@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/note_progress.dart';
@@ -10,11 +12,13 @@ class NoteViewModel extends ChangeNotifier {
 
   List<Chapter> _chapters = [];
   List<Note> _notes = [];
+  final Map<String, List<Note>> _notesByChapter = {};
 
   final List<NoteProgress> _studentProgress = [];
   bool _isLoading = false;
   late String _userId;
   String _chapterId = "";
+  final Map<String, Timer> _debounceTimers = {};
 
   // Getters
   List<Chapter> get chapters => _chapters;
@@ -26,8 +30,70 @@ class NoteViewModel extends ChangeNotifier {
   Future<void> setupChapterData(String userId) async {
     // _noteService.loadData();
     _userId = userId;
+
+    if (_chapters.isNotEmpty) {
+      return;
+    }
     await fetchChapters();
     await fetchProgress();
+  }
+
+  Future<void> setupChapterDataAdmin() async {
+    if (_chapters.isNotEmpty) {
+      return;
+    }
+    await fetchChapters();
+  }
+
+  // Fetch notes for a specific chapter
+  Future<void> fetchNotesForChapter(String chapterID,
+      {bool refresh = false}) async {
+    _chapterId = chapterID;
+    if (!refresh && _notesByChapter.containsKey(chapterID)) {
+      _notes = _notesByChapter[chapterID]!;
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _notes = await _noteService.getNotesForChapter(chapterID);
+
+      _notes.sort((a, b) => a.order.compareTo(b.order));
+      _notesByChapter[chapterID] = _notes;
+    } catch (e) {
+      print('Error fetching notes: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateNoteOrder(
+      List<Note> updatedNotes, String chapterId) async {
+    for (int i = 0; i < updatedNotes.length; i++) {
+      _notes[i].order = i;
+    }
+    _notes = updatedNotes;
+    notifyListeners();
+
+    _debounceTimers[chapterId]?.cancel();
+
+    _debounceTimers[chapterId] = Timer(
+      const Duration(seconds: 10),
+      () => saveUpdatedNoteToFirestore(updatedNotes, chapterId),
+    );
+  }
+
+  Future<void> saveUpdatedNoteToFirestore(
+      List<Note> updatedNotes, String chapterId) async {
+    try {
+      await _noteService.updateNoteOrder(updatedNotes, chapterId);
+      print('Note order updated successfully');
+    } catch (e) {
+      print('Error saving answer: $e');
+    } finally {}
   }
 
   // Fetch all chapters
@@ -53,8 +119,6 @@ class NoteViewModel extends ChangeNotifier {
             .add(_noteProgressService.getProgress(_userId, chapter.chapterID!));
       }
     }
-
-
 
     List<NoteProgress?> progressResults = await Future.wait(progressFutures);
 
@@ -83,13 +147,12 @@ class NoteViewModel extends ChangeNotifier {
               .length;
 
           completionRate =
-              (totalNotes > 0) ?  ((completedCount / totalNotes)) : 0.0;
+              (totalNotes > 0) ? ((completedCount / totalNotes)) : 0.0;
           progressMap[chapter.chapterID!] = completionRate;
         } else {
           progressMap[chapter.chapterID!] = 0;
         }
       }
- 
     } catch (e) {
       print("Error calculating progress: $e");
     }
@@ -101,7 +164,7 @@ class NoteViewModel extends ChangeNotifier {
     try {
       _chapterId = noteProgress.chapterID;
       // Update Firestore or backend service
-   
+
       await _noteProgressService.addOrUpdateProgress(noteProgress);
 
       // Check if student progress already exists for the same chapter
@@ -115,23 +178,8 @@ class NoteViewModel extends ChangeNotifier {
         // Add new progress
         _studentProgress.add(noteProgress);
       }
-  
     } catch (e) {
       print("Error updating note progress: $e");
-    }
-  }
-
-  // Fetch notes for a specific chapter
-  Future<void> fetchNotesForChapter(String chapterID) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      _notes = await _noteService.getNotesForChapter(chapterID);
-    } catch (e) {
-      print('Error fetching notes: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
   }
 

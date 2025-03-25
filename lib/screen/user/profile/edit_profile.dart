@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -161,6 +162,39 @@ Future<void> _pickImage() async {
               const SizedBox(height: 30),
               _buildInputField(Icons.email, "Email", _emailController),
               const SizedBox(height: 35),
+                  // Edit Password Button
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        GoRouter.of(context).push("/editPassword");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                        shadowColor: AppTheme.primaryColor.withOpacity(0.3),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.lock_outline, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Change Password",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
               // Save button
               ElevatedButton(

@@ -9,12 +9,12 @@ class InputDialog extends StatefulWidget {
   final void Function(String) onSave;
 
   const InputDialog({
-    Key? key,
+    super.key,
     required this.title,
     this.initialValue,
     required this.hintText,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _InputDialogState createState() => _InputDialogState();

@@ -6,7 +6,7 @@ class Note {
   final String content;
   final List<String>? images;
   final List<String>? videoLink;
-  final int order;
+   int order;
 
   Note({
     this.noteID,

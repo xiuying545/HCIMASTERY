@@ -13,6 +13,7 @@ class ForumViewModel extends ChangeNotifier {
   final Map<String, bool> _isLikedByUser = {};
   Map<String, Profile> _userMap = {};
   bool _isLoading = false;
+  String _userId = "";
 
   List<Post> get posts => _posts;
   Post get post => _post;
@@ -34,17 +35,18 @@ class ForumViewModel extends ChangeNotifier {
   }
 
   Future<void> loadForumData(Profile newUser) async {
+    if (_posts.isNotEmpty) {
+      return;
+    }
     _isLoading = true;
     notifyListeners();
     try {
       await fetchPost();
 
       _userMap[newUser.userId!] = newUser;
+      _userId = newUser.userId!;
 
-// pass in indexrectly
-      for (var post in _posts) {
-        _isLikedByUser[post.postID!] = post.likedByUserIds.contains(newUser.userId);
-      }
+      print('Done fetching posts for forum ');
     } catch (e) {
       print('Error fetching posts: $e');
     }
@@ -62,6 +64,10 @@ class ForumViewModel extends ChangeNotifier {
               [post.creator, ...post.replies.map((reply) => reply.creator)])
           .toSet();
       _userMap = await _userService.fetchUsersByIds(creatorIds);
+
+      for (var post in _posts) {
+        _isLikedByUser[post.postID!] = post.likedByUserIds.contains(_userId);
+      }
     } catch (e) {
       print('Error fetching posts: $e');
     }

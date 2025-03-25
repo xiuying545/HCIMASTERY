@@ -27,7 +27,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   Future<void> loadQuizData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    await quizViewModel.fetchQuizzes(widget.chapterID);
+    await quizViewModel.fetchQuizData(widget.chapterID);
   }
 
   @override
@@ -57,7 +57,11 @@ class _QuestionListPageState extends State<QuestionListPage> {
               ),
             );
           } else {
-            return Container(
+           return  RefreshIndicator(
+                onRefresh: () async {
+                  await quizViewModel.fetchQuizData(widget.chapterID, refresh: true);
+                },
+                child:  Container(
               color: const Color(0xFFf5f5f5),
               child: ListView.builder(
                 itemCount: quizViewModel.quizzes.length,
@@ -120,7 +124,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                   );
                 },
               ),
-            );
+            ));
           }
         },
       ),

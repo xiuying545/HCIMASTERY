@@ -20,6 +20,7 @@ class ManageNotePage extends StatefulWidget {
 
 class _ManageNotePage extends State<ManageNotePage> {
   late String chapterName;
+  late NoteViewModel noteViewModel;
 
   @override
   void initState() {
@@ -27,9 +28,17 @@ class _ManageNotePage extends State<ManageNotePage> {
     fetchNoteData();
   }
 
+  // @override
+  // void dispose() {
+  //   noteViewModel.debounceTimer?.cancel();
+  //   noteViewModel.saveUpdatedNoteToFirestore(
+  //       noteViewModel.notes, noteViewModel.chapterId);
+  //   super.dispose();
+  // }
+
   Future<void> fetchNoteData() async {
-    await Provider.of<NoteViewModel>(context, listen: false)
-        .fetchNotesForChapter(widget.chapterId);
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+    await noteViewModel.fetchNotesForChapter(widget.chapterId);
   }
 
   @override
@@ -60,93 +69,68 @@ class _ManageNotePage extends State<ManageNotePage> {
           );
         }
 
-        return Column(
-          children: [
-            // Header with chapter info
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            //   color: Colors.blue.shade700,
-            //   child: Row(
-            //     children: [
-            //       Icon(Icons.menu_book_rounded, color: Colors.white, size: 28),
-            //       SizedBox(width: 12),
-            //       Expanded(
-            //         child: Text(
-            //           chapterName,
-            //           style: GoogleFonts.poppins(
-            //             color: Colors.white,
-            //             fontSize: 18,
-            //             fontWeight: FontWeight.w600,
-            //           ),
-            //           overflow: TextOverflow.ellipsis,
-            //         ),
-            //       ),
-            //       Text(
-            //         '${notes.length} ${notes.length == 1 ? 'Note' : 'Notes'}',
-            //         style: GoogleFonts.poppins(
-            //           color: Colors.white.withOpacity(0.9),
-            //           fontSize: 14,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
-            // Notes list
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+        return RefreshIndicator(
+            onRefresh: () async {
+              await model.fetchNotesForChapter(widget.chapterId, refresh: true);
+            },
+            child: Column(
+              children: [
+                // Notes list
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    child: notes.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.note_add,
+                                    size: 64, color: Colors.grey.shade400),
+                                SizedBox(height: 16),
+                                Text(
+                                  'No notes yet',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Tap the + button to add a new note',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ReorderableListView.builder(
+                            padding: const EdgeInsets.only(top: 16, bottom: 80),
+                            itemCount: notes.length,
+                            itemBuilder: (context, index) {
+                              final note = notes[index];
+                              return _buildNoteRow(note, index);
+                            },
+                            onReorder: (int oldIndex, int newIndex) {
+                              if (oldIndex < newIndex) {
+                                newIndex -= 1;
+                              }
+                              final Note item = notes.removeAt(oldIndex);
+                              notes.insert(newIndex, item);
+                              model.updateNoteOrder(notes, widget.chapterId);
+                            },
+                          ),
                   ),
                 ),
-                child: notes.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.note_add,
-                                size: 64, color: Colors.grey.shade400),
-                            SizedBox(height: 16),
-                            Text(
-                              'No notes yet',
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey.shade600,
-                                fontSize: 18,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Tap the + button to add a new note',
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey.shade500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ReorderableListView.builder(
-                        padding: const EdgeInsets.only(top: 16, bottom: 80),
-                        itemCount: notes.length,
-                        itemBuilder: (context, index) {
-                          final note = notes[index];
-                          return _buildNoteRow(note, index);
-                        },
-                        onReorder: (int oldIndex, int newIndex) {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          final Note item = notes.removeAt(oldIndex);
-                          notes.insert(newIndex, item);
-                        },
-                      ),
-              ),
-            ),
-          ],
-        );
+              ],
+            ));
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => GoRouter.of(context).push(
@@ -224,14 +208,14 @@ class _ManageNotePage extends State<ManageNotePage> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            note.content.length > 100
-                                ? '${note.content.substring(0, 100)}...'
+                            note.content.length > 300
+                                ? '${note.content.substring(0, 300)}...'
                                 : note.content,
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               color: Colors.grey.shade600,
                             ),
-                            maxLines: 2,
+                            maxLines: 6,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],

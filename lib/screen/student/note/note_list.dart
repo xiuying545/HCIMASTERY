@@ -3,7 +3,6 @@ import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../view_model/note_view_model.dart';
 import '../../../model/note.dart';
@@ -40,14 +39,14 @@ class _NoteListPageState extends State<NoteListPage> {
         (chapter) => chapter.chapterID == widget.chapterId,
       );
 
-    noteProgress = noteViewModel.studentProgress.firstWhere(
-  (studentProgress) => studentProgress.chapterID == widget.chapterId,
-  orElse: () => NoteProgress(
-    studentID: userViewModel.userId!,
-    chapterID: widget.chapterId,
-    progress: {},
-  ),
-);
+      noteProgress = noteViewModel.studentProgress.firstWhere(
+        (studentProgress) => studentProgress.chapterID == widget.chapterId,
+        orElse: () => NoteProgress(
+          studentID: userViewModel.userId!,
+          chapterID: widget.chapterId,
+          progress: {},
+        ),
+      );
       print("chapter $chapter, noteprogress $noteProgress");
       isLoading = false;
     });
@@ -65,7 +64,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 return Center(
                   child: Text(
                     'No notes available.',
-                   style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
+                    style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
                   ),
                 );
               }
@@ -115,7 +114,8 @@ class _NoteListPageState extends State<NoteListPage> {
                                       MediaQuery.of(context).size.width * 0.6,
                                   child: Text(
                                     chapter.chapterName,
-                   style: AppTheme.h1Style.copyWith(color: Colors.white),
+                                    style: AppTheme.h1Style
+                                        .copyWith(color: Colors.white),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -143,44 +143,52 @@ class _NoteListPageState extends State<NoteListPage> {
                     ),
                     // Bottom Section (White with Rounded Corners)
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                        child: Container(
-                          color: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 30.0),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30.0),
-                                  child: Text(
-                                         style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
-                                    "Course Detail",
-                                 
+                   
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                             
+                          child: Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 30.0),
+                            child: RefreshIndicator(
+                        onRefresh: () async {
+                          await model.fetchNotesForChapter(widget.chapterId,
+                              refresh: true);
+                        },
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30.0),
+                                    child: Text(
+                                      style: AppTheme.h2Style
+                                          .copyWith(color: AppTheme.textColor),
+                                      "Course Detail",
+                                    ),
                                   ),
-                                ),
-                                const Divider(
-                                  color: Colors.grey,
-                                  thickness: 2,
-                                  height: 20,
-                                ),
-                                const SizedBox(height: 10),
-                                // Step Indicator for Notes
-                                ...List.generate(
-                                  notes.length,
-                                  (index) => _buildNoteProgress(
-                                    note: notes[index],
-                                    index: index,
-                                    totalNotes: notes.length,
+                                  const Divider(
+                                    color: Colors.grey,
+                                    thickness: 2,
+                                    height: 20,
                                   ),
-                                ),
-                                _buildQuizProgress(),
-                              ],
+                                  const SizedBox(height: 10),
+                                  // Step Indicator for Notes
+                                  ...List.generate(
+                                    notes.length,
+                                    (index) => _buildNoteProgress(
+                                      note: notes[index],
+                                      index: index,
+                                      totalNotes: notes.length,
+                                    ),
+                                  ),
+                                  _buildQuizProgress(),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -281,16 +289,16 @@ class _NoteListPageState extends State<NoteListPage> {
                       '/student/questionlist/${widget.chapterId}',
                     );
                   },
-                  child:  Padding(
-                    padding: EdgeInsets.all(12.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Quiz",
-                       style: AppTheme.h4Style,
+                          style: AppTheme.h4Style,
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                       ],
                     ),
                   ),

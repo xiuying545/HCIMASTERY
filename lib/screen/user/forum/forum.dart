@@ -155,9 +155,14 @@ class _ForumPageState extends State<ForumPage> {
                           Text("No Post Available", style: AppTheme.h1Style)));
             }
             return Expanded(
-              child: showMyPosts
-                  ? _buildMyPostsList(model)
-                  : _buildPostsList(model),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await model.fetchPost();
+                },
+                child: showMyPosts
+                    ? _buildMyPostsList(model)
+                    : _buildPostsList(model),
+              ),
             );
           })
         ],
@@ -174,14 +179,12 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Widget _buildPostsList(ForumViewModel forumViewModel) {
-    return Container(
+    return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
-        itemCount: forumViewModel.posts.length,
-        itemBuilder: (context, index) {
-          return _buildPostCard(forumViewModel.posts[index], forumViewModel);
-        },
-      ),
+      itemCount: forumViewModel.posts.length,
+      itemBuilder: (context, index) {
+        return _buildPostCard(forumViewModel.posts[index], forumViewModel);
+      },
     );
   }
 
@@ -191,15 +194,13 @@ class _ForumPageState extends State<ForumPage> {
         .where((post) => post.creator == userViewModel.userId)
         .toList();
 
-    return Container(
+    return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
-        itemCount: myPosts.length,
-        itemBuilder: (context, index) {
-          var post = myPosts[index];
-          return _buildPostCard(post, forumViewModel);
-        },
-      ),
+      itemCount: myPosts.length,
+      itemBuilder: (context, index) {
+        var post = myPosts[index];
+        return _buildPostCard(post, forumViewModel);
+      },
     );
   }
 
@@ -361,7 +362,7 @@ class _ForumPageState extends State<ForumPage> {
                     const Icon(Icons.comment, color: Color(0xFF757575)),
                     const SizedBox(width: 5),
                     Text(
-                      '${forumViewModel.posts[index].replies.length} comments',
+                      '${forumViewModel.posts[index].replies.length} replies',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: const Color(0xFF757575),

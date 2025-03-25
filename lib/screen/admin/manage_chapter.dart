@@ -28,7 +28,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
 
   Future<void> fetchChapterData() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
-    await noteViewModel.fetchChapters();
+    await noteViewModel.setupChapterDataAdmin();
   }
 
   @override
@@ -97,14 +97,18 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                 }
 
                 final chapters = model.chapters;
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: chapters.length,
-                  itemBuilder: (context, index) {
-                    final chapter = chapters[index];
-                    return _buildChapterCard(chapter);
-                  },
-                );
+                return RefreshIndicator(
+                    onRefresh: () async {
+                      await model.fetchChapters();
+                    },
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: chapters.length,
+                      itemBuilder: (context, index) {
+                        final chapter = chapters[index];
+                        return _buildChapterCard(chapter);
+                      },
+                    ));
               },
             ),
           ),
@@ -211,7 +215,6 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
     );
   }
 
-
   void _navigateToManageNotes(Chapter chapter) {
     GoRouter.of(context).push('/admin/manageNote/${chapter.chapterID}');
   }
@@ -262,7 +265,6 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
     showDialog(
       context: context,
       builder: (context) => CustomDialog(
-    
         title: 'Delete Chapter',
         content:
             'Are you sure you want to delete this chapter? This action cannot be undone.',

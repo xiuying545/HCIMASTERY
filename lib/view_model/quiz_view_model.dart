@@ -15,6 +15,7 @@ class QuizViewModel extends ChangeNotifier {
 
   final String _chapterName = "unknown";
   List<Quiz> _quizzes = [];
+  final Map<String, List<Quiz>> _quizzesByChapter = {};
   int _score = 0;
   bool _isLoading = false;
   late String _userId;
@@ -38,14 +39,32 @@ class QuizViewModel extends ChangeNotifier {
   Future<void> loadData(String userId, String chapterId) async {
     _userId = userId;
     _chapterId = chapterId;
+    try {
+      fetchQuizData(chapterId);
+    } catch (e) {
+      print('Error retrieving answer: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+
+  Future<void> fetchQuizData(String chapterId, {bool refresh = false}) async {
+    if (!refresh && _quizzesByChapter.containsKey(chapterId)) {
+      _quizzes = _quizzesByChapter[chapterId]!;
+      notifyListeners();
+      return;
+    }
     _isLoading = true;
     notifyListeners();
 
     try {
       _quizzes = await _quizService.getQuizzesByChapter(chapterId);
-
+      _quizzesByChapter[chapterId] = _quizzes;
       _cachedAnswers =
-          await _quizAnswerService.getChapterAnswers(userId, chapterId);
+          await _quizAnswerService.getChapterAnswers(_userId, chapterId);
     } catch (e) {
       print('Error retrieving answer: $e');
     } finally {
@@ -70,7 +89,6 @@ class QuizViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-     
       await _quizAnswerService.saveMultipleQuizAnswers(
           _userId, _chapterId, _cachedAnswers);
       print('Answer saved successfully');
@@ -80,18 +98,9 @@ class QuizViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-
   }
 
-  Future<void> fetchQuizzes(String chapter) async {
-    _isLoading = true;
-    notifyListeners();
 
-    _quizzes = await _quizService.getQuizzesByChapter(chapter);
-
-    _isLoading = false;
-    notifyListeners();
-  }
 
   Future<Quiz> getQuizById(String chapterID, String quizId) async {
     _isLoading = true;
@@ -137,9 +146,8 @@ class QuizViewModel extends ChangeNotifier {
       // } else {
       //   _score = 0.0; // Avoid division by zero
       // }
- _score = correctAnswers;
+      _score = correctAnswers;
       print('Score calculated: $_score');
-      
     } catch (e) {
       print('Error calculating score: $e');
       _score = 0; // Reset score in case of error

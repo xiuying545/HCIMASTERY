@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/custom_dialog.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +42,6 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => CustomDialog(
-      
         title: 'Logout',
         content: 'Are you sure you want to logout?',
         action: 'Alert',
@@ -57,181 +57,300 @@ class _ProfilePageState extends State<ProfilePage> {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     await userViewModel.logout(context);
     if (mounted) {
-      GoRouter.of(context).go('/signIn'); // Navigate to the sign-in page
+      GoRouter.of(context).go('/signIn');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final userViewModel = context.watch<UserViewModel>();
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.blue[30],
       appBar: AppBar(
         title: Text(
-          "Profile",
+          "My Profile",
           style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.blue.shade900,
-        elevation: 2,
+        backgroundColor: AppTheme.primaryColor,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _showLogoutConfirmation, 
+            onPressed: _showLogoutConfirmation,
           ),
         ],
       ),
-      body: Center(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (_isLoading)
-                    const Center(child: CircularProgressIndicator()),
-                  if (_hasError)
-                    Center(
-                      child: Text(
-                        "Failed to load profile. Please try again.",
-                        style: GoogleFonts.poppins(
-                            fontSize: 18, color: Colors.red),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+
+                // Loading State
+                if (_isLoading)
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              AppTheme.primaryColor),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Loading your profile...",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // Error State
+                if (_hasError)
+                  Center(
+                    child: Column(
+                      children: [
+                        // Image.asset(
+                        //   'assets/images/error_robot.png', // Replace with your error image
+                        //   height: 120,
+                        // ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Oops! Something went wrong",
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                     
+                      ],
+                    ),
+                  ),
+
+                if (!_isLoading &&
+                    !_hasError &&
+                    userViewModel.user != null) ...[
+                  // Profile Picture with Fun Frame
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        )
+                      ],
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
                       ),
                     ),
-                  if (!_isLoading &&
-                      !_hasError &&
-                      userViewModel.user != null) ...[
-                    CircleAvatar(
-                      radius: 60,
+                    child: CircleAvatar(
+                      radius: size.width * 0.18,
+                      backgroundColor: Colors.grey[200],
                       backgroundImage: userViewModel.user?.profileImagePath !=
                               null
                           ? NetworkImage(userViewModel.user!.profileImagePath!)
                           : const NetworkImage(
                               "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
-                      backgroundColor: Colors.white,
                     ),
-                    const SizedBox(height: 40),
+                  ),
 
-                    // Name
-                    _buildInfoRow(
-                        Icons.person, "Name", userViewModel.user!.name),
-                    const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                    // Phone
-                    _buildInfoRow(Icons.phone, "Phone",
-                        userViewModel.user!.phone ?? "N/A"),
-                    const SizedBox(height: 20),
+                  // Name with Star Decoration
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        userViewModel.user!.name,
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                    ],
+                  ),
 
-                    // Email
-                    _buildInfoRow(
-                        Icons.email, "Email", userViewModel.user!.email),
-                    const SizedBox(height: 35),
+                  const SizedBox(height: 8),
 
-                    // Edit Password Button
-                    _buildButton(
-                      text: "Edit Password",
-                      onPressed: () {
-                        GoRouter.of(context).push("/editPassword");
-                      },
-                      icon: Icons.lock,
-                      color: Colors.blue.shade400,
+                  // Email with Mail Icon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.mail_outline,
+                          color: Colors.blue, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        userViewModel.user!.email,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  _buildChildInfoCard(
+                    icon: Icons.school,
+                    title: "Username",
+                    value: userViewModel.user!.username ?? "Not set yet",
+                    color: Colors.blue,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildChildInfoCard(
+                    icon: Icons.phone,
+                    title: "Phone Number",
+                    value: userViewModel.user!.phone ?? "Not set yet",
+                    color: Colors.green,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildChildInfoCard(
+                    icon: Icons.email_rounded,
+                    title: "Email",
+                    value: userViewModel.user!.email ??
+                        "Not set yet", // Replace with actual data
+                    color: Colors.purple,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Edit Button with Fun Shape
+                  ElevatedButton(
+                    onPressed: () {
+                      GoRouter.of(context)
+                          .push("/editProfile/${userViewModel.userId!}");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.blue.withOpacity(0.3),
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.edit, color: Colors.white, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Edit My Profile',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 32),
                 ],
-              ),
+              ],
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          GoRouter.of(context).push("/editProfile/${userViewModel.userId!}");
-        },
-        backgroundColor: Colors.blue.shade900,
-        child: const Icon(Icons.edit, color: Colors.white),
-      ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String title, String value) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade50, Colors.blue.shade50],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: Colors.blue.shade900, size: 26),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade900,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildButton({
-    required String text,
-    required VoidCallback onPressed,
+  Widget _buildChildInfoCard({
     required IconData icon,
-    Color color = Colors.blue,
+    required String title,
+    required String value,
+    required Color color,
   }) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 20),
-        label: Text(
-          text,
-          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        style: ElevatedButton.styleFrom(
-          elevation: 2,
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        ],
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
         ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -13,8 +13,7 @@ class UserViewModel extends ChangeNotifier {
   String? get userId => _userId;
   String? get role => _role;
 
-
- set role(String? role) {
+  set role(String? role) {
     _role = role;
   }
 
@@ -24,7 +23,11 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> loadUser(String userID) async {
-    _user = await _userService.getUserById(userID); 
+    if (_user != null) {
+      return;
+    }
+
+    _user = await _userService.getUserById(userID);
     notifyListeners();
   }
 
@@ -51,18 +54,15 @@ class UserViewModel extends ChangeNotifier {
     return _role;
   }
 
-
   Future<String> getUsername(String userId) async {
-   return await _userService.getUserName(userId);
+    return await _userService.getUserName(userId);
   }
-
-
 
   Future<void> logout(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.signOut(); 
+      await FirebaseAuth.instance.signOut();
       _userId = null;
-      _user = null; 
+      _user = null;
       _role = null;
       notifyListeners();
 

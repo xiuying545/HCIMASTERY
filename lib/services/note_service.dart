@@ -159,6 +159,27 @@ class ChapterService {
     }
   }
 
+
+  //update note order
+  Future<void> updateNoteOrder(List<Note> notes, String chapterId) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  WriteBatch batch = firestore.batch();
+
+  for (int i = 0; i < notes.length; i++) {
+    DocumentReference docRef = firestore
+        .collection('Chapters')
+        .doc(chapterId)
+        .collection('Notes')
+        .doc(notes[i].noteID);
+
+    batch.update(docRef, {'order': i}); 
+  }
+
+  await batch.commit();
+  print("✅ Note order updated successfully!");
+}
+
+
   // Delete a chapter (including its notes)
   Future<void> deleteChapter(String chapterID) async {
     try {
