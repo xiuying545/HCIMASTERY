@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/action_button.dart';
+import 'package:fyp1/common_widget/banner.dart';
 import 'package:fyp1/common_widget/custom_dialog.dart';
 import 'package:fyp1/common_widget/input_dialog.dart';
 import 'package:fyp1/common_widget/loading_shimmer.dart';
@@ -50,8 +51,16 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
               ),
             ),
           ),
+          SizedBox(height: 20,),
           // Banner Section
-          _buildBanner(),
+          CustomBanner(
+            title: "Manage your notes\nthrough\nHCI Mastery",
+            imagePath: 'assets/Animation/chapter.png',
+            onPressed: () {
+              // Handle the button press
+            },
+          ),
+           SizedBox(height: 25,),
           // Chapters Heading
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -1,5 +1,7 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -9,12 +11,15 @@ import 'package:fyp1/routes/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Enable Crashlytics logging
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  await StorageHelper.init();
 
   runApp(const MyApp());
 }

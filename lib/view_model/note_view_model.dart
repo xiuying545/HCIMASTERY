@@ -57,6 +57,7 @@ class NoteViewModel extends ChangeNotifier {
 
     _isLoading = true;
     notifyListeners();
+
     try {
       _notes = await _noteService.getNotesForChapter(chapterID);
 
@@ -235,7 +236,12 @@ class NoteViewModel extends ChangeNotifier {
   Future<void> addNoteToChapter(String chapterID, Note note) async {
     try {
       await _noteService.addNoteToChapter(chapterID, note);
-      await fetchNotesForChapter(chapterID);
+      if (_notesByChapter[chapterID] != null) {
+        _notesByChapter[chapterID]!.add(note);
+      } else {
+        _notesByChapter[chapterID] = [note];
+      }
+      await fetchNotesForChapter(chapterID,refresh: true);
     } catch (e) {
       print('Error adding note: $e');
       notifyListeners();
@@ -245,6 +251,17 @@ class NoteViewModel extends ChangeNotifier {
   Future<void> updateNote(String chapterID, Note note) async {
     try {
       await _noteService.updateNote(chapterID, note);
+      if (_notesByChapter[chapterID] != null) {
+        int index = _notesByChapter[chapterID]!
+            .indexWhere((n) => n.noteID == note.noteID);
+        if (index != -1) {
+          _notesByChapter[chapterID]![index] = note;
+        } else {
+          _notesByChapter[chapterID]!.add(note);
+        }
+      } else {
+        _notesByChapter[chapterID] = [note];
+      }
       await fetchNotesForChapter(chapterID);
     } catch (e) {
       print('Error updating note: $e');
@@ -255,7 +272,16 @@ class NoteViewModel extends ChangeNotifier {
   Future<void> deleteNote(String chapterID, String noteID) async {
     try {
       await _noteService.deleteNote(chapterID, noteID);
-      await fetchNotesForChapter(chapterID);
+
+      if (_notesByChapter[chapterID] != null) {
+        _notesByChapter[chapterID]!
+            .removeWhere((note) => note.noteID == noteID);
+        await fetchNotesForChapter(chapterID);
+        saveUpdatedNoteToFirestore(_notesByChapter[chapterID]!, chapterId);
+        if (_notesByChapter[chapterID]!.isEmpty) {
+          _notesByChapter.remove(chapterID);
+        }
+      }
     } catch (e) {
       print('Error deleting note: $e');
       notifyListeners();

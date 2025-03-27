@@ -41,7 +41,7 @@ dependencies:
   google_fonts: ^6.2.1
   cloud_firestore: ^4.17.5
   provider: ^6.1.2
-  shared_preferences: ^2.0.14
+  shared_preferences: ^2.3.3
   google_sign_in: ^6.2.1
   image_picker: ^1.1.0
   intl: ^0.19.0
@@ -53,6 +53,8 @@ dependencies:
   youtube_player_flutter: ^8.1.0
   flutter_colorpicker: ^1.0.3
   tutorial_coach_mark: ^1.2.13
+  firebase_crashlytics: ^3.5.7
+  firebase_analytics: ^10.10.7
 
 
 
@@ -95,6 +97,7 @@ flutter:
   - assets/Animation/design2.png
   - assets/Animation/design3.png
   - assets/Animation/gamelogo.png
+  - assets/Animation/error.gif
 
 
   # To add assets to your application, add an assets section, like this:

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_widget/input_field_icon.dart';
+import 'package:fyp1/common_widget/custom_input_field.dart';
 import 'package:go_router/go_router.dart';
 
 class EditPasswordScreen extends StatefulWidget {
@@ -16,9 +16,6 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
-  bool _obscureCurrentPassword = true;
-  bool _obscureNewPassword = true;
-  bool _obscureConfirmPassword = true;
 
   Future<void> _updatePassword() async {
     if (!_formKey.currentState!.validate()) return;

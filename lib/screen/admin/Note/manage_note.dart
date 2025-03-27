@@ -60,7 +60,7 @@ class _ManageNotePage extends State<ManageNotePage> {
         title: chapterName,
       ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
-        final notes = model.notes;
+
         if (model.isLoading) {
           return const Center(
             child: CircularProgressIndicator(
@@ -85,7 +85,7 @@ class _ManageNotePage extends State<ManageNotePage> {
                         topRight: Radius.circular(24),
                       ),
                     ),
-                    child: notes.isEmpty
+                    child: model.notes.isEmpty
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -113,18 +113,18 @@ class _ManageNotePage extends State<ManageNotePage> {
                           )
                         : ReorderableListView.builder(
                             padding: const EdgeInsets.only(top: 16, bottom: 80),
-                            itemCount: notes.length,
+                            itemCount: model.notes.length,
                             itemBuilder: (context, index) {
-                              final note = notes[index];
+                              final note = model.notes[index];
                               return _buildNoteRow(note, index);
                             },
                             onReorder: (int oldIndex, int newIndex) {
                               if (oldIndex < newIndex) {
                                 newIndex -= 1;
                               }
-                              final Note item = notes.removeAt(oldIndex);
-                              notes.insert(newIndex, item);
-                              model.updateNoteOrder(notes, widget.chapterId);
+                              final Note item = model.notes.removeAt(oldIndex);
+                              model.notes.insert(newIndex, item);
+                              model.updateNoteOrder(model.notes, widget.chapterId);
                             },
                           ),
                   ),
@@ -280,22 +280,22 @@ class _ManageNotePage extends State<ManageNotePage> {
   void _showDeleteConfirmationDialog(Note note) {
     showDialog(
       context: context,
-      builder: (ctx) => CustomDialog(
+      builder: (context) => CustomDialog(
         title: 'Delete Note',
         content:
             'Are you sure you want to delete "${note.title}"? This action cannot be undone.',
         action: 'Delete',
         onConfirm: () async {
-          Navigator.of(context).pop(); // Close the dialog
-          await Provider.of<NoteViewModel>(context, listen: false)
-              .deleteNote(widget.chapterId, note.noteID!);
+         Navigator.of(context).pop(); 
+          await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
+           
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Note deleted successfully!',
                     style: AppTheme.snackBarText),
                 backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
+     
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

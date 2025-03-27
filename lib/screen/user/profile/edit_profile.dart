@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/app_bar_with_back.dart';
-import 'package:fyp1/common_widget/input_field_icon.dart';
+import 'package:fyp1/common_widget/custom_input_field.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';

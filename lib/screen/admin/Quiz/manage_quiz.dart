@@ -259,10 +259,10 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
               action: 'Alert',
               onConfirm: () async {
                 Navigator.of(context).pop();
-                //todo
-                // await Provider.of<QuizViewModel>(context, listen: false)
-                //     .deleteQuiz(quiz.id!);
-                ScaffoldMessenger.of(context).showSnackBar(
+
+                await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
+                if(mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
                       'Quiz deleted successfully!',
@@ -274,6 +274,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                     backgroundColor: Colors.green,
                   ),
                 );
+                }
               },
             ));
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp1/main.dart';
 import 'package:fyp1/screen/admin/Quiz/add_quiz.dart';
 import 'package:fyp1/screen/admin/Quiz/edit_quiz.dart';
 import 'package:fyp1/screen/admin/Note/add_note.dart';
@@ -13,6 +14,7 @@ import 'package:fyp1/screen/student/note/note_detail.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/user/authenication/login.dart';
 import 'package:fyp1/screen/user/authenication/register.dart';
+import 'package:fyp1/screen/user/error_page.dart';
 import 'package:fyp1/screen/user/forum/edit_post.dart';
 import 'package:fyp1/screen/user/forum/post_detail.dart';
 import 'package:fyp1/screen/user/forum/add_post.dart';
@@ -34,6 +36,7 @@ import 'package:go_router/go_router.dart';
 GoRouter router() {
   return GoRouter(
     initialLocation: '/',
+     navigatorKey: navigatorKey,
     routes: [
       GoRoute(
         path: '/',
@@ -42,9 +45,10 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-               return  SplashScreen();
+              //  return  SplashScreen();
           // return const AdminNavBar();
           // return   StudentNavBar(bottomIndex: 3,);
+          return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
                       // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
@@ -53,6 +57,7 @@ GoRouter router() {
             // return ManageNotesPage(chapterId: "1tVIMjWSBHWuKDGQLWIA");
         //   }
       ),
+      
       GoRoute(
         path: '/admin/addNote/:chapterId',
         builder: (context, state) {

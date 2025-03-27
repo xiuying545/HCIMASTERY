@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_widget/input_field_icon.dart';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common_widget/custom_input_field.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _obscurePassword = true;
+
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -48,6 +49,7 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       String? role = await Provider.of<UserViewModel>(context, listen: false)
           .getUserRole(userId);
+    
       if (role == null) {
         _showSnackBar("User role not found.");
         return;
@@ -59,6 +61,10 @@ class _SignInScreenState extends State<SignInScreen> {
         String route = role == 'admin' ? '/adminNav' : '/studentNav';
         GoRouter.of(context).go(route);
       }
+
+      await StorageHelper.set("USER_ID", userId); 
+      await StorageHelper.set("ROLE", role); 
+      await StorageHelper.set("STATUS", "LOGIN"); 
     } catch (e) {
       _showSnackBar("Error retrieving user role.");
     }

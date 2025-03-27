@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   List<Map<String, String>> splashData = [
     {
-      "text": "Welcome to EduConnect! Empower your learning journey.",
+      "text": "Welcome to HCIMastery! Empower your learning journey.",
       "image": "assets/SplashScreen1.png"
     },
     {

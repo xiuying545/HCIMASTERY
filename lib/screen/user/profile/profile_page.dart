@@ -14,8 +14,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool _isLoading = true;
-  bool _hasError = false;
+
+late UserViewModel userViewModel;
 
   @override
   void initState() {
@@ -25,17 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadProfile() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    try {
       await userViewModel.loadUser(userViewModel.userId!);
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _hasError = true;
-      });
-    }
   }
 
   Future<void> _showLogoutConfirmation() async {
@@ -54,7 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _logout() async {
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     await userViewModel.logout(context);
     if (mounted) {
       GoRouter.of(context).go('/signIn');
@@ -63,7 +52,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = context.watch<UserViewModel>();
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -96,8 +84,8 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 const SizedBox(height: 20),
 
-                // Loading State
-                if (_isLoading)
+                // When is fetching the profile data
+                if (userViewModel.isLoading)
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -118,34 +106,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
 
-                // Error State
-                if (_hasError)
-                  Center(
-                    child: Column(
-                      children: [
-                        // Image.asset(
-                        //   'assets/images/error_robot.png', // Replace with your error image
-                        //   height: 120,
-                        // ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Oops! Something went wrong",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                     
-                      ],
-                    ),
-                  ),
+             
 
-                if (!_isLoading &&
-                    !_hasError &&
-                    userViewModel.user != null) ...[
-                  // Profile Picture with Fun Frame
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -179,18 +141,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 20),
-                      const SizedBox(width: 8),
+                      // const Icon(Icons.star, color: Colors.amber, size: 20),
+                      // const SizedBox(width: 8),
                       Text(
                         userViewModel.user!.name,
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.deepPurple,
+                        style: AppTheme.h2Style
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                   
+                      // const SizedBox(width: 8),
+                      // const Icon(Icons.star, color: Colors.amber, size: 20),
                     ],
                   ),
 
@@ -279,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   const SizedBox(height: 32),
                 ],
-              ],
+          
             ),
           ),
         ),

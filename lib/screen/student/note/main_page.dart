@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/banner.dart';
 import 'package:fyp1/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -42,7 +43,14 @@ class _MainPageState extends State<MainPage> {
             height: 20,
           ),
           _buildHeader(),
-          _buildBanner(),
+
+          CustomBanner(
+            title: "Explore, Learn,\nand Master HCI\nusing HCI Mastery",
+            imagePath: 'assets/Animation/child.png',
+            onPressed: () {
+              // Handle the button press
+            },
+          ),
           const SizedBox(height: 20),
           Expanded(child: _buildCoursesSection()),
         ],

@@ -40,7 +40,10 @@ class QuizViewModel extends ChangeNotifier {
     _userId = userId;
     _chapterId = chapterId;
     try {
-      fetchQuizData(chapterId);
+      await Future.wait([
+        fetchQuizData(chapterId),
+        fetchUserAnswers(chapterId),
+      ]);
     } catch (e) {
       print('Error retrieving answer: $e');
     } finally {
@@ -49,7 +52,14 @@ class QuizViewModel extends ChangeNotifier {
     }
   }
 
-
+  Future<void> fetchUserAnswers(String chapterId) async {
+    try {
+      _cachedAnswers =
+          await _quizAnswerService.getChapterAnswers(_userId, chapterId);
+    } catch (e) {
+      print('Error retrieving user answer: $e');
+    }
+  }
 
   Future<void> fetchQuizData(String chapterId, {bool refresh = false}) async {
     if (!refresh && _quizzesByChapter.containsKey(chapterId)) {
@@ -63,8 +73,6 @@ class QuizViewModel extends ChangeNotifier {
     try {
       _quizzes = await _quizService.getQuizzesByChapter(chapterId);
       _quizzesByChapter[chapterId] = _quizzes;
-      _cachedAnswers =
-          await _quizAnswerService.getChapterAnswers(_userId, chapterId);
     } catch (e) {
       print('Error retrieving answer: $e');
     } finally {
@@ -99,8 +107,6 @@ class QuizViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 
   Future<Quiz> getQuizById(String chapterID, String quizId) async {
     _isLoading = true;
@@ -165,6 +171,7 @@ class QuizViewModel extends ChangeNotifier {
 
     try {
       await _quizService.addQuizToChapter(chapterId, quiz);
+      await fetchQuizData(chapterId, refresh: true);
     } catch (e) {
       print('Error adding quiz: $e');
     } finally {
@@ -181,6 +188,7 @@ class QuizViewModel extends ChangeNotifier {
 
     try {
       await _quizService.updateQuiz(chapterId, quizId, updatedQuiz);
+      await fetchQuizData(chapterId, refresh: true);
     } catch (e) {
       print('Error updating quiz: $e');
     } finally {
@@ -196,6 +204,7 @@ class QuizViewModel extends ChangeNotifier {
 
     try {
       await _quizService.deleteQuiz(chapterId, quizId);
+      await fetchQuizData(chapterId, refresh: true);
     } catch (e) {
       print('Error deleting quiz: $e');
     } finally {

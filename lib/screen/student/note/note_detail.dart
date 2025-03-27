@@ -21,7 +21,6 @@ class _NotePageState extends State<NotePage> {
   late Note currentNote;
   late AudioPlayer _audioPlayer;
   late NoteViewModel noteViewModel;
-  late UserViewModel userViewModel;
   bool isPlaying = false;
   late String audioUrl;
   List<YoutubePlayerController> _youtubeControllers = [];
@@ -44,7 +43,6 @@ class _NotePageState extends State<NotePage> {
 
   Future<void> _loadNote() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
     setState(() {
       currentNote = noteViewModel.notes.firstWhere((note) => note.noteID == widget.noteID);

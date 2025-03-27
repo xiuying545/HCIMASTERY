@@ -12,7 +12,6 @@ class CustomDialog extends StatelessWidget {
 
   const CustomDialog({
     super.key,
-
     required this.onConfirm,
     required this.title,
     required this.content,
