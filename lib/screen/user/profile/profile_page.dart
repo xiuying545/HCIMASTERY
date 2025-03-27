@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common_style/app_theme.dart';
 import 'package:fyp1/common_widget/custom_dialog.dart';
@@ -14,18 +15,28 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-late UserViewModel userViewModel;
+  late UserViewModel userViewModel;
 
   @override
   void initState() {
     super.initState();
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     _loadProfile();
   }
 
   Future<void> _loadProfile() async {
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    if (userViewModel.userId != null) {
       await userViewModel.loadUser(userViewModel.userId!);
+    } else {
+      print("nulll valueee");
+      String errorMessage = "User ID is null";
+
+      // Log error in Firebase Crashlytics
+      FirebaseCrashlytics.instance.recordError(
+        Exception(errorMessage),
+        StackTrace.current,
+      );
+    }
   }
 
   Future<void> _showLogoutConfirmation() async {
@@ -106,139 +117,133 @@ late UserViewModel userViewModel;
                     ),
                   ),
 
-             
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 4),
+                      )
+                    ],
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 4,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: size.width * 0.18,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: userViewModel.user?.profileImagePath !=
+                            null
+                        ? NetworkImage(userViewModel.user!.profileImagePath!)
+                        : const NetworkImage(
+                            "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
+                  ),
+                ),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 4,
+                const SizedBox(height: 16),
+
+                // Name with Star Decoration
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // const Icon(Icons.star, color: Colors.amber, size: 20),
+                    // const SizedBox(width: 8),
+                    Text( userViewModel.user != null ? userViewModel.user!.name : 'User', style: AppTheme.h2Style),
+
+                    // const SizedBox(width: 8),
+                    // const Icon(Icons.star, color: Colors.amber, size: 20),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // Email with Mail Icon
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.mail_outline,
+                        color: Colors.blue, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      userViewModel.user!.email,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
                       ),
                     ),
-                    child: CircleAvatar(
-                      radius: size.width * 0.18,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: userViewModel.user?.profileImagePath !=
-                              null
-                          ? NetworkImage(userViewModel.user!.profileImagePath!)
-                          : const NetworkImage(
-                              "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+                _buildChildInfoCard(
+                  icon: Icons.school,
+                  title: "Username",
+                  value: userViewModel.user!.username ?? "Not set yet",
+                  color: Colors.blue,
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildChildInfoCard(
+                  icon: Icons.phone,
+                  title: "Phone Number",
+                  value: userViewModel.user!.phone ?? "Not set yet",
+                  color: Colors.green,
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildChildInfoCard(
+                  icon: Icons.email_rounded,
+                  title: "Email",
+                  value: userViewModel.user!.email ??
+                      "Not set yet", // Replace with actual data
+                  color: Colors.purple,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Edit Button with Fun Shape
+                ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context)
+                        .push("/editProfile/${userViewModel.userId!}");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    elevation: 4,
+                    shadowColor: Colors.blue.withOpacity(0.3),
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // Name with Star Decoration
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // const Icon(Icons.star, color: Colors.amber, size: 20),
-                      // const SizedBox(width: 8),
-                      Text(
-                        userViewModel.user!.name,
-                        style: AppTheme.h2Style
-                        ),
-                   
-                      // const SizedBox(width: 8),
-                      // const Icon(Icons.star, color: Colors.amber, size: 20),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Email with Mail Icon
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.mail_outline,
-                          color: Colors.blue, size: 16),
+                      const Icon(Icons.edit, color: Colors.white, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        userViewModel.user!.email,
+                        'Edit My Profile',
                         style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
+                ),
 
-                  const SizedBox(height: 24),
-                  _buildChildInfoCard(
-                    icon: Icons.school,
-                    title: "Username",
-                    value: userViewModel.user!.username ?? "Not set yet",
-                    color: Colors.blue,
-                  ),
+                const SizedBox(height: 16),
 
-                  const SizedBox(height: 16),
-
-                  _buildChildInfoCard(
-                    icon: Icons.phone,
-                    title: "Phone Number",
-                    value: userViewModel.user!.phone ?? "Not set yet",
-                    color: Colors.green,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  _buildChildInfoCard(
-                    icon: Icons.email_rounded,
-                    title: "Email",
-                    value: userViewModel.user!.email ??
-                        "Not set yet", // Replace with actual data
-                    color: Colors.purple,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Edit Button with Fun Shape
-                  ElevatedButton(
-                    onPressed: () {
-                      GoRouter.of(context)
-                          .push("/editProfile/${userViewModel.userId!}");
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 4,
-                      shadowColor: Colors.blue.withOpacity(0.3),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.edit, color: Colors.white, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Edit My Profile',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  const SizedBox(height: 32),
-                ],
-          
+                const SizedBox(height: 32),
+              ],
             ),
           ),
         ),

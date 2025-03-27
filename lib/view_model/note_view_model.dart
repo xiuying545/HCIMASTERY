@@ -1,21 +1,19 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/services/note_progress_service.dart';
 import 'package:fyp1/services/note_service.dart';
+import 'package:fyp1/view_model/base_view_model.dart';
 
-class NoteViewModel extends ChangeNotifier {
+class NoteViewModel extends BaseViewModel {
   final ChapterService _noteService = ChapterService();
   final NoteProgressService _noteProgressService = NoteProgressService();
 
   List<Chapter> _chapters = [];
   List<Note> _notes = [];
   final Map<String, List<Note>> _notesByChapter = {};
-
   final List<NoteProgress> _studentProgress = [];
-  bool _isLoading = false;
   late String _userId;
   String _chapterId = "";
   final Map<String, Timer> _debounceTimers = {};
@@ -23,29 +21,33 @@ class NoteViewModel extends ChangeNotifier {
   // Getters
   List<Chapter> get chapters => _chapters;
   List<Note> get notes => _notes;
-  bool get isLoading => _isLoading;
   List<NoteProgress> get studentProgress => _studentProgress;
   String get chapterId => _chapterId;
 
-  Future<void> setupChapterData(String userId) async {
-    // _noteService.loadData();
-    _userId = userId;
-
-    if (_chapters.isNotEmpty) {
-      return;
+  @override
+  void dispose() {
+    for (var timer in _debounceTimers.values) {
+      timer.cancel();
     }
+
+    for (var entry in _debounceTimers.entries) {
+      saveUpdatedNoteToFirestore(_notesByChapter[entry.key]!, entry.key);
+    }
+    super.dispose();
+  }
+
+  Future<void> setupChapterData(String userId) async {
+    _userId = userId;
+    if (_chapters.isNotEmpty) return;
     await fetchChapters();
     await fetchProgress();
   }
 
   Future<void> setupChapterDataAdmin() async {
-    if (_chapters.isNotEmpty) {
-      return;
-    }
+    if (_chapters.isNotEmpty) return;
     await fetchChapters();
   }
 
-  // Fetch notes for a specific chapter
   Future<void> fetchNotesForChapter(String chapterID,
       {bool refresh = false}) async {
     _chapterId = chapterID;
@@ -54,21 +56,11 @@ class NoteViewModel extends ChangeNotifier {
       notifyListeners();
       return;
     }
-
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      _notes = await _noteService.getNotesForChapter(chapterID);
-
-      _notes.sort((a, b) => a.order.compareTo(b.order));
-      _notesByChapter[chapterID] = _notes;
-    } catch (e) {
-      print('Error fetching notes: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    setLoading(true);
+    _notes = await _noteService.getNotesForChapter(chapterID);
+    _notes.sort((a, b) => a.order.compareTo(b.order));
+    _notesByChapter[chapterID] = _notes;
+    setLoading(false);
   }
 
   Future<void> updateNoteOrder(
@@ -78,54 +70,31 @@ class NoteViewModel extends ChangeNotifier {
     }
     _notes = updatedNotes;
     notifyListeners();
-
     _debounceTimers[chapterId]?.cancel();
-
-    _debounceTimers[chapterId] = Timer(
-      const Duration(seconds: 10),
-      () => saveUpdatedNoteToFirestore(updatedNotes, chapterId),
-    );
+    _debounceTimers[chapterId] = Timer(const Duration(seconds: 10),
+        () => saveUpdatedNoteToFirestore(updatedNotes, chapterId));
   }
 
   Future<void> saveUpdatedNoteToFirestore(
       List<Note> updatedNotes, String chapterId) async {
-    try {
-      await _noteService.updateNoteOrder(updatedNotes, chapterId);
-      print('Note order updated successfully');
-    } catch (e) {
-      print('Error saving answer: $e');
-    } finally {}
+    await _noteService.updateNoteOrder(updatedNotes, chapterId);
   }
 
-  // Fetch all chapters
   Future<void> fetchChapters() async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      _chapters = await _noteService.getChapters();
-    } catch (e) {
-      print('Error fetching chapters: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    setLoading(true);
+    _chapters = await _noteService.getChapters();
+    setLoading(false);
   }
 
   Future<void> fetchProgress() async {
-    List<Future<NoteProgress?>> progressFutures = [];
-    _isLoading = true;
-    for (var chapter in _chapters) {
-      if (chapter.chapterID != null) {
-        progressFutures
-            .add(_noteProgressService.getProgress(_userId, chapter.chapterID!));
-      }
-    }
-
-    List<NoteProgress?> progressResults = await Future.wait(progressFutures);
-
-    _studentProgress.addAll(progressResults.whereType<NoteProgress>());
-
-    _isLoading = false;
+    setLoading(true);
+    List<Future<NoteProgress?>> progressFutures = _chapters
+        .map((chapter) =>
+            _noteProgressService.getProgress(_userId, chapter.chapterID!))
+        .toList();
+    _studentProgress
+        .addAll((await Future.wait(progressFutures)).whereType<NoteProgress>());
+    setLoading(false);
   }
 
   // Calculate progress for each chapter
@@ -162,129 +131,64 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   Future<void> updateNoteProgress(NoteProgress noteProgress) async {
-    try {
-      _chapterId = noteProgress.chapterID;
-      // Update Firestore or backend service
-
-      await _noteProgressService.addOrUpdateProgress(noteProgress);
-
-      // Check if student progress already exists for the same chapter
-      int index = _studentProgress.indexWhere(
-          (progress) => progress.chapterID == noteProgress.chapterID);
-
-      if (index != -1) {
-        // Update existing progress
-        _studentProgress[index] = noteProgress;
-      } else {
-        // Add new progress
-        _studentProgress.add(noteProgress);
-      }
-    } catch (e) {
-      print("Error updating note progress: $e");
+    _chapterId = noteProgress.chapterID;
+    await _noteProgressService.addOrUpdateProgress(noteProgress);
+    int index = _studentProgress
+        .indexWhere((progress) => progress.chapterID == noteProgress.chapterID);
+    if (index != -1) {
+      _studentProgress[index] = noteProgress;
+    } else {
+      _studentProgress.add(noteProgress);
     }
   }
 
-  // Fetch a specific note by ID
   Future<Note?> getNoteById(String chapterID, String noteID) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      return await _noteService.getNoteById(chapterID, noteID);
-    } catch (e) {
-      print('Error fetching note by id: $e');
-      return null;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+    return await tryFunction<Note?>(() async {
+      setLoading(true);
+      Note? note = await _noteService.getNoteById(chapterID, noteID);
+      setLoading(false);
+      return note;
+    });
   }
 
-  // CRUD operations for chapters
   Future<void> addChapter(Chapter chapter) async {
-    try {
+    await tryFunction(() async {
       await _noteService.addChapter(chapter);
       await fetchChapters();
-    } catch (e) {
-      print('Error adding chapters: $e');
-      notifyListeners();
-    }
+    });
   }
 
   Future<void> deleteChapter(String chapterID) async {
-    try {
+    await tryFunction(() async {
       await _noteService.deleteChapter(chapterID);
       await fetchChapters();
-    } catch (e) {
-      print('Error deleting chapters: $e');
-      notifyListeners();
-    }
+    });
   }
 
   Future<void> updateChapterName(
       String chapterID, String newChapterName) async {
-    try {
+    await tryFunction(() async {
       await _noteService.updateChapterName(chapterID, newChapterName);
       await fetchChapters();
-    } catch (e) {
-      print('Error updating chapters name: $e');
-      notifyListeners();
-    }
+    });
   }
 
-  // CRUD operations for notes
   Future<void> addNoteToChapter(String chapterID, Note note) async {
-    try {
+    await tryFunction(() async {
       await _noteService.addNoteToChapter(chapterID, note);
-      if (_notesByChapter[chapterID] != null) {
-        _notesByChapter[chapterID]!.add(note);
-      } else {
-        _notesByChapter[chapterID] = [note];
-      }
-      await fetchNotesForChapter(chapterID,refresh: true);
-    } catch (e) {
-      print('Error adding note: $e');
-      notifyListeners();
-    }
+      await fetchNotesForChapter(chapterID, refresh: true);
+    });
   }
 
   Future<void> updateNote(String chapterID, Note note) async {
-    try {
-      await _noteService.updateNote(chapterID, note);
-      if (_notesByChapter[chapterID] != null) {
-        int index = _notesByChapter[chapterID]!
-            .indexWhere((n) => n.noteID == note.noteID);
-        if (index != -1) {
-          _notesByChapter[chapterID]![index] = note;
-        } else {
-          _notesByChapter[chapterID]!.add(note);
-        }
-      } else {
-        _notesByChapter[chapterID] = [note];
-      }
-      await fetchNotesForChapter(chapterID);
-    } catch (e) {
-      print('Error updating note: $e');
-      notifyListeners();
-    }
+    await _noteService.updateNote(chapterID, note);
+    await fetchNotesForChapter(chapterID, refresh: true);
   }
 
   Future<void> deleteNote(String chapterID, String noteID) async {
-    try {
+    await tryFunction(() async {
       await _noteService.deleteNote(chapterID, noteID);
-
-      if (_notesByChapter[chapterID] != null) {
-        _notesByChapter[chapterID]!
-            .removeWhere((note) => note.noteID == noteID);
-        await fetchNotesForChapter(chapterID);
-        saveUpdatedNoteToFirestore(_notesByChapter[chapterID]!, chapterId);
-        if (_notesByChapter[chapterID]!.isEmpty) {
-          _notesByChapter.remove(chapterID);
-        }
-      }
-    } catch (e) {
-      print('Error deleting note: $e');
-      notifyListeners();
-    }
+      await fetchNotesForChapter(chapterID, refresh: true);
+    });
   }
 }

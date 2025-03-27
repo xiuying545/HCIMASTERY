@@ -30,33 +30,31 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+ # Firebase dependencies
+  firebase_core: ^3.12.1
+  firebase_crashlytics: ^4.3.4
+  firebase_auth: ^5.5.1
+  firebase_storage: ^12.4.4
+  cloud_firestore: ^5.6.5
+  firebase_analytics: ^11.4.4
+
+  # Other essential packages
   go_router: ^14.3.0
   auto_size_text: ^3.0.0
-  fl_chart: ^0.55.2
+  fl_chart: ^0.70.2
   percent_indicator: ^4.2.2
-  firebase_auth: ^4.19.1
-  firebase_storage: ^11.7.4
   cupertino_icons: ^1.0.6
-  firebase_core: ^2.28.0
   google_fonts: ^6.2.1
-  cloud_firestore: ^4.17.5
   provider: ^6.1.2
-  shared_preferences: ^2.3.3
+  shared_preferences: ^2.5.3
   google_sign_in: ^6.2.1
   image_picker: ^1.1.0
-  intl: ^0.19.0
-  cached_network_image: ^3.0.0
-  weekly_calendar: ^0.1.2
-  horizontal_week_calendar: ^0.0.18
-  audioplayers: ^6.1.0
+  intl: ^0.20.2
+  audioplayers: ^6.4.0
   video_player: ^2.5.1
-  youtube_player_flutter: 9.0.4
+  youtube_player_flutter: ^9.1.1
   flutter_colorpicker: ^1.0.3
   tutorial_coach_mark: ^1.2.13
-  firebase_crashlytics: ^3.5.7
-  firebase_analytics: ^10.10.7
-  flutter_inappwebview: ^6.0.0
-
 
 
 dev_dependencies:

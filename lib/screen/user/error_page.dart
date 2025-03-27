@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 class ErrorPage extends StatelessWidget {
   final String errorMessage;
-  
+
   const ErrorPage({Key? key, required this.errorMessage}) : super(key: key);
 
   @override
@@ -48,7 +48,8 @@ class ErrorPage extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange[400],
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -63,8 +64,8 @@ class ErrorPage extends StatelessWidget {
                 //   }
                 // },
                 onPressed: () {
-    throw Exception("Test Crash");
-  },
+                  throw Exception("Test Crash");
+                },
                 child: const Text(
                   'Go Back Home',
                   style: TextStyle(

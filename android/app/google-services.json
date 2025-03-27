@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009963429547",
+    "project_id": "hcimastery",
+    "storage_bucket": "hcimastery.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009963429547:android:80796894c99ca55e1811ee",
+        "android_client_info": {
+          "package_name": "com.example.fyp1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP76VLssqiTosEaibGPd7s7yLnk4BPCbw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
