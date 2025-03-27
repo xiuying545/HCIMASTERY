@@ -44,7 +44,7 @@ late UserViewModel userViewModel;
   }
 
   Future<void> _logout() async {
-    await userViewModel.logout(context);
+    await userViewModel.logout();
     if (mounted) {
       GoRouter.of(context).go('/signIn');
     }

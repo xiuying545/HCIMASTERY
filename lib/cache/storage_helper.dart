@@ -7,7 +7,7 @@ class StorageHelper {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  static Future<String?> get(String key) async {
+  static String? get(String key) {
     return _prefs?.getString(key);
   }
 

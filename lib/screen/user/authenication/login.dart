@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common_widget/custom_input_field.dart';
@@ -14,11 +15,17 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  late UserViewModel userViewModel;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+  }
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -46,27 +53,30 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _redirectUserBasedOnRole(String userId) async {
-    try {
-      String? role = await Provider.of<UserViewModel>(context, listen: false)
-          .getUserRole(userId);
-    
-      if (role == null) {
-        _showSnackBar("User role not found.");
-        return;
-      }
-
-      if (mounted) {
-        Provider.of<UserViewModel>(context, listen: false).setUserId(userId);
-        Provider.of<UserViewModel>(context, listen: false).loadUser(userId);
-        String route = role == 'admin' ? '/adminNav' : '/studentNav';
+    if (mounted) {
+      userViewModel.setUserId(userId);
+      userViewModel.loadUser(userId);
+      String route;
+      if (userViewModel.user?.role == 'admin') {
+        route = '/adminNav';
         GoRouter.of(context).go(route);
-      }
+      } else if (userViewModel.user?.role == 'student') {
+        route = '/studentNav';
+        GoRouter.of(context).go(route);
+      } else {
+        String errorMessage =
+            "User role is invalid: ${userViewModel.user?.role ?? 'null'}";
 
-      await StorageHelper.set("USER_ID", userId); 
-      await StorageHelper.set("ROLE", role); 
-      await StorageHelper.set("STATUS", "LOGIN"); 
-    } catch (e) {
-      _showSnackBar("Error retrieving user role.");
+        // Log error in Firebase Crashlytics
+        FirebaseCrashlytics.instance.recordError(
+          Exception(errorMessage),
+          StackTrace.current,
+        );
+      }
+      
+      await StorageHelper.set("USER_ID", userId);
+      await StorageHelper.set("ROLE", userViewModel.user!.role);
+      await StorageHelper.set("STATUS", "LOGIN");
     }
   }
 
@@ -138,7 +148,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         CustomInputField(
                           label: "Email",
                           controller: _emailController,
-                       
                         ),
                         const SizedBox(height: 16), // Padding
 
@@ -146,7 +155,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           label: "Password",
                           controller: _passwordController,
                           isSecure: true,
-                          
                         ),
                         const SizedBox(height: 36),
                         ElevatedButton(

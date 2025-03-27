@@ -50,11 +50,12 @@ dependencies:
   horizontal_week_calendar: ^0.0.18
   audioplayers: ^6.1.0
   video_player: ^2.5.1
-  youtube_player_flutter: ^8.1.0
+  youtube_player_flutter: 9.0.4
   flutter_colorpicker: ^1.0.3
   tutorial_coach_mark: ^1.2.13
   firebase_crashlytics: ^3.5.7
   firebase_analytics: ^10.10.7
+  flutter_inappwebview: ^6.0.0
 
 
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:go_router/go_router.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -54,7 +55,12 @@ class ErrorPage extends StatelessWidget {
                   elevation: 5,
                 ),
                 // onPressed: () {
-                // GoRouter.of(context).go('/main');
+                //   if(StorageHelper.get("STATUS")=="LOGIN") {
+                //     GoRouter.of(context).go('/main');
+                //   }
+                //   else{
+                //     GoRouter.of(context).go('/login');
+                //   }
                 // },
                 onPressed: () {
     throw Exception("Test Crash");

@@ -1,80 +1,65 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/services/user_service.dart';
 import 'package:go_router/go_router.dart';
+import '../main.dart'; // Import where navigatorKey is defined
 
 class UserViewModel extends ChangeNotifier {
-  //Variable
   final UserService _userService = UserService();
+
   Profile? _user;
   String? _userId;
   String? role;
+
   bool _isLoading = false;
   bool _isError = false;
-  String? _errorMessage;
 
-  // Getters
   Profile? get user => _user;
   String? get userId => _userId;
   bool get isLoading => _isLoading;
   bool get isError => _isError;
-  String? get errorMessage => _errorMessage;
 
-  // Set the user ID
   void setUserId(String userId) {
     _userId = userId;
     notifyListeners();
   }
 
-  // Load the user data
   Future<void> loadUser(String userID) async {
     if (_user != null) return;
 
     _isLoading = true;
-    _isError = false;
-    _errorMessage = null;
     notifyListeners();
 
     try {
       _user = await _userService.getUserById(userID);
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when loading the user.";
-      print("Error: $_errorMessage $e");
-      notifyListeners(); 
+    } catch (e, stackTrace) {
+      _handleError(
+          e, stackTrace, "Something went wrong when loading the user.");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Save the user profile when the user updates the profile
   Future<void> saveUser(Profile user) async {
     _isLoading = true;
-    _isError = false;
-    _errorMessage = null;
     notifyListeners();
 
     try {
       await _userService.addOrUpdateUser(user);
       _user = user;
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when saving the user.";
-      print("Error: $_errorMessage $e");
-      notifyListeners();
+    } catch (e, stackTrace) {
+      _handleError(e, stackTrace, "Something went wrong when saving the user.");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Delete the user account
   Future<void> deleteUser(String email) async {
     _isLoading = true;
-    _isError = false;
-    _errorMessage = null;
     notifyListeners();
 
     try {
@@ -82,32 +67,25 @@ class UserViewModel extends ChangeNotifier {
       if (_user?.email == email) {
         _user = null;
       }
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when deleting the user.";
-      print("Error: $_errorMessage $e");
-      notifyListeners();
+    } catch (e, stackTrace) {
+      _handleError(
+          e, stackTrace, "Something went wrong when deleting the user.");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Get the user role
   Future<String?> getUserRole(String userID) async {
     _isLoading = true;
-    _isError = false;
-    _errorMessage = null;
     notifyListeners();
 
     try {
       role = await _userService.getUserRole(userID);
       return role;
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when fetching the user role.";
-      print("Error: $_errorMessage $e");
-      notifyListeners();
+    } catch (e, stackTrace) {
+      _handleError(
+          e, stackTrace, "Something went wrong when fetching the user role.");
       return null;
     } finally {
       _isLoading = false;
@@ -115,24 +93,18 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  // Get the username
   Future<String> getUsername(String userId) async {
     try {
       return await _userService.getUserName(userId);
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when fetching the username.";
-      print("Error: $_errorMessage $e");
-      notifyListeners();
+    } catch (e, stackTrace) {
+      _handleError(
+          e, stackTrace, "Something went wrong when fetching the username.");
       return "";
     }
   }
 
-  // Logout the user and clear the data in view model
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout() async {
     _isLoading = true;
-    _isError = false;
-    _errorMessage = null;
     notifyListeners();
 
     try {
@@ -140,27 +112,32 @@ class UserViewModel extends ChangeNotifier {
       _userId = null;
       _user = null;
       role = null;
-    } catch (e) {
-      _isError = true;
-      _errorMessage = "Something went wrong when logging out.";
-      print("Error: $_errorMessage ${e.toString()}");
-      notifyListeners(); // Important to notify UI
 
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("$_errorMessage ${e.toString()}"),
-            backgroundColor: Colors.red,
-          ),
-        );
+      //redirect to sign in page
+      final currentContext = navigatorKey.currentContext;
+      if (currentContext != null) {
+        GoRouter.of(currentContext).go('/signIn');
       }
+    } catch (e, stackTrace) {
+      _handleError(e, stackTrace, "Something went wrong when logging out.");
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
 
-      if (context.mounted && !_isError) {
-        GoRouter.of(context).go('/signIn');
-      }
+  //Error Handling
+  void _handleError(dynamic error, StackTrace stackTrace, String message) {
+    _isError = true;
+    print("Error: $message $error");
+
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+    notifyListeners();
+
+    // Redirect to error page
+    final currentContext = navigatorKey.currentContext;
+    if (currentContext != null) {
+      GoRouter.of(currentContext).go('/errorPage');
     }
   }
 }
