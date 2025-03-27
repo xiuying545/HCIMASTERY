@@ -194,6 +194,12 @@ class _ForumPageState extends State<ForumPage> {
         .where((post) => post.creator == userViewModel.userId)
         .toList();
 
+    if (myPosts.isEmpty) {
+      return 
+           Center(
+              child: Text("No Post Added By You", style: AppTheme.h1Style));
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemCount: myPosts.length,

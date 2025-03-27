@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/input_field_icon.dart';
 import 'package:go_router/go_router.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -91,34 +92,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        TextFormField(
+                        CustomInputField(
+                          label: "Email",
                           controller: _emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                .hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
+                          validators: [
+                            (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                  .hasMatch(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: _isLoading ? null : _sendPasswordResetEmail,
+                          onPressed:
+                              _isLoading ? null : _sendPasswordResetEmail,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
                             backgroundColor: Colors.blue.shade900,

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/input_field_icon.dart';
 import 'package:go_router/go_router.dart';
 
 class EditPasswordScreen extends StatefulWidget {
@@ -111,123 +112,45 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     child: Column(
                       children: [
                         // Current Password Field
-                        TextFormField(
+                        CustomInputField(
+                          label: "Current Password",
                           controller: _currentPasswordController,
-                          obscureText: _obscureCurrentPassword,
-                          decoration: InputDecoration(
-                            hintText: 'Current Password',
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureCurrentPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureCurrentPassword =
-                                      !_obscureCurrentPassword;
-                                });
-                              },
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your current password';
-                            }
-                            return null;
-                          },
+                          isSecure: true,
                         ),
-                        const SizedBox(height: 16),
-
-                        // New Password Field
-                        TextFormField(
+                        const SizedBox(height: 30),
+                        CustomInputField(
+                          label: "New Password",
                           controller: _newPasswordController,
-                          obscureText: _obscureNewPassword,
-                          decoration: InputDecoration(
-                            hintText: 'New Password',
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureNewPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureNewPassword = !_obscureNewPassword;
-                                });
-                              },
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a new password';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
+                          isSecure: true,
+                          validators: [
+                            (value) {
+                         
+                              if (value!.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         const SizedBox(height: 16),
 
-                        // Confirm New Password Field
-                        TextFormField(
+                      // Confirm New Password Field
+                        CustomInputField(
+                          label: "Confirm New Password",
                           controller: _confirmPasswordController,
-                          obscureText: _obscureConfirmPassword,
-                          decoration: InputDecoration(
-                            hintText: 'Confirm New Password',
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword =
-                                      !_obscureConfirmPassword;
-                                });
-                              },
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your new password';
-                            }
-                            if (value != _newPasswordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
+                          isSecure:
+                              true, 
+                          validators: [
+                            (value) {
+                             
+                              if (value != _newPasswordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 30),
 
                         // Update Password Button
                         ElevatedButton(

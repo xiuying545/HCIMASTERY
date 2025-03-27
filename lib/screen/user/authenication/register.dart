@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fyp1/common_widget/input_field_icon.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:go_router/go_router.dart';
@@ -42,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           userId: userCredential.user!.uid,
           name: _nameController.text,
           email: _emailController.text.trim(),
-          role:"Student",
+          role: "Student",
         );
 
         UserViewModel userViewModel =
@@ -96,103 +97,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        TextFormField(
+                        CustomInputField(
+                          label: "Name",
                           controller: _nameController,
-                          decoration: const InputDecoration(
-                            hintText: 'Name',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your name.';
-                            }
-                            return null;
-                          },
                         ),
-                         const SizedBox(height: 16.0),
-                        TextFormField(
+                        const SizedBox(height: 16.0),
+                        CustomInputField(
+                          label: "Email",
                           controller: _emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email.';
-                            }
-                            if (!RegExp(
-                                    r"^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
-                                .hasMatch(value)) {
-                              return 'Please enter a valid email address.';
-                            }
-                            return null;
-                          },
+                          validators: [
+                            (value) {
+                              if (!RegExp(
+                                      r"^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
+                                  .hasMatch(value!)) {
+                                return 'Please enter a valid email address.';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         const SizedBox(height: 16.0),
-                        TextFormField(
+                        CustomInputField(
+                          label: "Password",
                           controller: _passwordController,
-                          decoration: const InputDecoration(
-                            hintText: 'Password',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password.';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters.';
-                            }
-                            return null;
-                          },
+                          isSecure: true,
+                          validators: [
+                            (value) {
+                              if (value!.length < 6) {
+                                return 'Password must be at least 6 characters.';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         const SizedBox(height: 16.0),
-                        TextFormField(
+                        CustomInputField(
+                          label: "Confirm Password",
                           controller: _confirmPasswordController,
-                          decoration: const InputDecoration(
-                            hintText: 'Confirm Password',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match.';
-                            }
-                            return null;
-                          },
+                          isSecure: true,
+                          validators: [
+                            (value) {
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match.';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -204,7 +154,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
-                              backgroundColor:  Colors.blue.shade900,
+                              backgroundColor: Colors.blue.shade900,
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 48),
                               shape: const StadiumBorder(),

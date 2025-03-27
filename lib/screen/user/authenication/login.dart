@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/common_widget/input_field_icon.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -128,66 +129,20 @@ class _SignInScreenState extends State<SignInScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        TextFormField(
+                        CustomInputField(
+                          label: "Email",
                           controller: _emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 247, 246, 252),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * 1.5, vertical: 16.0),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            return null;
-                          },
+                       
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            decoration: InputDecoration(
-                              hintText: 'Password',
-                              filled: true,
-                              fillColor:
-                                  const Color.fromARGB(255, 247, 246, 252),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0 * 1.5, vertical: 16.0),
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50)),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
-                          ),
+                        const SizedBox(height: 16), // Padding
+
+                        CustomInputField(
+                          label: "Password",
+                          controller: _passwordController,
+                          isSecure: true,
+                          
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 36),
                         ElevatedButton(
                           onPressed: _isLoading ? null : _signIn,
                           style: ElevatedButton.styleFrom(
