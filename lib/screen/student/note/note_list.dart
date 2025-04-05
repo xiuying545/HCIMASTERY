@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_style/app_theme.dart';
+import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';

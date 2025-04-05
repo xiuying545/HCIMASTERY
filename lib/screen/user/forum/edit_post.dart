@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/services/post_service.dart';

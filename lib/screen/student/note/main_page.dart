@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_widget/banner.dart';
-import 'package:fyp1/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/common_widget/banner.dart';
+import 'package:fyp1/common/common_widget/course_tile.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -58,70 +59,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // Banner Section
-  Widget _buildBanner() {
-    return Container(
-      width: double.infinity,
-      height: 170,
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade700, Colors.blue.shade400],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 30,
-            left: 15,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Learn HCI using\nHCI Mastery",
-                  style: TextStyle(
-                    height: 1.1,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 33),
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    "Explore",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: -20,
-            child: Image.asset(
-              'assets/Animation/child.png',
-              width: 200,
-              height: 200,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+ 
   // Header with greeting and search bar
   Widget _buildHeader() {
     return Container(
@@ -176,7 +114,7 @@ class _MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Courses',
+                '📚 Courses',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -209,92 +147,3 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-// Widget representing each chapter in the list
-class CourseTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String chapterId;
-  final String subtitle;
-  final double progress;
-  final Color color;
-
-  const CourseTile({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.chapterId,
-    required this.subtitle,
-    required this.progress,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => GoRouter.of(context).push('/student/notelist/$chapterId'),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade800,
-                    ),
-                           maxLines: 2, 
-                                    overflow: TextOverflow
-                                        .ellipsis, 
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.poppins(
-                      color: Colors.black54,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

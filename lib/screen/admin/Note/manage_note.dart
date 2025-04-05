@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_style/app_theme.dart';
-import 'package:fyp1/common_widget/action_button.dart';
-import 'package:fyp1/common_widget/app_bar_with_back.dart';
-import 'package:fyp1/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/action_button.dart';
+import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,6 @@ class _ManageNotePage extends State<ManageNotePage> {
         title: chapterName,
       ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
-
         if (model.isLoading) {
           return const Center(
             child: CircularProgressIndicator(
@@ -124,7 +124,8 @@ class _ManageNotePage extends State<ManageNotePage> {
                               }
                               final Note item = model.notes.removeAt(oldIndex);
                               model.notes.insert(newIndex, item);
-                              model.updateNoteOrder(model.notes, widget.chapterId);
+                              model.updateNoteOrder(
+                                  model.notes, widget.chapterId);
                             },
                           ),
                   ),
@@ -166,6 +167,7 @@ class _ManageNotePage extends State<ManageNotePage> {
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
         child: InkWell(
+          onLongPress: () => _showNoteOptionsBottomSheet(note),
           borderRadius: BorderRadius.circular(16),
           onTap: () =>
               GoRouter.of(context).push('/student/note/${note.noteID}'),
@@ -222,57 +224,65 @@ class _ManageNotePage extends State<ManageNotePage> {
                       ),
                     ),
 
-                    // Drag handle
-                    ReorderableDragStartListener(
-                      index: index,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Icon(
-                          Icons.drag_handle_rounded,
-                          color: Colors.grey.shade400,
-                          size: 24,
+                    // Options and drag handle
+                    Column(
+                      children: [
+                        // More options icon
+                        IconButton(
+                          icon: Icon(Icons.more_vert,
+                              color: Colors.grey.shade500),
+                          onPressed: () => _showNoteOptionsBottomSheet(note),
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                          iconSize: 24,
                         ),
-                      ),
+                        SizedBox(height: 8),
+                        // Drag handle
+                        ReorderableDragStartListener(
+                          index: index,
+                          child: Icon(
+                            Icons.drag_handle_rounded,
+                            color: Colors.grey.shade400,
+                            size: 24,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-
-                // Divider and action buttons
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Column(
-                    children: [
-                      Divider(height: 1, color: Colors.grey.shade200),
-                      SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // Edit button
-                          ActionButton(
-                            icon: Icons.edit_outlined,
-                            label: 'Edit',
-                            color: Colors.blue.shade600,
-                            onTap: () => GoRouter.of(context).push(
-                                '/admin/editNote/${widget.chapterId}/${note.noteID}'),
-                          ),
-                          SizedBox(width: 8),
-
-                          // Delete button
-                          ActionButton(
-                            icon: Icons.delete_outline_rounded,
-                            label: 'Delete',
-                            color: Colors.red.shade600,
-                            onTap: () => _showDeleteConfirmationDialog(note),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showNoteOptionsBottomSheet(Note note) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CustomOptionsBottomSheet(
+        options: [
+          OptionItem(
+            icon: Icons.edit,
+            label: 'Edit Note',
+            color: Colors.blue.shade800,
+            onTap: () {
+              GoRouter.of(context)
+                  .push('/admin/editNote/${widget.chapterId}/${note.noteID}');
+            },
+          ),
+          OptionItem(
+            icon: Icons.delete_outline_rounded,
+            label: 'Delete Note',
+            color: Colors.red.shade600,
+            onTap: () {
+              _showDeleteConfirmationDialog(note);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -286,16 +296,15 @@ class _ManageNotePage extends State<ManageNotePage> {
             'Are you sure you want to delete "${note.title}"? This action cannot be undone.',
         action: 'Delete',
         onConfirm: () async {
-         Navigator.of(context).pop(); 
+          Navigator.of(context).pop();
           await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
-           
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Note deleted successfully!',
                     style: AppTheme.snackBarText),
                 backgroundColor: Colors.green,
-     
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

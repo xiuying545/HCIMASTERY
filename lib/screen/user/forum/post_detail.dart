@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_style/app_theme.dart';
-import 'package:fyp1/common_widget/app_bar_with_back.dart';
-import 'package:fyp1/common_widget/custom_dialog.dart';
-import 'package:fyp1/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';

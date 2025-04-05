@@ -23,7 +23,7 @@ class UserViewModel extends BaseViewModel {
     // if (_user != null) return;
     await tryFunction(() async {
       _user = await _userService.getUserById(userID);
-
+      notifyListeners();
     });
   }
 

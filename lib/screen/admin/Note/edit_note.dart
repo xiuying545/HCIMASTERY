@@ -1,6 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:go_router/go_router.dart';

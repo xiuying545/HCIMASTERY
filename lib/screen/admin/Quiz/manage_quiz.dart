@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp1/common_style/app_theme.dart';
-import 'package:fyp1/common_widget/action_button.dart';
-import 'package:fyp1/common_widget/app_bar_with_back.dart';
-import 'package:fyp1/common_widget/custom_dialog.dart';
-import 'package:fyp1/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/action_button.dart';
+import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -95,6 +96,36 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
     );
   }
 
+  void _showQuizOptionsBottomSheet(Quiz quiz) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CustomOptionsBottomSheet(
+        options: [
+          OptionItem(
+            icon: Icons.edit,
+            label: 'Edit Quiz',
+            color: Colors.blue.shade800,
+            onTap: () {
+              GoRouter.of(context).push(
+                '/admin/editQuiz/${widget.chapterId}/${quiz.quizzID}',
+              );
+            },
+          ),
+          OptionItem(
+            icon: Icons.delete_outline_rounded,
+            label: 'Delete Quiz',
+            color: Colors.red.shade600,
+            onTap: () {
+              _showDeleteConfirmationDialog(quiz);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildQuizCard(Quiz quiz) {
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -113,6 +144,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
         child: InkWell(
+          onLongPress: () => _showQuizOptionsBottomSheet(quiz),
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -130,6 +162,13 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         minFontSize: 16,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.more_vert),
+                        onPressed: () => _showQuizOptionsBottomSheet(quiz),
                       ),
                     ),
                   ],
@@ -218,29 +257,6 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                   );
                 }),
                 const SizedBox(height: 12),
-                Divider(height: 1, color: Colors.grey.shade200),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ActionButton(
-                      icon: Icons.edit_outlined,
-                      label: 'Edit',
-                      color: Colors.blue.shade600,
-                      onTap: () => GoRouter.of(context).push(
-                          '/admin/editQuiz/${widget.chapterId}/${quiz.quizzID}'),
-                    ),
-                    const SizedBox(width: 8),
-
-                    // Delete button
-                    ActionButton(
-                      icon: Icons.delete_outline_rounded,
-                      label: 'Delete',
-                      color: Colors.red.shade600,
-                      onTap: () => _showDeleteConfirmationDialog(quiz),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -261,19 +277,19 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                 Navigator.of(context).pop();
 
                 await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
-                if(mounted) {
+                if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Quiz deleted successfully!',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.white,
+                    SnackBar(
+                      content: Text(
+                        'Quiz deleted successfully!',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
                       ),
+                      backgroundColor: Colors.green,
                     ),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                  );
                 }
               },
             ));
