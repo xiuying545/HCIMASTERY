@@ -29,13 +29,6 @@ class _ManageNotePage extends State<ManageNotePage> {
     fetchNoteData();
   }
 
-  // @override
-  // void dispose() {
-  //   noteViewModel.debounceTimer?.cancel();
-  //   noteViewModel.saveUpdatedNoteToFirestore(
-  //       noteViewModel.notes, noteViewModel.chapterId);
-  //   super.dispose();
-  // }
 
   Future<void> fetchNoteData() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);

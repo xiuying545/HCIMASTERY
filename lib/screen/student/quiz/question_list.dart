@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common_widget/loading_shimmer.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,11 +41,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
       body: Consumer<QuizViewModel>(
         builder: (context, quizViewModel, child) {
           if (quizViewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a5ae0)),
-              ),
-            );
+            return LoadingShimmer();
           } else if (quizViewModel.quizzes.isEmpty) {
             return Center(
               child: Text(

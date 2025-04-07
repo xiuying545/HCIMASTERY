@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LoadingShimmer extends StatelessWidget {
- 
-
-  const LoadingShimmer({super.key, 
-  
+  const LoadingShimmer({
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-      return 
-      Expanded(child:
-      ListView.builder(
+    return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 5,
       itemBuilder: (context, index) {
@@ -78,6 +74,6 @@ class LoadingShimmer extends StatelessWidget {
           ),
         );
       },
-    ));
+    );
   }
 }

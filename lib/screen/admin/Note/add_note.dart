@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/loading_dialog.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +22,13 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePage extends State<AddNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  final List<TextEditingController> _videoControllers = [TextEditingController()];
+  final List<TextEditingController> _videoControllers = [
+    TextEditingController()
+  ];
   List<File> _images = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -47,7 +51,7 @@ class _AddNotePage extends State<AddNotePage> {
   Future<void> _pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
     setState(() {
-      _images = pickedFiles.map((file) => File(file.path)).toList();
+      _images.addAll(pickedFiles.map((file) => File(file.path)));
     });
   }
 
@@ -65,6 +69,8 @@ class _AddNotePage extends State<AddNotePage> {
       return;
     }
 
+    LoadingDialog.show(context, "Uploading your note...");
+
     List<String> imageUrls = [];
     List<String> videoLinks = _videoControllers
         .map((controller) => controller.text.trim())
@@ -73,8 +79,10 @@ class _AddNotePage extends State<AddNotePage> {
 
     try {
       for (File image in _images) {
-        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
+        String fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -100,11 +108,11 @@ class _AddNotePage extends State<AddNotePage> {
         _images.clear();
       });
 
+      LoadingDialog.hide(context);
+      GoRouter.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Note added successfully!')),
       );
-
-      GoRouter.of(context).pop();
     } catch (e) {
       print('Error uploading note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,7 +126,7 @@ class _AddNotePage extends State<AddNotePage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-     appBar: const AppBarWithBackBtn(
+      appBar: const AppBarWithBackBtn(
         title: 'Create Note',
       ),
       backgroundColor: Colors.grey.shade100,
@@ -155,7 +163,8 @@ class _AddNotePage extends State<AddNotePage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter note title",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -194,7 +203,7 @@ class _AddNotePage extends State<AddNotePage> {
               const SizedBox(height: 12),
               _images.isNotEmpty
                   ? SizedBox(
-                      height: 100,
+                      height: 150,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _images.length,
@@ -204,8 +213,7 @@ class _AddNotePage extends State<AddNotePage> {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.file(
                                 _images[index],
-                                width: 100,
-                                height: 100,
+                                height: 150,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -213,7 +221,8 @@ class _AddNotePage extends State<AddNotePage> {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -257,7 +266,8 @@ class _AddNotePage extends State<AddNotePage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter note content",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -292,14 +302,18 @@ class _AddNotePage extends State<AddNotePage> {
                                       color: Colors.white,
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
                                       child: TextField(
                                         controller: entry.value,
-                                        style: GoogleFonts.poppins(fontSize: 16),
+                                        style:
+                                            GoogleFonts.poppins(fontSize: 16),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
                                           hintText: "Enter video link",
-                                          hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                                          hintStyle: GoogleFonts.poppins(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
@@ -307,7 +321,8 @@ class _AddNotePage extends State<AddNotePage> {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                icon: const Icon(Icons.remove_circle,
+                                    color: Colors.red),
                                 onPressed: () => _removeVideoField(entry.key),
                               ),
                             ],
@@ -324,7 +339,8 @@ class _AddNotePage extends State<AddNotePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                   ),
                   child: Text(
                     'Add Video Link',

@@ -2,6 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -89,33 +90,19 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
+       
             child: Consumer<UserViewModel>(
                 builder: (context, userViewModel, child) {
               if (userViewModel.isLoading) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            AppTheme.primaryColor),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Loading your profile...",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return 
+                
+                LoadingShimmer();
               }
 
-              return Column(
+              return 
+             SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child:Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
@@ -253,12 +240,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   const SizedBox(height: 32),
                 ],
+            )
               );
             }),
           ),
         ),
-      ),
-    );
+      );
+   
   }
 
   Widget _buildChildInfoCard({

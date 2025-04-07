@@ -133,7 +133,7 @@ class _NotePageState extends State<NotePage> {
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.asset(
+                                  child: Image.network(
                                     currentNote.images![index],
                                     width: 300,
                                     height: 200,

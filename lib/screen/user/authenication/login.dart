@@ -74,9 +74,7 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
       
-      await StorageHelper.set("USER_ID", userId);
-      await StorageHelper.set("ROLE", userViewModel.user!.role);
-      await StorageHelper.set("STATUS", "LOGIN");
+
     }
   }
 

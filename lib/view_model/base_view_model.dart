@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:fyp1/main.dart';
+import 'package:go_router/go_router.dart';
 
 class BaseViewModel extends ChangeNotifier {
   bool _isLoading = false;
@@ -33,6 +35,10 @@ class BaseViewModel extends ChangeNotifier {
   void _handleError(dynamic error, StackTrace stackTrace) {
     setError(true);
     print("Error: $error");
+        final currentContext = navigatorKey.currentContext;
+    if (currentContext != null) {
+      Future.microtask(() => GoRouter.of(currentContext).go('/error'));
+    }
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fyp1/common/common_widget/custom_input_field.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:go_router/go_router.dart';
@@ -43,7 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           userId: userCredential.user!.uid,
           name: _nameController.text,
           email: _emailController.text.trim(),
-          role: "Student",
+          role: ROLE_STUDENT,
         );
 
         UserViewModel userViewModel =

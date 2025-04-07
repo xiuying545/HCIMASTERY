@@ -31,7 +31,7 @@ class _StudentNavBar extends State<StudentNavBar> {
     // Set user ID (example)
     Provider.of<UserViewModel>(context, listen: false)
         .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
-                    Provider.of<UserViewModel>(context, listen: false)
+    Provider.of<UserViewModel>(context, listen: false)
         .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
   }
 
@@ -44,7 +44,7 @@ class _StudentNavBar extends State<StudentNavBar> {
         case 1:
           return const ForumPage();
         case 2:
-          return  DesignChallengesPage();
+          return DesignChallengesPage();
         case 3:
           return const ProfilePage();
         default:

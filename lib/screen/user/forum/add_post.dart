@@ -3,6 +3,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/loading_dialog.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -37,7 +38,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Future<void> _pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
     setState(() {
-      _images = pickedFiles.map((file) => File(file.path)).toList();
+      _images.addAll(pickedFiles.map((file) => File(file.path)));
     });
   }
 
@@ -55,6 +56,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       );
       return;
     }
+    LoadingDialog.show(context, "Uploading your post...");
 
     List<String> imageUrls = [];
 
@@ -65,11 +67,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
           continue;
         }
 
-        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef = FirebaseStorage.instance.ref().child('forum/$fileName');
+        String fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('forum/$fileName');
 
         UploadTask uploadTask = storageRef.putFile(image);
-        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {}).catchError((error) {
+        TaskSnapshot taskSnapshot =
+            await uploadTask.whenComplete(() {}).catchError((error) {
           print('Error uploading file: $error');
           throw error;
         });
@@ -99,7 +104,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       setState(() {
         _images.clear();
       });
-
+      LoadingDialog.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Post created successfully!')),
       );
@@ -108,7 +113,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
     } catch (e) {
       print('Error uploading post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to create post. Please try again.')),
+        const SnackBar(
+            content: Text('Failed to create post. Please try again.')),
       );
     }
   }
@@ -118,7 +124,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-    appBar: const AppBarWithBackBtn(
+      appBar: const AppBarWithBackBtn(
         title: 'Create Post',
       ),
       backgroundColor: Colors.grey.shade100,
@@ -155,7 +161,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post title",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -194,7 +201,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SizedBox(height: 12),
               _images.isNotEmpty
                   ? SizedBox(
-                      height: 100,
+                      height: 200,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _images.length,
@@ -204,8 +211,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               borderRadius: BorderRadius.circular(8),
                               child: Image.file(
                                 _images[index],
-                                width: 100,
-                                height: 100,
+                                height: 200,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -213,7 +219,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                                 onPressed: () => _removeImage(index),
                               ),
                             ),
@@ -257,7 +264,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Enter post content",
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                        hintStyle: GoogleFonts.poppins(
+                            color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),

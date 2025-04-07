@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:go_router/go_router.dart';
 
 class ErrorPage extends StatelessWidget {
-  final String errorMessage;
+  const ErrorPage({super.key});
 
-  const ErrorPage({Key? key, required this.errorMessage}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[50],
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -18,32 +20,21 @@ class ErrorPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/Animation/error.gif',
+                'assets/Animation/error.png',
                 height: 200,
               ),
               const SizedBox(height: 20),
-              Text(
-                'Oopsie-daisy!',
+              const Text(
+                'Something went wrong.',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
+                  color: Colors.black,
                   fontFamily: 'ComicNeue', // Use a fun font
                 ),
               ),
               const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  errorMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[700],
-                    fontFamily: 'ComicNeue',
-                  ),
-                ),
-              ),
+            
               const SizedBox(height: 30),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -53,18 +44,20 @@ class ErrorPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  elevation: 5,
+                  elevation: 2,
                 ),
-                // onPressed: () {
-                //   if(StorageHelper.get("STATUS")=="LOGIN") {
-                //     GoRouter.of(context).go('/main');
-                //   }
-                //   else{
-                //     GoRouter.of(context).go('/login');
-                //   }
-                // },
                 onPressed: () {
-                  throw Exception("Test Crash");
+                  if (StorageHelper.get("STATUS") == STATUS_LOGIN) {
+                    if (StorageHelper.get("ROLE") == ROLE_STUDENT){
+                    GoRouter.of(context).go('/studentNav');
+                    }
+                    else if(StorageHelper.get("ROLE") == ROLE_ADMIN){
+                      GoRouter.of(context).go('/adminNav');
+                    }
+                    
+                  } else {
+                    GoRouter.of(context).go('/login');
+                  }
                 },
                 child: const Text(
                   'Go Back Home',
