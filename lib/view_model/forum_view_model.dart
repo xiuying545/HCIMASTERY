@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/services/post_service.dart';
@@ -41,6 +40,7 @@ class ForumViewModel extends BaseViewModel {
 
   /// Fetches posts and populates `_userMap` with creator information
   Future<void> fetchPost() async {
+
     await tryFunction(() async {
       _posts = await _postService.fetchPosts();
       Set<String> creatorIds = _posts

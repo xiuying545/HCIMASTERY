@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/banner.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/course_tile.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,18 +20,23 @@ class _MainPageState extends State<MainPage> {
   late NoteViewModel noteViewModel;
   late UserViewModel userViewModel;
   Map<String, double> progressMap = {};
+     bool isLoading = true; 
   @override
   void initState() {
+        noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     super.initState();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
     loadInitialData();
+      });
   }
 
   Future<void> loadInitialData() async {
-    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
     await noteViewModel.setupChapterData(userViewModel.userId!);
     setState(()  {
           progressMap =  noteViewModel.calculateProgressByChapter();
+          isLoading=false;
     });
   }
 
@@ -92,20 +97,16 @@ class _MainPageState extends State<MainPage> {
   Widget _buildCoursesSection() {
     return Consumer<NoteViewModel>(
       builder: (context, viewModel, _) {
-        if (viewModel.isLoading) {
+        if (viewModel.isLoading||isLoading) {
           return const LoadingShimmer();
         }
 
         if (viewModel.chapters.isEmpty) {
-          return Center(
-            child: Text(
-              'No chapters found.',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                color: Colors.black54,
-              ),
-            ),
-          );
+          return   const BlankState(
+                    icon: Icons.menu_book_outlined,
+                    title: 'No chapters yet',
+                    subtitle: 'Please check back later for available chapters.',
+                  );
         }
 
         return Container(

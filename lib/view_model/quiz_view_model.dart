@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/services/note_service.dart';
 import 'package:fyp1/services/quiz_answer_service.dart';
@@ -56,6 +55,7 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> fetchQuizData(String chapterId, {bool refresh = false}) async {
+  
     if (!refresh && _quizzesByChapter.containsKey(chapterId)) {
       _quizzes = _quizzesByChapter[chapterId]!;
       notifyListeners();

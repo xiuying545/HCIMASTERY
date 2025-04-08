@@ -21,24 +21,28 @@ class QuizResultPage extends StatefulWidget {
 class _QuizResultPageState extends State<QuizResultPage> {
   late QuizViewModel quizViewModel;
   late UserViewModel userViewModel;
+    bool isLoading = true;
 
 
   @override
   void initState() {
     super.initState();
+         quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
     loadInitialData();
+        });
    
   }
 
   Future<void> loadInitialData() async {
-     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-     userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      // todo Set user ID (example)
-    Provider.of<UserViewModel>(context, listen: false)
-        .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
+
    await quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
     await quizViewModel.calculateScore(widget.chapterID, userViewModel.userId!);
     print("Current Score: ${quizViewModel.score}");
+        setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -53,7 +57,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
       
       Consumer<QuizViewModel>(
         builder: (context, quizViewModel, child) {
-          if (quizViewModel.isLoading) {
+          if (quizViewModel.isLoading||isLoading) {
             return const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6a5ae0)),

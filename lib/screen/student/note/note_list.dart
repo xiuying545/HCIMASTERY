@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +29,9 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData();
+    });
   }
 
   Future<void> _fetchData() async {
@@ -55,149 +59,160 @@ class _NoteListPageState extends State<NoteListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Consumer<NoteViewModel>(builder: (context, model, child) {
-              var notes = model.notes;
+      body: Consumer<NoteViewModel>(builder: (context, model, child) {
+        if (model.isLoading || isLoading) {
+          return LoadingShimmer();
+        }
 
-              if (notes.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No notes available.',
-                    style: AppTheme.h2Style.copyWith(color: AppTheme.textColor),
-                  ),
-                );
-              }
+        var notes = model.notes;
 
-              return Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade700, Colors.blue.shade400],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+        if (notes.isEmpty) {
+          return Stack(children: [
+            const BlankState(
+              icon: Icons.sticky_note_2_outlined,
+              title: 'No notes yet',
+              subtitle: 'Please check back later for available notes.',
+            ),
+            Positioned(
+              top: 40,
+              left: 10,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                  size: 30,
                 ),
-                child: Column(
-                  children: [
-                    // Top Section (Gradient Background with Back Button)
-                    Stack(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ]);
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade400],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            children: [
+              // Top Section (Gradient Background with Back Button)
+              Stack(
+                children: [
+                  Container(
+                    height: 300,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade700, Colors.blue.shade400],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Stack(
                       children: [
-                        Container(
-                          height: 300,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.blue.shade700,
-                                Colors.blue.shade400
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                top: 50,
-                                right: 50,
-                                child: Image.asset(
-                                  'assets/Animation/book.png',
-                                  width: 300,
-                                  height: 300,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 20,
-                                left: 20,
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                  child: Text(
-                                    chapter.chapterName,
-                                    style: AppTheme.h1Style
-                                        .copyWith(color: Colors.white),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ],
+                        Positioned(
+                          top: 50,
+                          right: 50,
+                          child: Image.asset(
+                            'assets/Animation/book.png',
+                            width: 300,
+                            height: 300,
                           ),
                         ),
-                        // Back Button
                         Positioned(
-                          top: 40,
+                          bottom: 20,
                           left: 20,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 30,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: Text(
+                              chapter.chapterName,
+                              style: AppTheme.h1Style
+                                  .copyWith(color: Colors.white),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
                           ),
                         ),
                       ],
                     ),
-                    // Bottom Section (White with Rounded Corners)
-                    Expanded(
-                   
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ),
-                             
-                          child: Container(
-                            color: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 30.0),
-                            child: RefreshIndicator(
-                        onRefresh: () async {
-                          await model.fetchNotesForChapter(widget.chapterId,
-                              refresh: true);
-                        },
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30.0),
-                                    child: Text(
-                                      style: AppTheme.h2Style
-                                          .copyWith(color: AppTheme.textColor),
-                                      "Course Detail",
-                                    ),
-                                  ),
-                                  const Divider(
-                                    color: Colors.grey,
-                                    thickness: 2,
-                                    height: 20,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  // Step Indicator for Notes
-                                  ...List.generate(
-                                    notes.length,
-                                    (index) => _buildNoteProgress(
-                                      note: notes[index],
-                                      index: index,
-                                      totalNotes: notes.length,
-                                    ),
-                                  ),
-                                  _buildQuizProgress(),
-                                ],
+                  ),
+                  // Back Button
+                  Positioned(
+                    top: 40,
+                    left: 20,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              // Bottom Section (White with Rounded Corners)
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        await model.fetchNotesForChapter(widget.chapterId,
+                            refresh: true);
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30.0),
+                              child: Text(
+                                style: AppTheme.h2Style
+                                    .copyWith(color: AppTheme.textColor),
+                                "Course Detail",
                               ),
                             ),
-                          ),
+                            const Divider(
+                              color: Colors.grey,
+                              thickness: 2,
+                              height: 20,
+                            ),
+                            const SizedBox(height: 10),
+                            // Step Indicator for Notes
+                            ...List.generate(
+                              notes.length,
+                              (index) => _buildNoteProgress(
+                                note: notes[index],
+                                index: index,
+                                totalNotes: notes.length,
+                              ),
+                            ),
+                            _buildQuizProgress(),
+                          ],
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              );
-            }),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

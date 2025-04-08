@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/services/note_progress_service.dart';
@@ -50,6 +49,7 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchNotesForChapter(String chapterID,
       {bool refresh = false}) async {
+
     _chapterId = chapterID;
     if (!refresh && _notesByChapter.containsKey(chapterID)) {
       _notes = _notesByChapter[chapterID]!;

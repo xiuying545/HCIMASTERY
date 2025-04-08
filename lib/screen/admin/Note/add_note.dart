@@ -25,7 +25,7 @@ class _AddNotePage extends State<AddNotePage> {
   final List<TextEditingController> _videoControllers = [
     TextEditingController()
   ];
-  List<File> _images = [];
+  final List<File> _images = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
   bool isLoading = false;

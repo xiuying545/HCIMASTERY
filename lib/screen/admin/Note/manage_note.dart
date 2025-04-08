@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
-import 'package:fyp1/common/common_widget/action_button.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
@@ -22,17 +22,23 @@ class ManageNotePage extends StatefulWidget {
 class _ManageNotePage extends State<ManageNotePage> {
   late String chapterName;
   late NoteViewModel noteViewModel;
+     bool isLoading = true; 
 
   @override
   void initState() {
     super.initState();
-    fetchNoteData();
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchNoteData();
+    });
+    
   }
 
-
   Future<void> fetchNoteData() async {
-    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
     await noteViewModel.fetchNotesForChapter(widget.chapterId);
+         setState(() {
+      isLoading = false;  
+    });
   }
 
   @override
@@ -54,7 +60,7 @@ class _ManageNotePage extends State<ManageNotePage> {
         title: chapterName,
       ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
-        if (model.isLoading) {
+        if (model.isLoading||isLoading) {
           return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -73,36 +79,16 @@ class _ManageNotePage extends State<ManageNotePage> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(24),
                         topRight: Radius.circular(24),
                       ),
                     ),
                     child: model.notes.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.note_add,
-                                    size: 64, color: Colors.grey.shade400),
-                                SizedBox(height: 16),
-                                Text(
-                                  'No notes yet',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Tap the + button to add a new note',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.grey.shade500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ? const BlankState(
+                            icon: Icons.note_add,
+                            title: 'No notes yet',
+                            subtitle: 'Tap the + button to add a new note',
                           )
                         : ReorderableListView.builder(
                             padding: const EdgeInsets.only(top: 16, bottom: 80),
@@ -152,7 +138,7 @@ class _ManageNotePage extends State<ManageNotePage> {
             color: Colors.grey.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 2,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -186,7 +172,7 @@ class _ManageNotePage extends State<ManageNotePage> {
                         size: 20,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
                     // Note title and content preview
                     Expanded(
@@ -201,7 +187,7 @@ class _ManageNotePage extends State<ManageNotePage> {
                               color: Colors.blue.shade800,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             note.content.length > 300
                                 ? '${note.content.substring(0, 300)}...'
@@ -226,10 +212,10 @@ class _ManageNotePage extends State<ManageNotePage> {
                               color: Colors.grey.shade500),
                           onPressed: () => _showNoteOptionsBottomSheet(note),
                           padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
+                          constraints: const BoxConstraints(),
                           iconSize: 24,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         // Drag handle
                         ReorderableDragStartListener(
                           index: index,

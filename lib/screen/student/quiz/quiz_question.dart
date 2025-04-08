@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -26,6 +27,7 @@ class _QuizPageState extends State<QuizPage> {
   int currentQuestionIndex = 0;
   late UserViewModel userViewModel;
   late QuizViewModel quizViewModel;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -33,12 +35,17 @@ class _QuizPageState extends State<QuizPage> {
     currentQuestionIndex = widget.questionIndex;
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    setUpInitialData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setUpInitialData();
+    });
   }
 
   Future<void> setUpInitialData() async {
     await quizViewModel.loadData(
         userViewModel.userId!, widget.quizzes[0].chapter);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -70,7 +77,9 @@ class _QuizPageState extends State<QuizPage> {
           ),
         ),
       ),
-      body: Container(
+      body: (  isLoading)
+          ? const LoadingShimmer()
+          : Container(
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -292,7 +301,6 @@ class _QuizPageState extends State<QuizPage> {
     showDialog(
       context: context,
       builder: (context) => CustomDialog(
-
         title: 'Quiz Completed!',
         content:
             'You have completed the quiz! Do you want to submit your answers?',

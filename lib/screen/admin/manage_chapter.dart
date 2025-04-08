@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/action_button.dart';
 import 'package:fyp1/common/common_widget/banner.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/input_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
@@ -20,16 +21,22 @@ class ChapterDetailsPage extends StatefulWidget {
 
 class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   late NoteViewModel noteViewModel;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchChapterData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchChapterData();
+    });
   }
 
   Future<void> fetchChapterData() async {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
     await noteViewModel.setupChapterDataAdmin();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -51,7 +58,9 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
               ),
             ),
           ),
-          SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           // Banner Section
           CustomBanner(
             title: "Manage your notes\nthrough\nHCI Mastery",
@@ -60,7 +69,9 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
               // Handle the button press
             },
           ),
-           SizedBox(height: 25,),
+          const SizedBox(
+            height: 25,
+          ),
           // Chapters Heading
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -101,7 +112,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
           Expanded(
             child: Consumer<NoteViewModel>(
               builder: (context, model, child) {
-                if (model.isLoading) {
+                if (model.isLoading || isLoading) {
                   return const LoadingShimmer();
                 }
 
@@ -110,14 +121,20 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                     onRefresh: () async {
                       await model.fetchChapters();
                     },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: chapters.length,
-                      itemBuilder: (context, index) {
-                        final chapter = chapters[index];
-                        return _buildChapterCard(chapter);
-                      },
-                    ));
+                    child: model.chapters.isEmpty
+                        ? const BlankState(
+                            icon: Icons.note_add,
+                            title: 'No chapters yet',
+                            subtitle: 'Tap the + button to add a new chapter',
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            itemCount: chapters.length,
+                            itemBuilder: (context, index) {
+                              final chapter = chapters[index];
+                              return _buildChapterCard(chapter);
+                            },
+                          ));
               },
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -28,16 +29,17 @@ class _EditQuizPageState extends State<EditQuizPage> {
   final List<TextEditingController> _optionControllers = [];
   int _selectedAnswer = 0;
   late QuizViewModel quizViewModel;
-  bool _isLoading = true;
 
-  File? _image; // To store the selected image
-  final ImagePicker _picker = ImagePicker(); // For image picking
-  bool _isUploading = false; // To track image upload state
-  String? _currentImageUrl; // To store the current image URL
+
+  File? _image; 
+  final ImagePicker _picker = ImagePicker(); 
+  bool _isUploading = false;
+  String? _currentImageUrl; 
+    bool isLoading = true;
 
   Future<void> _fetchQuiz() async {
-    Quiz quiz = await quizViewModel.getQuizById(widget.chapterId, widget.quizId);
-
+    Quiz quiz =
+        await quizViewModel.getQuizById(widget.chapterId, widget.quizId);
 
     if (mounted) {
       setState(() {
@@ -48,16 +50,20 @@ class _EditQuizPageState extends State<EditQuizPage> {
           _optionControllers.add(TextEditingController(text: option));
         }
         _currentImageUrl = quiz.imageUrl; // Set the current image URL
-        _isLoading = false;
+        isLoading = false;
       });
     }
+
   }
 
   @override
   void initState() {
     super.initState();
+    super.initState();
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    _fetchQuiz();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchQuiz();
+    });
   }
 
   void _addOption() {
@@ -107,7 +113,8 @@ class _EditQuizPageState extends State<EditQuizPage> {
     });
 
     try {
-      String fileName = '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
+      String fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
       Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
 
       print('Uploading file: ${_image!.path}');
@@ -193,12 +200,12 @@ class _EditQuizPageState extends State<EditQuizPage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-   appBar: const AppBarWithBackBtn(
+      appBar: const AppBarWithBackBtn(
         title: 'Edit Quiz',
       ),
       backgroundColor: Colors.grey.shade100,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body: isLoading
+          ?  LoadingShimmer()
           : Padding(
               padding: const EdgeInsets.all(22.0),
               child: SingleChildScrollView(

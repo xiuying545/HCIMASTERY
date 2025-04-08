@@ -24,7 +24,7 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  List<File> _images = [];
+  final List<File> _images = [];
   final _picker = ImagePicker();
   late UserViewModel userViewModel;
 

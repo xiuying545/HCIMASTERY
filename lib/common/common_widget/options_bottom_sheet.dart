@@ -135,7 +135,7 @@ class CustomOptionsBottomSheet extends StatelessWidget {
                 ),
               ),
             );
-          }).toList(),
+          }),
           
           // Fun cancel button
           Padding(

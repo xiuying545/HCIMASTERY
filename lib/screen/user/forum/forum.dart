@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
@@ -24,17 +25,23 @@ class _ForumPageState extends State<ForumPage> {
   late UserViewModel userViewModel;
   late ForumViewModel forumViewModel;
   bool showMyPosts = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
-    Future.microtask(() => loadPosts());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadPosts();
+    });
   }
 
   Future<void> loadPosts() async {
     await forumViewModel.loadForumData(userViewModel.user!);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> confirmDelete(String postID) async {
@@ -61,16 +68,14 @@ class _ForumPageState extends State<ForumPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Forum',
           style: Theme.of(context).appBarTheme.titleTextStyle,
-        ), // Empty title to remove default behavior
+        ),
         backgroundColor: const Color(0xFFefeefb),
-        elevation: 2, // Slight elevation for shadow
+        elevation: 2,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -79,12 +84,6 @@ class _ForumPageState extends State<ForumPage> {
               end: Alignment.bottomRight,
             ),
           ),
-          // child: Center(
-          //   child: Text(
-          //     'Forum',
-          //     style: Theme.of(context).appBarTheme.titleTextStyle,
-          //   ),
-          // ),
         ),
       ),
       body: Column(
@@ -148,14 +147,16 @@ class _ForumPageState extends State<ForumPage> {
           ),
           // Post List
           Consumer<ForumViewModel>(builder: (context, model, child) {
-            if (model.isLoading) {
-              return const LoadingShimmer();
+            if (model.isLoading || isLoading) {
+              return Expanded(child: const LoadingShimmer());
             }
             if (model.posts.isEmpty) {
-              return Expanded(
-                  child: Center(
-                      child:
-                          Text("No Post Available", style: AppTheme.h1Style)));
+              return const Expanded(
+                  child: BlankState(
+                icon: Icons.post_add,
+                title: 'No posts yet',
+                subtitle: 'Tap the + button to add a new post',
+              ));
             }
             return Expanded(
               child: RefreshIndicator(
@@ -198,8 +199,12 @@ class _ForumPageState extends State<ForumPage> {
         .toList();
 
     if (myPosts.isEmpty) {
-      return Center(
-          child: Text("No Post Added By You", style: AppTheme.h1Style));
+      return Expanded(
+          child: const BlankState(
+        icon: Icons.post_add,
+        title: 'No posts added by you',
+        subtitle: 'Tap the + button to add a new post',
+      ));
     }
 
     return ListView.builder(
@@ -213,7 +218,7 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   void _showPostOptionsBottomSheet(Post post, bool isMyPost) {
-    print("ismypost : ${isMyPost}");
+    print("ismypost : $isMyPost");
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -239,40 +244,43 @@ class _ForumPageState extends State<ForumPage> {
                 confirmDelete(post.postID!);
               },
             ),
-            OptionItem(
-  icon: Icons.share,
-  label: 'Share Post',
-  color: Colors.blue.shade600, // Changed from red to blue for consistency
-  onTap: () async {
-    try {
-      final box = context.findRenderObject() as RenderBox?;
-      String shareText = '${post.title}\n\n${post.content}';
-      
-     
-      shareText += '\n\nCheck out this post in our app: HCI Mastery';
-      
-      await Share.share(
-        shareText,
-        subject: 'Check out this post: ${post.title}',
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to share: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  },
-),
+          OptionItem(
+            icon: Icons.share,
+            label: 'Share Post',
+            color: Colors
+                .blue.shade600, // Changed from red to blue for consistency
+            onTap: () async {
+              try {
+                final box = context.findRenderObject() as RenderBox?;
+                String shareText = '${post.title}\n\n${post.content}';
+
+                shareText += '\n\nCheck out this post in our app: HCI Mastery';
+
+                await Share.share(
+                  shareText,
+                  subject: 'Check out this post: ${post.title}',
+                  sharePositionOrigin:
+                      box!.localToGlobal(Offset.zero) & box.size,
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to share: ${e.toString()}'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPostCard(Post post, ForumViewModel forumViewModel,
-    ) {
+  Widget _buildPostCard(
+    Post post,
+    ForumViewModel forumViewModel,
+  ) {
     var isLiked = forumViewModel.isLikedByUser[post.postID] ?? false;
     int index = forumViewModel.posts.indexWhere((p) => p.postID == post.postID);
     var isMyPost = post.creator == userViewModel.userId;
@@ -296,7 +304,7 @@ class _ForumPageState extends State<ForumPage> {
               _showPostOptionsBottomSheet(post, isMyPost);
             },
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -435,7 +443,6 @@ class _ForumPageState extends State<ForumPage> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    
                     ],
                   ),
                 ],

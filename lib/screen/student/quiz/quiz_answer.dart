@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -25,20 +26,26 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
   List<String> choice = ['A', 'B', 'C', 'D'];
   late Quiz quiz;
   late String currentQuizID;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadInitialData();
+    quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadInitialData();
+    });
   }
 
   Future<void> loadInitialData() async {
-    quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     currentQuizID = widget.quizzID;
     quiz = quizViewModel.quizzes.firstWhere(
       (quiz) => quiz.quizzID == currentQuizID,
     );
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void navigateToNextQuiz() {
@@ -70,10 +77,12 @@ class _QuizAnswerPage extends State<QuizAnswerPage> {
     bool isLastQuiz = currentIndex == quizViewModel.quizzes.length - 1;
 
     return Scaffold(
-      appBar:  AppBarWithBackBtn(
+      appBar: AppBarWithBackBtn(
         title: 'Question ${currentIndex + 1}',
       ),
-      body: Container(
+      body: (  isLoading)
+          ? const LoadingShimmer()
+          :Container(
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

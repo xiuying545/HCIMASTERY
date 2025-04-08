@@ -24,18 +24,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
   late Post post;
   final TextEditingController _replyController = TextEditingController();
   late UserViewModel userViewModel;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    fetchPostDetails();
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchPostDetails();
+    });
   }
 
   Future<void> fetchPostDetails() async {
     try {
-      userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
       await forumViewModel.fetchPostById(widget.postID);
       setState(() {
         post = forumViewModel.post;
@@ -45,13 +47,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
         SnackBar(content: Text('Failed to fetch post details: $error')),
       );
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void confirmDeleteReply(int index) {
     showDialog(
         context: context,
         builder: (context) => CustomDialog(
-      
               title: 'Delete Reply',
               content: 'Are you sure you want to delete this reply?',
               action: 'Alert',
@@ -84,29 +88,29 @@ class _PostDetailPageState extends State<PostDetailPage> {
       appBar: const AppBarWithBackBtn(
         title: 'Post Detail',
       ),
-      body: forumViewModel.isLoading
+      body: (forumViewModel.isLoading || isLoading)
           ? const LoadingShimmer()
           : Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPostHeader(post),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    'Replies (${post.replies.length})',
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPostHeader(post),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      'Replies (${post.replies.length})',
                       style: AppTheme.h4Style,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                _buildRepliesList(post, forumViewModel),
-                const SizedBox(height: 16),
-                _buildReplyInputField(forumViewModel),
-              ],
+                  const SizedBox(height: 8),
+                  _buildRepliesList(post, forumViewModel),
+                  const SizedBox(height: 16),
+                  _buildReplyInputField(forumViewModel),
+                ],
+              ),
             ),
-          ),
     );
   }
 
@@ -133,11 +137,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
             const SizedBox(height: 12),
             Row(
               children: [
-                 CircleAvatar(
+                CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(
-                        forumViewModel.userMap[post.creator]?.profileImagePath ??  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
-                      ),
+                    forumViewModel.userMap[post.creator]?.profileImagePath ??
+                        "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+                  ),
                   backgroundColor: Colors.grey,
                 ),
                 const SizedBox(width: 12),
@@ -145,7 +150,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                     forumViewModel.userMap[post.creator]?.name ?? "unknown" ,
+                      forumViewModel.userMap[post.creator]?.name ?? "unknown",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -231,10 +236,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                       CircleAvatar(
+                      CircleAvatar(
                         radius: 20,
                         backgroundImage: NetworkImage(
-                           forumViewModel.userMap[reply.creator]?.profileImagePath ??  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+                          forumViewModel
+                                  .userMap[reply.creator]?.profileImagePath ??
+                              "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                         ),
                         backgroundColor: Colors.grey,
                       ),
@@ -244,7 +251,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                             forumViewModel.userMap[reply.creator]?.name ??  "unknown",
+                              forumViewModel.userMap[reply.creator]?.name ??
+                                  "unknown",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

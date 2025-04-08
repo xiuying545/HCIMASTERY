@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
-import 'package:fyp1/common/common_widget/action_button.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
@@ -26,16 +26,23 @@ class ManageQuizPage extends StatefulWidget {
 class _ManageQuizPageState extends State<ManageQuizPage> {
   late String chapterName;
   late QuizViewModel quizViewModel;
+     bool isLoading = true; 
 
   @override
   void initState() {
     super.initState();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
     loadQuizData();
+        });
+        
   }
 
   Future<void> loadQuizData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     await quizViewModel.fetchQuizData(widget.chapterId);
+         setState(() {
+      isLoading = false;  
+    });
   }
 
   @override
@@ -58,7 +65,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
         color: Colors.grey.shade100, // Light grey background for the page
         child: Consumer<QuizViewModel>(
           builder: (context, model, child) {
-            if (model.isLoading) {
+            if (model.isLoading||isLoading) {
               return const LoadingShimmer();
             }
             final quizzes = model.quizzes;
@@ -66,7 +73,12 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                 onRefresh: () async {
                   await model.fetchQuizData(widget.chapterId, refresh: true);
                 },
-                child: Padding(
+                child: model.quizzes.isEmpty
+                        ? const BlankState(
+                            icon: Icons.quiz,
+                            title: 'No quizzes yet',
+                            subtitle: 'Tap the + button to add a new quizz',
+                          ):Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +179,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                        icon: Icon(Icons.more_vert),
+                        icon: const Icon(Icons.more_vert),
                         onPressed: () => _showQuizOptionsBottomSheet(quiz),
                       ),
                     ),
