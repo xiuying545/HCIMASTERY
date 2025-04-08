@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common_widget/loading_shimmer.dart';
+import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,7 +32,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   }
 
   Future<void> loadQuizData() async {
-    await quizViewModel.fetchQuizData(widget.chapterID);
+    await quizViewModel.loadData(widget.chapterID);
     setState(() {
       isLoading = false;
     });
@@ -64,6 +65,15 @@ class _QuestionListPageState extends State<QuestionListPage> {
                   child: ListView.builder(
                     itemCount: quizViewModel.quizzes.length,
                     itemBuilder: (context, index) {
+                      Quiz quiz = quizViewModel.quizzes[index];
+                      int selectedIndex =
+                          quizViewModel.cachedAnswers[quiz.quizzID] ?? -1;
+                      String selectedOption;
+                      if (selectedIndex != -1) {
+                        selectedOption = quiz.options[selectedIndex];
+                      } else {
+                        selectedOption = "❗No answer";
+                      }
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 16.0),
@@ -104,7 +114,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               ),
                             ),
                             subtitle: Text(
-                              "Tap to view details",
+                              "${selectedOption}",
                               style: GoogleFonts.rubik(
                                 fontSize: 14.0,
                                 color: Colors.grey[600],

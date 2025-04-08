@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> loadInitialData() async {
 
-    await noteViewModel.setupChapterData(userViewModel.userId!);
+    await noteViewModel.setupChapterData();
     setState(()  {
           progressMap =  noteViewModel.calculateProgressByChapter();
           isLoading=false;

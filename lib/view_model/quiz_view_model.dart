@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/services/note_service.dart';
 import 'package:fyp1/services/quiz_answer_service.dart';
@@ -33,17 +35,20 @@ class QuizViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  Future<void> loadData(String userId, String chapterId) async {
-    _userId = userId;
+  Future<void> loadData(String chapterId) async {
     _chapterId = chapterId;
-    try {
+    tryFunction(() async {
+      if (StorageHelper.get(USER_ID) != null) {
+        _userId = StorageHelper.get(USER_ID)!;
+      } else {
+        throw Exception("USER ID is null");
+      }
       await Future.wait([
         fetchQuizData(chapterId),
         fetchUserAnswers(chapterId),
       ]);
-    } catch (e) {
-      print('Error retrieving answer: $e');
-    }
+    });
+
     notifyListeners();
   }
 
@@ -55,7 +60,6 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> fetchQuizData(String chapterId, {bool refresh = false}) async {
-  
     if (!refresh && _quizzesByChapter.containsKey(chapterId)) {
       _quizzes = _quizzesByChapter[chapterId]!;
       notifyListeners();
@@ -87,17 +91,17 @@ class QuizViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-Future<Quiz> getQuizById(String chapterID, String quizId) async {
-  return await tryFunction<Quiz>(() async {
-        setLoading(true);
-    Quiz? quiz = await _quizService.getQuizById(chapterID, quizId);
-        setLoading(false);
-    if (quiz == null) {
-      throw Exception('Quiz not found');
-    }
-    return quiz;
-  }) as Quiz;
-}
+  Future<Quiz> getQuizById(String chapterID, String quizId) async {
+    return await tryFunction<Quiz>(() async {
+      setLoading(true);
+      Quiz? quiz = await _quizService.getQuizById(chapterID, quizId);
+      setLoading(false);
+      if (quiz == null) {
+        throw Exception('Quiz not found');
+      }
+      return quiz;
+    }) as Quiz;
+  }
 
   Future<int> calculateScore(String chapter, String userId) async {
     int correctAnswers = 0;

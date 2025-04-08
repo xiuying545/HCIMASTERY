@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/services/note_progress_service.dart';
@@ -35,11 +37,18 @@ class NoteViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  Future<void> setupChapterData(String userId) async {
-    _userId = userId;
+  Future<void> setupChapterData() async {
+    if (StorageHelper.get(USER_ID) != null) {
+      _userId = StorageHelper.get(USER_ID)!;
+    } else {
+      throw Exception("USER ID is null");
+    }
     if (_chapters.isNotEmpty) return;
-    await fetchChapters();
-    await fetchProgress();
+    tryFunction<Note?>(() async {
+      await fetchChapters();
+      await fetchProgress();
+      return null;
+    });
   }
 
   Future<void> setupChapterDataAdmin() async {
@@ -49,7 +58,6 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchNotesForChapter(String chapterID,
       {bool refresh = false}) async {
-
     _chapterId = chapterID;
     if (!refresh && _notesByChapter.containsKey(chapterID)) {
       _notes = _notesByChapter[chapterID]!;

@@ -124,20 +124,20 @@ class _NoteListPageState extends State<NoteListPage> {
                             height: 300,
                           ),
                         ),
-                        Positioned(
-                          bottom: 20,
-                          left: 20,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Text(
-                              chapter.chapterName,
-                              style: AppTheme.h1Style
-                                  .copyWith(color: Colors.white),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
+                        // Positioned(
+                        //   bottom: 20,
+                        //   left: 20,
+                        //   child: SizedBox(
+                        //     width: MediaQuery.of(context).size.width * 0.6,
+                        //     child: Text(
+                        //       chapter.chapterName,
+                        //       style: AppTheme.h1Style
+                        //           .copyWith(color: Colors.white),
+                        //       maxLines: 2,
+                        //       overflow: TextOverflow.ellipsis,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -181,9 +181,9 @@ class _NoteListPageState extends State<NoteListPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 30.0),
                               child: Text(
-                                style: AppTheme.h2Style
+                                style: AppTheme.h3Style
                                     .copyWith(color: AppTheme.textColor),
-                                "Course Detail",
+                               chapter.chapterName,
                               ),
                             ),
                             const Divider(

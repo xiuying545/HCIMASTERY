@@ -37,7 +37,6 @@ class _QuizResultPageState extends State<QuizResultPage> {
 
   Future<void> loadInitialData() async {
 
-   await quizViewModel.loadData(userViewModel.userId!, widget.chapterID);
     await quizViewModel.calculateScore(widget.chapterID, userViewModel.userId!);
     print("Current Score: ${quizViewModel.score}");
         setState(() {
