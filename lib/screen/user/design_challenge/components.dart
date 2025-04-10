@@ -1,7 +1,7 @@
+// Shared Base Class
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// ------------------ Base UIComponent Class ------------------
 class UIComponent {
   String type;
   String text;
@@ -26,308 +26,57 @@ class UIComponent {
   });
 }
 
-// ------------------ Profile Picture Component ------------------
-class ProfilePicture extends UIComponent {
-  ProfilePicture()
-      : super(
-          type: 'ProfilePicture',
-          text: 'Profile Picture',
-          color: Colors.blue.shade900,
-          x: 150,
-          y: 60,
-          width: 60,
-          height: 60,
-        );
-
-  Widget buildWidget(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade300, width: 2),
-      ),
-      child: const CircleAvatar(
-        radius: 50,
-        backgroundImage: NetworkImage(
-          "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
-        ),
-        backgroundColor: Colors.grey,
-      ),
-    );
-  }
-}
-
-// ------------------ Name Component ------------------
-class Name extends UIComponent {
-  Name()
-      : super(
-          type: 'Name',
-          text: 'John Doe',
-          fontSize: 16,
-          x: 40,
-          y: 200,
-          width: 300,
-          height: 90,
-          color: const Color.fromARGB(255, 204, 204, 204),
-        );
-
-  Widget buildWidget(BuildContext context) {
-    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
-    return Container(
-      width: calculatedWidth,
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.person, color: color, size: 26),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Name",
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize - 2,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  text,
-                  style: GoogleFonts.poppins(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
-                      color: color),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ------------------ Bio Component ------------------
-class Bio extends UIComponent {
-  Bio()
-      : super(
-          type: 'Bio',
-          text:
-              'A passionate developer ',
-          fontSize: 14,
-          x: 40,
-          y: 280,
-          width: 300,
-          height: 90,
-          color: Colors.blue.shade900,
-        );
-
-  Widget buildWidget(BuildContext context) {
-    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
-    return Container(
-      width: calculatedWidth,
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline, color: color, size: 26),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Bio",
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize - 2,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  text,
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ------------------ Contact Info Component ------------------
-class ContactInfo extends UIComponent {
-  ContactInfo()
-      : super(
-          type: 'ContactInfo',
-          text: 'john.doe@gmail.com',
-          color: Colors.green,
-          x: 40,
-          y: 380,
-          width: 300,
-          height: 90,
-        );
-
-  Widget buildWidget(BuildContext context) {
-    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
-    return Container(
-      width: calculatedWidth,
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.email, color: color, size: 26),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Email",
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize - 2,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  text,
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ------------------ Address Component ------------------
-class Address extends UIComponent {
-  Address()
-      : super(
-          type: 'Address',
-          text: 'Address: 123 Main St',
-          color: Colors.orange,
-          fontSize: 16,
-          x: 20,
-          y: 450,
-          width: 300,
-          height: 90,
-        );
-
-  Widget buildWidget(BuildContext context) {
-    double calculatedWidth = MediaQuery.of(context).size.width * 0.7;
-    return Container(
-      width: calculatedWidth,
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.location_on, color: color, size: 26),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.poppins(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ------------------ Header Component ------------------
+// ------------------ Header ------------------
 class Header extends UIComponent {
   Header()
       : super(
           type: 'Header',
           text: 'Welcome to My Profile',
-          color: Colors.blue.shade900,
+          color: const Color(0xFF6A1B9A),
           x: 0,
           y: 0,
           width: 400,
-          height: 100,
+          height: 90,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return Container(
+      width: width,
+      height: height + (fontSize - 18),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.shade700,
+            offset: const Offset(4, 4),
+          )
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: GoogleFonts.fredoka(
+          fontSize: fontSize,
+          color: Colors.yellow,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+// ------------------ Profile Picture ------------------
+class ProfilePicture extends UIComponent {
+  ProfilePicture()
+      : super(
+          type: 'ProfilePicture',
+          text: '',
+          color: Colors.orange,
+          x: 150,
+          y: 100,
+          width: 80,
+          height: 80,
         );
 
   Widget buildWidget(BuildContext context) {
@@ -335,67 +84,222 @@ class Header extends UIComponent {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.blue.shade900,
-        borderRadius: BorderRadius.circular(12),
+        shape: BoxShape.circle,
+        border: Border.all(color: color, width: 4),
+        boxShadow: [
+          BoxShadow(color: Colors.orange.shade800, offset: const Offset(4, 4))
+        ],
       ),
-      padding: const EdgeInsets.all(16),
-      child: Center(
-        child: Text(
-          text,
-          style: GoogleFonts.poppins(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+      child: CircleAvatar(
+        radius: width / 2,
+        backgroundColor: Colors.white,
+        backgroundImage: const NetworkImage(
+          "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
         ),
       ),
     );
   }
 }
 
-// ------------------ Edit Profile Component ------------------
+// ------------------ Reusable Label Component ------------------
+Widget buildLabeledCard({
+  required IconData icon,
+  required String label,
+  required String value,
+  required Color background,
+  required Color shadow,
+  required double fontSize,
+  required Color color,
+}) {
+  return Container(
+      width: 320,
+      height: fontSize * 2 + 34,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: shadow, offset: const Offset(4, 4))],
+      ),
+      child: Column(children: [
+        Row(
+          children: [
+            Icon(icon, color: Colors.white, size: fontSize + 6),
+            const SizedBox(width: 16),
+            Text(
+              label,
+              style: GoogleFonts.fredoka(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+     
+           
+          ],
+             ),
+           Flexible(
+              child: Text(
+                value,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.fredoka(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ),
+     
+      ]));
+}
+
+Color getDarkerColor(Color color, [double amount = .2]) {
+  final hsl = HSLColor.fromColor(color);
+  final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+  return hslDark.toColor();
+}
+
+// ------------------ Name ------------------
+class Name extends UIComponent {
+  Name()
+      : super(
+          type: 'Name',
+          text: 'John Doe',
+          fontSize: 20,
+          color: const Color(0xFFED5546),
+          x: 40,
+          y: 200,
+          width: 320,
+          height: 70,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return buildLabeledCard(
+      icon: Icons.person,
+      label: 'Name',
+      value: text,
+      background: color,
+      shadow: getDarkerColor(color),
+      fontSize: fontSize,
+      color: Colors.white,
+    );
+  }
+}
+
+// ------------------ Bio ------------------
+class Bio extends UIComponent {
+  Bio()
+      : super(
+          type: 'Bio',
+          text: 'A passionate developer',
+          fontSize: 20,
+          color: const Color(0xFF0033A0),
+          x: 40,
+          y: 280,
+          width: 320,
+          height: 80,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return buildLabeledCard(
+      icon: Icons.info,
+      label: 'Bio',
+      value: text,
+      background: color,
+      shadow: getDarkerColor(color),
+      fontSize: fontSize,
+      color: Colors.white,
+    );
+  }
+}
+
+// ------------------ Contact Info ------------------
+class ContactInfo extends UIComponent {
+  ContactInfo()
+      : super(
+          type: 'ContactInfo',
+          text: 'john.doe@gmail.com',
+          fontSize: 20,
+          color: Colors.orange,
+          x: 40,
+          y: 360,
+          width: 320,
+          height: 70,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return buildLabeledCard(
+      icon: Icons.email,
+      label: 'Email',
+      value: text,
+      background: color,
+      shadow: getDarkerColor(color),
+      fontSize: fontSize,
+      color: Colors.white,
+    );
+  }
+}
+
+// ------------------ Address ------------------
+class Address extends UIComponent {
+  Address()
+      : super(
+          type: 'Address',
+          text: '123 Main St',
+          fontSize: 20,
+          color: Colors.white,
+          x: 40,
+          y: 440,
+          width: 320,
+          height: 70,
+        );
+
+  Widget buildWidget(BuildContext context) {
+    return buildLabeledCard(
+      icon: Icons.location_on,
+      label: 'Address',
+      value: text,
+      background: color,
+      shadow: getDarkerColor(color),
+      fontSize: fontSize,
+      color: Colors.white,
+    );
+  }
+}
+
+// ------------------ Edit Profile ------------------
 class EditProfile extends UIComponent {
   EditProfile()
       : super(
           type: 'EditProfile',
           text: 'Edit Profile',
-          color: Colors.grey, // Default color (can be overridden)
-          x: 150,
-          y: 500,
-          width: 160,
-          fontSize:10,
-          height: 60, // Adjusted height for a button
+          fontSize: 18,
+          color: Colors.white,
+          x: 100,
+          y: 530,
+          width: 200,
+          height: 60,
         );
 
   Widget buildWidget(BuildContext context) {
-  return Container(
-      width: width, 
-      height: height, 
+    return Container(
+      width: width,
+      height: height + (fontSize - 18),
       decoration: BoxDecoration(
-        color: color, 
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2), 
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2), 
-            )
+          BoxShadow(color: Colors.red.shade700, offset: const Offset(4, 4))
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Match button padding
-      alignment: Alignment.center, // Center the text
+      alignment: Alignment.center,
       child: Text(
         text,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.fredoka(
           fontSize: fontSize,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          color: color,
         ),
       ),
     );
-
+  }
 }
-}
-
-
