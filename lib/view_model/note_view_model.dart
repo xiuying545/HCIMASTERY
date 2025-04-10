@@ -18,12 +18,16 @@ class NoteViewModel extends BaseViewModel {
   late String _userId;
   String _chapterId = "";
   final Map<String, Timer> _debounceTimers = {};
+  final Map<String, int> _noteCount = {};
+  Map<String, double> _progressMap = {};
 
   // Getters
   List<Chapter> get chapters => _chapters;
   List<Note> get notes => _notes;
   List<NoteProgress> get studentProgress => _studentProgress;
   String get chapterId => _chapterId;
+  Map<String, int> get noteCount => _noteCount;
+  Map<String, double> get progressMap => _progressMap;
 
   @override
   void dispose() {
@@ -46,7 +50,11 @@ class NoteViewModel extends BaseViewModel {
     if (_chapters.isNotEmpty) return;
     tryFunction<Note?>(() async {
       await fetchChapters();
+
       await fetchProgress();
+
+      await calculateProgressByChapter();
+
       return null;
     });
   }
@@ -96,19 +104,29 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchProgress() async {
     setLoading(true);
+// Start both progress and note count futures in parallel
     List<Future<NoteProgress?>> progressFutures = _chapters
-        .map((chapter) =>
-            _noteProgressService.getProgress(_userId, chapter.chapterID!))
+        .map((chapter) => _noteProgressService.getProgress(
+            StorageHelper.get(USER_ID)!, chapter.chapterID!))
         .toList();
-    _studentProgress
-        .addAll((await Future.wait(progressFutures)).whereType<NoteProgress>());
+
+    List<Future<void>> noteCountFutures = _chapters.map((chapter) async {
+      _noteCount[chapter.chapterID!] =
+          await _noteService.getNoteCountForChapter(chapter.chapterID!);
+    }).toList();
+
+// Wait for both operations in parallel
+    await Future.wait([
+      Future.wait(progressFutures).then((results) {
+        _studentProgress.addAll(results.whereType<NoteProgress>());
+      }),
+      ...noteCountFutures,
+    ]);
     setLoading(false);
   }
 
   // Calculate progress for each chapter
-  Map<String, double> calculateProgressByChapter() {
-    Map<String, double> progressMap = {};
-
+  Future<void> calculateProgressByChapter() async {
     try {
       for (var chapter in _chapters) {
         double completionRate = 0;
@@ -119,23 +137,22 @@ class NoteViewModel extends BaseViewModel {
         );
 
         if (chapter.notes != null) {
-          int totalNotes = chapter.notes!.length;
+          int totalNotes = _noteCount[chapter.chapterID!] ?? 0;
           int completedCount = studentProgress.progress.values
               .where((status) => status == "Completed")
               .length;
 
           completionRate =
               (totalNotes > 0) ? ((completedCount / totalNotes)) : 0.0;
-          progressMap[chapter.chapterID!] = completionRate;
+          _progressMap[chapter.chapterID!] = completionRate;
         } else {
-          progressMap[chapter.chapterID!] = 0;
+          _progressMap[chapter.chapterID!] = 0;
         }
       }
+      notifyListeners();
     } catch (e) {
       print("Error calculating progress: $e");
     }
-
-    return progressMap;
   }
 
   Future<void> updateNoteProgress(NoteProgress noteProgress) async {

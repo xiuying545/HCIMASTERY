@@ -30,7 +30,7 @@ class _ForumPageState extends State<ForumPage> {
   @override
   void initState() {
     super.initState();
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+        userViewModel = Provider.of<UserViewModel>(context, listen: false);
     forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadPosts();
@@ -38,6 +38,7 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Future<void> loadPosts() async {
+
     await forumViewModel.loadForumData(userViewModel.user!);
     setState(() {
       isLoading = false;

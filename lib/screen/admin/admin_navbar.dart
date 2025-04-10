@@ -34,7 +34,7 @@ class _AdminNavBar extends State<AdminNavBar> {
         .setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
     Provider.of<UserViewModel>(context, listen: false)
         .loadUser("0ZSgmWUYGOOzncPO3oiitqaekTM2");
-    Provider.of<UserViewModel>(context, listen: false).role = "admin";
+    Provider.of<UserViewModel>(context, listen: false).role = "Admin";
   }
 
   @override

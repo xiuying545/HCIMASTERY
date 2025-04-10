@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/custom_input_field.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -56,10 +57,10 @@ class _SignInScreenState extends State<SignInScreen> {
       userViewModel.setUserId(userId);
       userViewModel.loadUser(userId);
       String route;
-      if (userViewModel.user?.role == 'admin') {
+      if (userViewModel.user?.role == ROLE_ADMIN) {
         route = '/adminNav';
         GoRouter.of(context).go(route);
-      } else if (userViewModel.user?.role == 'student') {
+      } else if (userViewModel.user?.role ==  ROLE_STUDENT) {
         route = '/studentNav';
         GoRouter.of(context).go(route);
       } else {
@@ -71,6 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Exception(errorMessage),
           StackTrace.current,
         );
+        
       }
       
 

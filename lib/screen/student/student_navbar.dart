@@ -29,10 +29,14 @@ class _StudentNavBar extends State<StudentNavBar> {
     _selectedIndex = widget.bottomIndex;
 
     // Set user ID (example)
-    Provider.of<UserViewModel>(context, listen: false)
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+          Provider.of<UserViewModel>(context, listen: false)
         .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
-    Provider.of<UserViewModel>(context, listen: false)
-        .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
+    Provider.of<UserViewModel>(context, listen: false).role = "Student";
+      Provider.of<UserViewModel>(context, listen: false)
+          .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
+    });
   }
 
   @override

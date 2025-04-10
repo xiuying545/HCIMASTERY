@@ -65,6 +65,22 @@ class ChapterService {
     }
   }
 
+  Future<int> getNoteCountForChapter(String chapterID) async {
+    try {
+      AggregateQuerySnapshot query = await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Notes')
+          .count()
+          .get();
+
+      return query.count ?? 0;
+    } catch (e) {
+      print('Error getting note count: $e');
+      return 0;
+    }
+  }
+
   Future<List<Chapter>> getChapters() async {
     try {
       QuerySnapshot chapterSnapshot = await _db.collection('Chapters').get();
@@ -80,7 +96,7 @@ class ChapterService {
         chapterList.add(Chapter(
           chapterID: chapterID,
           chapterName: chapterData['chapterName'],
-          notes: [], 
+          notes: [],
         ));
       }
 
@@ -159,26 +175,24 @@ class ChapterService {
     }
   }
 
-
   //update note order
   Future<void> updateNoteOrder(List<Note> notes, String chapterId) async {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  WriteBatch batch = firestore.batch();
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    WriteBatch batch = firestore.batch();
 
-  for (int i = 0; i < notes.length; i++) {
-    DocumentReference docRef = firestore
-        .collection('Chapters')
-        .doc(chapterId)
-        .collection('Notes')
-        .doc(notes[i].noteID);
+    for (int i = 0; i < notes.length; i++) {
+      DocumentReference docRef = firestore
+          .collection('Chapters')
+          .doc(chapterId)
+          .collection('Notes')
+          .doc(notes[i].noteID);
 
-    batch.update(docRef, {'order': i}); 
+      batch.update(docRef, {'order': i});
+    }
+
+    await batch.commit();
+    print("✅ Note order updated successfully!");
   }
-
-  await batch.commit();
-  print("✅ Note order updated successfully!");
-}
-
 
   // Delete a chapter (including its notes)
   Future<void> deleteChapter(String chapterID) async {
@@ -290,5 +304,4 @@ class ChapterService {
       return null;
     }
   }
-
 }

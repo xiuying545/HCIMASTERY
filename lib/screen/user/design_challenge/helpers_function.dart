@@ -6,7 +6,6 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 // ------------------ Helper Functions ------------------
 
 
-
 // Returns the contrast ratio between two colors
 double getContrastRatio(Color a, Color b) {
   double lumA = a.computeLuminance();

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/common_widget/banner.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/course_tile.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -18,25 +20,29 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late NoteViewModel noteViewModel;
-  late UserViewModel userViewModel;
-  Map<String, double> progressMap = {};
-     bool isLoading = true; 
+  bool isLoading = true;
   @override
   void initState() {
-        noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
+   
     super.initState();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-    loadInitialData();
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      loadInitialData();
+      loadProgress();
+    });
   }
 
   Future<void> loadInitialData() async {
-
     await noteViewModel.setupChapterData();
-    setState(()  {
-          progressMap =  noteViewModel.calculateProgressByChapter();
-          isLoading=false;
+
+
+  }
+
+    Future<void> loadProgress() async {
+
+    await noteViewModel.calculateProgressByChapter();
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -49,7 +55,6 @@ class _MainPageState extends State<MainPage> {
             height: 20,
           ),
           _buildHeader(),
-
           CustomBanner(
             title: "Explore, Learn,\nand Master HCI\nusing HCI Mastery",
             imagePath: 'assets/Animation/child.png',
@@ -64,7 +69,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
- 
   // Header with greeting and search bar
   Widget _buildHeader() {
     return Container(
@@ -87,8 +91,6 @@ class _MainPageState extends State<MainPage> {
             style: GoogleFonts.poppins(
                 color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
           ),
-          // const SizedBox(height: 20),
-          // _buildSearchBar(),
         ],
       ),
     );
@@ -97,16 +99,16 @@ class _MainPageState extends State<MainPage> {
   Widget _buildCoursesSection() {
     return Consumer<NoteViewModel>(
       builder: (context, viewModel, _) {
-        if (viewModel.isLoading||isLoading) {
+        if (viewModel.isLoading || isLoading) {
           return const LoadingShimmer();
         }
 
         if (viewModel.chapters.isEmpty) {
-          return   const BlankState(
-                    icon: Icons.menu_book_outlined,
-                    title: 'No chapters yet',
-                    subtitle: 'Please check back later for available chapters.',
-                  );
+          return const BlankState(
+            icon: Icons.menu_book_outlined,
+            title: 'No chapters yet',
+            subtitle: 'Please check back later for available chapters.',
+          );
         }
 
         return Container(
@@ -132,9 +134,10 @@ class _MainPageState extends State<MainPage> {
                     return CourseTile(
                       icon: Icons.book,
                       title: chapter.chapterName,
-                      subtitle: "${chapter.notes?.length} lessons",
+                      subtitle:
+                          "${viewModel.noteCount[chapter.chapterID]} lessons",
                       chapterId: chapter.chapterID!,
-                      progress: progressMap[chapter.chapterID] ?? 0.0,
+                      progress: viewModel.progressMap[chapter.chapterID]??0,
                       color: Colors.blue.shade400,
                     );
                   },
@@ -147,4 +150,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-

@@ -1,3 +1,5 @@
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/model/post.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/services/post_service.dart';
@@ -32,9 +34,10 @@ class ForumViewModel extends BaseViewModel {
   Future<void> loadForumData(Profile newUser) async {
     if (_posts.isNotEmpty) return;
     await tryFunction(() async {
+       _userId = StorageHelper.get(USER_ID)!;
       await fetchPost();
-      _userMap[newUser.userId!] = newUser;
-      _userId = newUser.userId!;
+      _userMap[_userId] = newUser;
+     
     });
   }
 

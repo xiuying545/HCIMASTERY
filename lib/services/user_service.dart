@@ -4,7 +4,8 @@ import 'package:fyp1/model/user.dart';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('User');
+  final CollectionReference _usersCollection =
+      FirebaseFirestore.instance.collection('User');
 
   // Adds or updates a user in Firestore
   Future<void> addOrUpdateUser(Profile user) async {
@@ -15,25 +16,21 @@ class UserService {
     }
   }
 
-  
-Future<Profile?> getUserById(String userID) async {
-  try {
-    DocumentSnapshot doc = await _usersCollection.doc(userID).get();
-    if (doc.exists) {
- 
-     
-      
-      // Create a User instance from Firestore data and add the userID
-      return Profile.fromJson({
-        ...doc.data() as Map<String, dynamic>,
-        'userID': userID,
-      });
+  Future<Profile?> getUserById(String userID) async {
+    try {
+      DocumentSnapshot doc = await _usersCollection.doc(userID).get();
+      if (doc.exists) {
+        // Create a User instance from Firestore data and add the userID
+        return Profile.fromJson({
+          ...doc.data() as Map<String, dynamic>,
+          'userId': userID,
+        });
+      }
+    } catch (e) {
+      print("Error retrieving user: $e");
     }
-  } catch (e) {
-    print("Error retrieving user: $e");
+    return null;
   }
-  return null;
-}
 
   // Deletes a user by userID
   Future<void> deleteUser(String userID) async {
@@ -69,7 +66,7 @@ Future<Profile?> getUserById(String userID) async {
     return null;
   }
 
-    Future<String> getUserName(String userID) async {
+  Future<String> getUserName(String userID) async {
     try {
       DocumentSnapshot doc = await _usersCollection.doc(userID).get();
       if (doc.exists) {
@@ -81,28 +78,28 @@ Future<Profile?> getUserById(String userID) async {
     return "unknown name";
   }
 
-Future<Map<String, Profile>> fetchUsersByIds(Set<String> userIds) async {
-  try {
-    const int batchSize = 10;
-    Map<String, Profile> userMap = {};
+  Future<Map<String, Profile>> fetchUsersByIds(Set<String> userIds) async {
+    try {
+      const int batchSize = 10;
+      Map<String, Profile> userMap = {};
 
-    for (int i = 0; i < userIds.length; i += batchSize) {
-      List<String> batch = userIds.skip(i).take(batchSize).toList();
+      for (int i = 0; i < userIds.length; i += batchSize) {
+        List<String> batch = userIds.skip(i).take(batchSize).toList();
 
-      QuerySnapshot querySnapshot = await _usersCollection
-          .where(FieldPath.documentId, whereIn: batch)
-          .get();
+        QuerySnapshot querySnapshot = await _usersCollection
+            .where(FieldPath.documentId, whereIn: batch)
+            .get();
 
-      for (var doc in querySnapshot.docs) {
-        userMap[doc.id] = Profile.fromJson(doc.data() as Map<String, dynamic>);
+        for (var doc in querySnapshot.docs) {
+          userMap[doc.id] =
+              Profile.fromJson(doc.data() as Map<String, dynamic>);
+        }
       }
+
+      return userMap;
+    } catch (e) {
+      print("Error fetching users by IDs: $e");
+      return {};
     }
-
-    return userMap;
-  } catch (e) {
-    print("Error fetching users by IDs: $e");
-    return {};
   }
-}
-
 }
