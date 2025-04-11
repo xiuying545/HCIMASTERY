@@ -114,7 +114,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               ),
                             ),
                             subtitle: Text(
-                              "${selectedOption}",
+                              selectedOption,
                               style: GoogleFonts.rubik(
                                 fontSize: 14.0,
                                 color: Colors.grey[600],

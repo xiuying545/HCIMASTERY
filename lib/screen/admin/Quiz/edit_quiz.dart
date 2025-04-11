@@ -205,7 +205,7 @@ class _EditQuizPageState extends State<EditQuizPage> {
       ),
       backgroundColor: Colors.grey.shade100,
       body: isLoading
-          ?  LoadingShimmer()
+          ?  const LoadingShimmer()
           : Padding(
               padding: const EdgeInsets.all(22.0),
               child: SingleChildScrollView(

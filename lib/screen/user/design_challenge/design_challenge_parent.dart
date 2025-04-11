@@ -1,11 +1,10 @@
 // design_challenge_ui_base.dart
 
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'components.dart';
+import 'components_profile.dart';
 
 abstract class DesignChallengeUIState<T extends StatefulWidget>
     extends State<T> {
@@ -16,6 +15,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   int? selectedIndex;
   bool isPlay = true;
   OverlayEntry? overlayEntry;
+  bool showTrashBin = false;
   Color primaryColor = Colors.orange;
 
   GlobalKey lockKey = GlobalKey();
@@ -32,12 +32,12 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         canvasWidth = MediaQuery.of(context).size.width;
-        canvasHeight = MediaQuery.of(context).size.height * 0.8;
+        canvasHeight = MediaQuery.of(context).size.height * 0.85;
       });
     });
   }
 
-  Widget buildCanvasBody() {
+  Widget buildCanvasBody({String? backgroundImage}) {
     return Column(
       children: [
         Expanded(
@@ -49,14 +49,24 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                     width: canvasWidth,
                     height: canvasHeight,
                     decoration: BoxDecoration(
+                      image: backgroundImage != null
+                          ? DecorationImage(
+                              image: AssetImage(backgroundImage),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                       color: canvasBackgroundColor,
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: Stack(
-                      children: components.isEmpty
-                          ? [_buildEmptyMessage()]
-                          : List.generate(components.length,
+                      children: [
+                        if (components.isEmpty)
+                          _buildEmptyMessage()
+                        else
+                          ...List.generate(components.length,
                               (i) => buildDraggableComponent(i)),
+                        if (showTrashBin) _buildTrashBin(),
+                      ],
                     ),
                   ),
                 ),
@@ -65,6 +75,33 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTrashBin() {
+    return Positioned(
+      bottom: 20,
+      right: MediaQuery.of(context).size.width * 0.5 - 30,
+      child: DragTarget<int>(
+        onWillAcceptWithDetails: (_) => true,
+        onAcceptWithDetails: (DragTargetDetails<int> details) {
+          setState(() {
+            components.removeAt(details.data);
+            showTrashBin = false;
+          });
+        },
+        builder: (context, candidateData, rejectedData) {
+          return Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.red.shade300,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white),
+          );
+        },
+      ),
     );
   }
 
@@ -90,44 +127,44 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
       duration: const Duration(milliseconds: 200),
       left: comp.x.clamp(0, canvasWidth - comp.width),
       top: comp.y.clamp(0, canvasHeight - comp.height),
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          if (!isPlay) return;
-          setState(() {
-            comp.x =
-                (comp.x + details.delta.dx).clamp(0, canvasWidth - comp.width);
-            comp.y = (comp.y + details.delta.dy)
-                .clamp(0, canvasHeight - comp.height);
-          });
-        },
-        onTap: () {
-          setState(() => selectedIndex = index);
-          editComponent(index);
-        },
-        child: Transform.scale(
-          scale: selectedIndex == index ? 1.05 : 1.0,
-          child: _buildComponentWidget(comp),
+      child: LongPressDraggable<int>(
+        data: index,
+        feedback: Opacity(
+          opacity: 0.7,
+          child: SizedBox(
+            child: buildComponentWidget(comp),
+          ),
+        ),
+        childWhenDragging: Container(),
+        onDragStarted: () => setState(() => showTrashBin = true),
+        onDragEnd: (_) => setState(() => showTrashBin = false),
+        child: GestureDetector(
+          onPanUpdate: (details) {
+            if (!isPlay) return;
+            setState(() {
+              comp.x = (comp.x + details.delta.dx)
+                  .clamp(0, canvasWidth - comp.width);
+              comp.y = (comp.y + details.delta.dy)
+                  .clamp(0, canvasHeight - comp.height);
+            });
+          },
+          onTap: () {
+            if (comp.isEditable == true) {
+              setState(() => selectedIndex = index);
+              editComponent(index);
+            }
+          },
+          child: Transform.scale(
+            scale: selectedIndex == index ? 1.05 : 1.0,
+            child: buildComponentWidget(comp),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildComponentWidget(UIComponent comp) {
-    switch (comp.type) {
-      case 'ProfilePicture':
-        return (comp as ProfilePicture).buildWidget(context);
-      case 'Name':
-        return (comp as Name).buildWidget(context);
-      case 'Bio':
-        return (comp as Bio).buildWidget(context);
-      case 'ContactInfo':
-        return (comp as ContactInfo).buildWidget(context);
-
-      case 'EditProfile':
-        return (comp as EditProfile).buildWidget(context);
-      default:
-        return const SizedBox();
-    }
+  Widget buildComponentWidget(UIComponent comp) {
+    return comp.buildWidget(context);
   }
 
   Future<Color?> showColorPickerDialog(Color initialColor) async {
@@ -183,18 +220,11 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
           _buildTutorialContent("Step 1 of 5", "🔓 Enable/disable dragging.")
         ]),
         TargetFocus(
-            identify: "BackgroundColorKey",
-            keyTarget: backgroundColorKey,
-            contents: [
-              _buildTutorialContent(
-                  "Step 2 of 5", "🎨 Change canvas background color.")
-            ]),
-        TargetFocus(
           identify: "Component",
           shape: ShapeLightFocus.RRect,
           targetPosition: TargetPosition(
             const Size(300, 90),
-            const Offset(40, 280), // Position (x, y)
+            const Offset(40, 280),
           ),
           contents: [
             _buildTutorialContent(
@@ -246,6 +276,9 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
 
   void editComponent(int index) {
     UIComponent comp = components[index];
+    if (comp is ProfilePicture) {
+      return;
+    }
     TextEditingController fontSizeController =
         TextEditingController(text: comp.fontSize.toString());
     Color currentColor = comp.color;
@@ -307,91 +340,120 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     );
   }
 
-  void submitDesign(void Function(String feedback, int score) onResult) {
-    int total = components.length;
-    if (total == 0) return;
+  void submitDesign(void Function(String feedback) onResult) {}
 
-    int goodFontSize = 0, goodContrast = 0, touchable = 0;
-    Set<double> fontSizes = {};
-    Set<Color> usedColors = {};
-    bool layoutOk = true, spacingOk = true;
+  void handleSubmitDesign() {
+    submitDesign((feedback) {
+      setState(() {
+        feedbackText = feedback;
+      });
 
-    for (var comp in components) {
-      if (comp.fontSize >= 14.0) goodFontSize++;
-      fontSizes.add(comp.fontSize);
-      usedColors.add(comp.color);
-      if (_calculateContrastRatio(comp.color, canvasBackgroundColor) >= 4.5)
-        goodContrast++;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: const Color(0xFFDBF2FF),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24),side: const BorderSide(
+          color: Color.fromARGB(255, 175, 222, 248), 
+          width: 6, 
+        ),),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with Emoji and Title
+                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                  Icon(
+  Icons.emoji_emotions,
+  size: 25, 
+  color: Colors.deepOrange, 
+),
+                      SizedBox(width: 8),
+                      Text(
+                        "DESIGN FEEDBACK",
+                        style: GoogleFonts.fredoka(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
-      for (var other in components) {
-        if (comp != other) {
-          double dx = (comp.x + comp.width / 2) - (other.x + other.width / 2);
-          double dy = (comp.y + comp.height / 2) - (other.y + other.height / 2);
-          if (math.sqrt(dx * dx + dy * dy) < 20) spacingOk = false;
-        }
-      }
+                  // Feedback content
+                  ...feedback.split('\n').map((line) {
+                    IconData icon;
+                    Color iconColor;
 
-      if (comp.x < 0 ||
-          comp.y < 0 ||
-          comp.x + comp.width > canvasWidth ||
-          comp.y + comp.height > canvasHeight) layoutOk = false;
-      if (comp.width >= 48 && comp.height >= 48) touchable++;
-    }
+                    if (line.contains("✅")) {
+                      icon = Icons.check_circle;
+                      iconColor = Colors.green;
+                    } else if (line.contains("⚠️")) {
+                      icon = Icons.warning_amber_rounded;
+                      iconColor = Colors.orange;
+                    } else {
+                      icon = Icons.bubble_chart;
+                      iconColor = Colors.grey;
+                    }
 
-    double fontScore = (goodFontSize / total) * 15;
-    double fontConsistent = fontSizes.length <= 3 ? 10 : 5;
-    double colorConsistent = usedColors.length <= 3
-        ? 10
-        : math.max(0, 10 - (usedColors.length - 3) * 3);
-    double contrastScore = (goodContrast / total) * 15;
-    double layoutScore = layoutOk ? 15 : 8;
-    double spacingScore = spacingOk ? 10 : 5;
-    double touchScore = (touchable / total) * 10;
-    double headerScore = components.any((c) => c.type == 'Header') ? 5 : 0;
-    double aesthetics = 5;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(icon, color: iconColor),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
 
-    int finalScore = (fontScore +
-            fontConsistent +
-            colorConsistent +
-            contrastScore +
-            layoutScore +
-            spacingScore +
-            touchScore +
-            headerScore +
-            aesthetics)
-        .round();
+                  const SizedBox(height: 20),
 
-    String feedback = '''
-🔍 HCI Evaluation:
-• Font Size: ${fontScore.round()}/15
-• Font Consistency: $fontConsistent/10
-• Color Consistency: ${colorConsistent.round()}/10
-• Contrast: ${contrastScore.round()}/15
-• Layout: ${layoutScore.round()}/15
-• Spacing: $spacingScore/10
-• Button Size: ${touchScore.round()}/10
-• Header: $headerScore/5
-• Aesthetic Bonus: $aesthetics/5
-🎯 Total Score: $finalScore / 100
-''';
-
-    onResult(feedback, finalScore);
-  }
-
-  double _calculateContrastRatio(Color color1, Color color2) {
-    double luminance(Color c) {
-      final r = c.red / 255.0;
-      final g = c.green / 255.0;
-      final b = c.blue / 255.0;
-      double channel(double v) => (v <= 0.03928)
-          ? v / 12.92
-          : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
-      return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
-    }
-
-    final l1 = luminance(color1);
-    final l2 = luminance(color2);
-
-    return (l1 > l2) ? (l1 + 0.05) / (l2 + 0.05) : (l2 + 0.05) / (l1 + 0.05);
+                  // Close button
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        side: BorderSide(
+                          color: Colors.orange.shade700,
+                          width: 4,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 12),
+                    ),
+                    child: Text(
+                      "Close",
+                      style: GoogleFonts.fredoka(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
   }
 }

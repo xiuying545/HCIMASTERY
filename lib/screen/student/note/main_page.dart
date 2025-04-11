@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/common_widget/banner.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/course_tile.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
-import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
-import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 

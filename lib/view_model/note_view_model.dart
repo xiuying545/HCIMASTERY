@@ -19,7 +19,7 @@ class NoteViewModel extends BaseViewModel {
   String _chapterId = "";
   final Map<String, Timer> _debounceTimers = {};
   final Map<String, int> _noteCount = {};
-  Map<String, double> _progressMap = {};
+  final Map<String, double> _progressMap = {};
 
   // Getters
   List<Chapter> get chapters => _chapters;

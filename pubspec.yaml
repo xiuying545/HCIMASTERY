@@ -99,7 +99,15 @@ flutter:
   - assets/Animation/design3.png
   - assets/Animation/gamelogo.png
   - assets/Animation/error.png
+  - assets/Animation/profile.png
   - assets/Animation/loading.gif
+  - assets/Animation/shoppingbackground.png
+  - assets/Animation/profilebackground.png
+  - assets/Animation/shoes.png
+  - assets/Animation/tshirt.png
+  - assets/Animation/hat.png
+  - assets/Animation/skirt.png
+
 
 
   # To add assets to your application, add an assets section, like this:

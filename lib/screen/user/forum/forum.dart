@@ -149,7 +149,7 @@ class _ForumPageState extends State<ForumPage> {
           // Post List
           Consumer<ForumViewModel>(builder: (context, model, child) {
             if (model.isLoading || isLoading) {
-              return Expanded(child: const LoadingShimmer());
+              return const Expanded(child: LoadingShimmer());
             }
             if (model.posts.isEmpty) {
               return const Expanded(
@@ -200,8 +200,8 @@ class _ForumPageState extends State<ForumPage> {
         .toList();
 
     if (myPosts.isEmpty) {
-      return Expanded(
-          child: const BlankState(
+      return const Expanded(
+          child: BlankState(
         icon: Icons.post_add,
         title: 'No posts added by you',
         subtitle: 'Tap the + button to add a new post',

@@ -14,7 +14,7 @@ import 'package:fyp1/screen/student/note/note_detail.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/user/authenication/login.dart';
 import 'package:fyp1/screen/user/authenication/register.dart';
-import 'package:fyp1/screen/user/design_challenge/design_challenge_list.dart';
+import 'package:fyp1/screen/user/design_challenge/product_page_design.dart';
 import 'package:fyp1/screen/user/error_page.dart';
 import 'package:fyp1/screen/user/forum/edit_post.dart';
 import 'package:fyp1/screen/user/forum/post_detail.dart';
@@ -31,7 +31,6 @@ import 'package:fyp1/screen/user/profile/edit_profile.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
 import 'package:fyp1/screen/admin/admin_navbar.dart';
 import 'package:fyp1/screen/student/student_navbar.dart';
-import 'package:fyp1/screen/user/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router() {
@@ -50,7 +49,10 @@ GoRouter router() {
           // return const AdminNavBar();
           // return  const StudentNavBar(bottomIndex: 0,);
           // return ErrorPage(errorMessage: "hey",);
-          return  DesignChallengesPage();
+          // return  DesignChallengesPage();
+          // return   IntroScreen();
+            return  const WeatherDesignChallengePage();
+          // return ProfileDesignChallengePage();
                       // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
         //  builder: (context, state) {

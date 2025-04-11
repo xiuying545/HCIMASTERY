@@ -61,7 +61,7 @@ class _NoteListPageState extends State<NoteListPage> {
     return Scaffold(
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
         if (model.isLoading || isLoading) {
-          return LoadingShimmer();
+          return const LoadingShimmer();
         }
 
         var notes = model.notes;
