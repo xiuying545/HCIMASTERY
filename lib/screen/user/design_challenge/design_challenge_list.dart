@@ -12,18 +12,18 @@ class DesignChallengesPage extends StatelessWidget {
       "routes": "/practicalExercise/profilePage"
     },
     {
-      "title": "Design a Login Page",
-      "description": "Add Suitable Component into login page",
+      "title": "Design a Product List Page",
+      "description": "Add Suitable Component into product list page",
       "icon": Icons.graphic_eq,
       "color": Colors.green.shade400,
-      "routes": "/practicalExercise/profilePage"
+      "routes": "/practicalExercise/productgame"
     },
     {
       "title": "A/B Testing",
-      "description": "Learn how to make color harmony",
+      "description": "Learn how to do A/B Testing",
       "icon": Icons.auto_awesome,
       "color": Colors.purple.shade400,
-      "routes": "/practicalExercise/profilePage"
+      "routes": "/practicalExercise/coffeegame"
     },
   ];
 

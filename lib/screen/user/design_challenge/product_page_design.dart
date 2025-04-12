@@ -5,15 +5,15 @@ import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fyp1/screen/user/design_challenge/components_profile.dart';
 
-class WeatherDesignChallengePage extends StatefulWidget {
-  const WeatherDesignChallengePage({super.key});
+class ProductDesignChallengePage extends StatefulWidget {
+  const ProductDesignChallengePage({super.key});
 
   @override
-  _WeatherDesignChallengePage createState() => _WeatherDesignChallengePage();
+  _ProductDesignChallengePage createState() => _ProductDesignChallengePage();
 }
 
-class _WeatherDesignChallengePage
-    extends DesignChallengeUIState<WeatherDesignChallengePage> {
+class _ProductDesignChallengePage
+    extends DesignChallengeUIState<ProductDesignChallengePage> {
   @override
   void initState() {
     super.initState();

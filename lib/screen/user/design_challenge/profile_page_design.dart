@@ -45,32 +45,32 @@ Widget build(BuildContext context) {
     //   // ),
     // ),
     body: buildCanvasBody(backgroundImage: "assets/Animation/profilebackground.png"),
-    bottomNavigationBar: _buildBottomBar(),
+    bottomNavigationBar: buildBottomBar(),
   );
 }
 
-Widget _buildBottomBar() {
+
+Widget buildBottomBar() {
   return Container(
+    height: 90,
     decoration: BoxDecoration(
-  color: Colors.pink[100],
+      color: Color(0xFFF48C8C), // Soft coral pink
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(40),
+        topRight: Radius.circular(40),
+      ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withOpacity(0.08),
           blurRadius: 10,
-          offset: const Offset(0, -5),
+          offset: Offset(0, -4),
         ),
       ],
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(30),
-        topRight: Radius.circular(30),
-      ),
     ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+             _buildNavItem(
             icon: Icons.lock_rounded,
             label: 'Lock',
             onTap: () => setState(() => isPlay = !isPlay),
@@ -88,11 +88,33 @@ Widget _buildBottomBar() {
             label: 'Help',
             onTap: () => showTutorial(true),
           ),
-        ],
-      ),
+      ],
     ),
   );
 }
+
+Widget navBarItem(IconData icon, String label) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(
+        icon,
+        color: Colors.white,
+        size: 30,
+      ),
+      SizedBox(height: 4),
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ],
+  );
+}
+
 Widget _buildNavItem({
   required IconData icon,
   required String label,
@@ -107,7 +129,7 @@ Widget _buildNavItem({
       duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
-        color: isActive ? Colors.purple.shade200 : Colors.transparent,
+color: isActive ? Color(0xFFA2D2FF) : Colors.transparent,
         borderRadius: BorderRadius.circular(25),
         border: isActive ? Border.all(
           color: Colors.white,
@@ -123,13 +145,14 @@ Widget _buildNavItem({
             size: 30,
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            style: GoogleFonts.fredoka(
-              fontSize: 16,
-              color: isActive ? Colors.white : Colors.white70,
-            ),
-          ),
+         Text(
+        label,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+         )
         ],
       ),
     ),

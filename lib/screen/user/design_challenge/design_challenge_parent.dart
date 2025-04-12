@@ -527,7 +527,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
               borderRadius: BorderRadius.circular(24),
               side: const BorderSide(
                 color: Color.fromARGB(255, 175, 222, 248),
-                width: 6,
+                width:4,
               ),
             ),
             child: Padding(
@@ -546,10 +546,10 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       ),
                       SizedBox(width: 8),
                       Text(
-                        "DESIGN FEEDBACK",
-                        style: GoogleFonts.fredoka(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                        "Design Feedback",
+                     style: GoogleFonts.fredoka(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                           color: Colors.deepOrange,
                         ),
                       ),
@@ -587,10 +587,11 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                                 Expanded(
                                   child: Text(
                                     line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                    ),
+                                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4E4E4E), // Soft charcoal
+                    ),
                                   ),
                                 ),
                               ],
@@ -606,18 +607,14 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                   // Close button
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(
-                          color: Colors.orange.shade700,
-                          width: 4,
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 12),
-                    ),
+                     style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF59C3A6), // Mint Green
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
                     child: Text(
                       "Close",
                       style: GoogleFonts.fredoka(

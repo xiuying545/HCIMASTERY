@@ -14,6 +14,7 @@ import 'package:fyp1/screen/student/note/note_detail.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/user/authenication/login.dart';
 import 'package:fyp1/screen/user/authenication/register.dart';
+import 'package:fyp1/screen/user/design_challenge/coffee_game/coffee_game.dart';
 import 'package:fyp1/screen/user/design_challenge/product_page_design.dart';
 import 'package:fyp1/screen/user/error_page.dart';
 import 'package:fyp1/screen/user/forum/edit_post.dart';
@@ -47,12 +48,12 @@ GoRouter router() {
           // }
               //  return  SplashScreen();
           // return const AdminNavBar();
-          // return  const StudentNavBar(bottomIndex: 0,);
+          return  const StudentNavBar(bottomIndex: 0,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
-          // return   IntroScreen();
-            // return  const WeatherDesignChallengePage();
-          return ProfileDesignChallengePage();
+          // return   CoffeeGame();
+            // return  const ProductDesignChallengePage();
+          // return ProfileDesignChallengePage();
                       // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
         //  builder: (context, state) {
@@ -60,6 +61,18 @@ GoRouter router() {
             // return ManageNotesPage(chapterId: "1tVIMjWSBHWuKDGQLWIA");
         //   }
       ),
+
+
+       GoRoute(
+        path: '/practicalExercise/coffeegame',
+        builder: (context, state) => const CoffeeGame(),
+      ),
+
+                   GoRoute(
+        path: '/practicalExercise/productgame',
+        builder: (context, state) => const ProductDesignChallengePage(),
+      ),
+      
       
       GoRoute(
         path: '/admin/addNote/:chapterId',
