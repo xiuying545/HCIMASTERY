@@ -51,8 +51,8 @@ GoRouter router() {
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   IntroScreen();
-            return  const WeatherDesignChallengePage();
-          // return ProfileDesignChallengePage();
+            // return  const WeatherDesignChallengePage();
+          return ProfileDesignChallengePage();
                       // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
         //  builder: (context, state) {

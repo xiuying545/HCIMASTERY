@@ -151,7 +151,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
           onTap: () {
             if (comp.isEditable == true) {
               setState(() => selectedIndex = index);
-              editComponent(index);
+              editComponent2(index);
             }
           },
           child: Transform.scale(
@@ -315,13 +315,6 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         ),
         actions: [
           TextButton(
-            onPressed: () => setState(() {
-              components.removeAt(index);
-              Navigator.pop(context);
-            }),
-            child: const Text("Delete", style: TextStyle(color: Colors.red)),
-          ),
-          TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text("Cancel")),
           ElevatedButton(
@@ -340,7 +333,184 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     );
   }
 
+
+  
+  void editComponent2(int index) {
+    UIComponent comp = components[index];
+    TextEditingController fontSizeController =
+        TextEditingController(text: comp.fontSize.toString());
+    Color currentColor = comp.color;
+ showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(
+            color: Color(0xFFFFC9C9),
+            width: 4,
+          ),
+        ),
+        backgroundColor: const Color(0xFFFFF2E3), // Pastel beige background
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title
+                  Text(
+                    'Adjust Settings',
+                    style: GoogleFonts.fredoka(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFF7C94), // Coral Pink
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Font Size Label
+                  Text(
+                    'Font Size',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4E4E4E), // Soft charcoal
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Current Font Size Value
+                  Text(
+                    '${comp.fontSize.toInt()} pt',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Color(0xFF4E4E4E),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Font Size Slider
+                  Slider(
+                    value: comp.fontSize,
+                    min: 10,
+                    max: 40,
+                    activeColor: Color(0xFF45C1A1), // Teal Green
+                    thumbColor: Color(0xFFFF9641),  // Warm Orange
+                    onChanged: (value) {
+                      setState(() {
+                        comp.fontSize = value;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Color Picker Label
+                  const Text(
+                    'Color',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4E4E4E),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Color Choices
+                  Wrap(
+                    spacing: 10,
+                    children: [
+                      Color(0xFFF26722),
+                      Color(0xFFFABD42),
+                      Color(0xFFA0C94F),
+                      Color(0xFF40BEB0),
+                      Color(0xFF4D89FF),
+                      Color(0xFFA564E9),
+                    ].map((color) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            comp.color = color;
+                          });
+                        },
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: comp.color == color ? Colors.black : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF59C3A6), // Mint Green
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                      
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF62B6FF), // Soft Blue
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    },
+  );
+  }
+
   void submitDesign(void Function(String feedback) onResult) {}
+
 
   void handleSubmitDesign() {
     submitDesign((feedback) {
@@ -353,25 +523,27 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         builder: (BuildContext context) {
           return Dialog(
             backgroundColor: const Color(0xFFDBF2FF),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24),side: const BorderSide(
-          color: Color.fromARGB(255, 175, 222, 248), 
-          width: 6, 
-        ),),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: const BorderSide(
+                color: Color.fromARGB(255, 175, 222, 248),
+                width: 6,
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Header with Emoji and Title
-                   Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  Icon(
-  Icons.emoji_emotions,
-  size: 25, 
-  color: Colors.deepOrange, 
-),
+                      Icon(
+                        Icons.emoji_emotions,
+                        size: 25,
+                        color: Colors.deepOrange,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         "DESIGN FEEDBACK",
@@ -385,42 +557,49 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                   ),
                   const SizedBox(height: 20),
 
-                  // Feedback content
-                  ...feedback.split('\n').map((line) {
-                    IconData icon;
-                    Color iconColor;
+                  // Scrollable feedback content
+                  SizedBox(
+                    height: 250,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: feedback.split('\n').map((line) {
+                          IconData icon;
+                          Color iconColor;
 
-                    if (line.contains("✅")) {
-                      icon = Icons.check_circle;
-                      iconColor = Colors.green;
-                    } else if (line.contains("⚠️")) {
-                      icon = Icons.warning_amber_rounded;
-                      iconColor = Colors.orange;
-                    } else {
-                      icon = Icons.bubble_chart;
-                      iconColor = Colors.grey;
-                    }
+                          if (line.contains("✅")) {
+                            icon = Icons.check_circle;
+                            iconColor = Colors.green;
+                          } else if (line.contains("⚠️")) {
+                            icon = Icons.warning_amber_rounded;
+                            iconColor = Colors.orange;
+                          } else {
+                            icon = Icons.bubble_chart;
+                            iconColor = Colors.grey;
+                          }
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(icon, color: iconColor),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(icon, color: iconColor),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }),
+                    ),
+                  ),
 
                   const SizedBox(height: 20),
 

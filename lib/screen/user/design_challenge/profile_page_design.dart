@@ -254,7 +254,7 @@ Widget _buildNavItem({
     }
 
     // Compile Feedback
-    String feedback = "🔍 HCI Evaluation Feedback:\n${feedbackList.join("\n")}";
+    String feedback = "${feedbackList.join("\n")}";
     onResult(feedback);
   }
 
