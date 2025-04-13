@@ -44,7 +44,24 @@ Widget build(BuildContext context) {
     //   //   ),
     //   // ),
     // ),
-    body: buildCanvasBody(backgroundImage: "assets/Animation/profilebackground.png"),
+    body: Stack(
+      children: [
+        buildCanvasBody(backgroundImage: "assets/Animation/profilebackground.png"),
+
+        // Top-left button like AppBar back button
+        Positioned(
+          top: 40,
+          left: 16,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+    ),
+  
     bottomNavigationBar: buildBottomBar(),
   );
 }

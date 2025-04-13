@@ -48,7 +48,7 @@ GoRouter router() {
           // }
               //  return  SplashScreen();
           // return const AdminNavBar();
-          return  const StudentNavBar(bottomIndex: 0,);
+          return  const StudentNavBar(bottomIndex: 1,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   CoffeeGame();

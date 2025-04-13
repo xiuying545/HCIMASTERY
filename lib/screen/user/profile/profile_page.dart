@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
+import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +18,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late UserViewModel userViewModel;
-    bool isLoading = true;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
         StackTrace.current,
       );
     }
-      setState(() {
+    setState(() {
       isLoading = false;
     });
   }
@@ -72,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFFFF9F0),
       appBar: AppBar(
         title: Text(
           "My Profile",
@@ -93,10 +94,10 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child:
               Consumer<UserViewModel>(builder: (context, userViewModel, child) {
-            if (userViewModel.isLoading||isLoading) {
+            if (userViewModel.isLoading || isLoading) {
               return const LoadingShimmer();
             }
 
@@ -126,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: size.width * 0.18,
+                        radius: size.width * 0.15,
                         backgroundColor: Colors.grey[200],
                         backgroundImage: userViewModel.user?.profileImagePath !=
                                 null
@@ -149,7 +150,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             userViewModel.user != null
                                 ? userViewModel.user!.name
                                 : 'User',
-                            style: AppTheme.h2Style),
+                            style: GoogleFonts.poppins(
+                              fontSize: 22,
+                              color: Colors.blue.shade900,
+                              fontWeight: FontWeight.bold,
+                            )),
 
                         // const SizedBox(width: 8),
                         // const Icon(Icons.star, color: Colors.amber, size: 20),
@@ -176,65 +181,40 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
 
                     const SizedBox(height: 24),
-                    _buildChildInfoCard(
-                      icon: Icons.school,
+                    _buildInfoCard(
+                      icon: Icons.person_outline,
                       title: "Username",
                       value: userViewModel.user!.username ?? "Not set yet",
-                      color: Colors.blue,
+              
                     ),
 
                     const SizedBox(height: 16),
 
-                    _buildChildInfoCard(
+                    _buildInfoCard(
                       icon: Icons.phone,
                       title: "Phone Number",
                       value: userViewModel.user!.phone ?? "Not set yet",
-                      color: Colors.green,
+                
                     ),
 
                     const SizedBox(height: 16),
 
-                    _buildChildInfoCard(
-                      icon: Icons.email_rounded,
+                    _buildInfoCard(
+                      icon: Icons.email,
                       title: "Email",
-                      value: userViewModel.user!.email ??
-                          "Not set yet", // Replace with actual data
-                      color: Colors.purple,
+                      value: userViewModel.user!.email , 
                     ),
 
                     const SizedBox(height: 24),
-
-                    // Edit Button with Fun Shape
-                    ElevatedButton(
-                      onPressed: () {
+                    buildRoundedButton(
+                      icon: Icons.edit,
+                      label: "Edit Profile",
+                      onTap: () {
                         GoRouter.of(context)
                             .push("/editProfile/${userViewModel.userId!}");
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 4,
-                        shadowColor: Colors.blue.withOpacity(0.3),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.edit, color: Colors.white, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Edit My Profile',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
+                      color: Color(0xffF79F3C),
+                      context: context
                     ),
 
                     const SizedBox(height: 16),
@@ -248,42 +228,37 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildChildInfoCard({
+  
+
+  Widget _buildInfoCard({
     required IconData icon,
     required String title,
     required String value,
-    required Color color,
   }) {
     return Container(
-      width: double.infinity,
+    
+      margin: const EdgeInsets.symmetric(vertical: 2),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: getBubbleColor(icon),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: getBubbleColor(icon), 
           width: 1,
         ),
       ),
       child: Row(
         children: [
-          Container(
+         Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              shape: BoxShape.circle,
+              color: getBubbleColor(icon), // pick pastel bg based on icon type
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               icon,
-              color: color,
-              size: 24,
+              color: getIconColor(icon),
+              size: 20,
             ),
           ),
           const SizedBox(width: 16),
@@ -303,7 +278,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   value,
                   style: GoogleFonts.poppins(
-                    fontSize: 16,
+                    // Change to poppins for cuteness
+                    fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[800],
                   ),

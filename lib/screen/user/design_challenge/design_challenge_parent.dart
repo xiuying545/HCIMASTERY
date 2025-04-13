@@ -333,184 +333,184 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     );
   }
 
-
-  
   void editComponent2(int index) {
     UIComponent comp = components[index];
     TextEditingController fontSizeController =
         TextEditingController(text: comp.fontSize.toString());
     Color currentColor = comp.color;
- showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(
-            color: Color(0xFFFFC9C9),
-            width: 4,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(
+              color: Color(0xFFFFC9C9),
+              width: 4,
+            ),
           ),
-        ),
-        backgroundColor: const Color(0xFFFFF2E3), // Pastel beige background
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Title
-                  Text(
-                    'Adjust Settings',
-                    style: GoogleFonts.fredoka(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF7C94), // Coral Pink
+          backgroundColor: const Color(0xFFFFF2E3), // Pastel beige background
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Title
+                    Text(
+                      'Adjust Settings',
+                      style: GoogleFonts.fredoka(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFFF7C94), // Coral Pink
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Font Size Label
-                  Text(
-                    'Font Size',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4E4E4E), // Soft charcoal
+                    // Font Size Label
+                    Text(
+                      'Font Size',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4E4E4E), // Soft charcoal
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
+                    const SizedBox(height: 6),
 
-                  // Current Font Size Value
-                  Text(
-                    '${comp.fontSize.toInt()} pt',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color(0xFF4E4E4E),
+                    // Current Font Size Value
+                    Text(
+                      '${comp.fontSize.toInt()} pt',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF4E4E4E),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Font Size Slider
-                  Slider(
-                    value: comp.fontSize,
-                    min: 10,
-                    max: 40,
-                    activeColor: Color(0xFF45C1A1), // Teal Green
-                    thumbColor: Color(0xFFFF9641),  // Warm Orange
-                    onChanged: (value) {
-                      setState(() {
-                        comp.fontSize = value;
-                      });
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Color Picker Label
-                  const Text(
-                    'Color',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4E4E4E),
+                    // Font Size Slider
+                    Slider(
+                      value: comp.fontSize,
+                      min: 10,
+                      max: 40,
+                      activeColor: Color(0xFF45C1A1), // Teal Green
+                      thumbColor: Color(0xFFFF9641), // Warm Orange
+                      onChanged: (value) {
+                        setState(() {
+                          comp.fontSize = value;
+                        });
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 10),
 
-                  // Color Choices
-                  Wrap(
-                    spacing: 10,
-                    children: [
-                      Color(0xFFF26722),
-                      Color(0xFFFABD42),
-                      Color(0xFFA0C94F),
-                      Color(0xFF40BEB0),
-                      Color(0xFF4D89FF),
-                      Color(0xFFA564E9),
-                    ].map((color) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            comp.color = color;
-                          });
-                        },
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: comp.color == color ? Colors.black : Colors.transparent,
-                              width: 2,
+                    const SizedBox(height: 20),
+
+                    // Color Picker Label
+                    const Text(
+                      'Color',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4E4E4E),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Color Choices
+                    Wrap(
+                      spacing: 10,
+                      children: [
+                        Color(0xFFF26722),
+                        Color(0xFFFABD42),
+                        Color(0xFFA0C94F),
+                        Color(0xFF40BEB0),
+                        Color(0xFF4D89FF),
+                        Color(0xFFA564E9),
+                      ].map((color) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              comp.color = color;
+                            });
+                          },
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: comp.color == color
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF59C3A6), // Mint Green
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF59C3A6), // Mint Green
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF62B6FF), // Soft Blue
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                      
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF62B6FF), // Soft Blue
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            },
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
   }
 
   void submitDesign(void Function(String feedback) onResult) {}
-
 
   void handleSubmitDesign() {
     submitDesign((feedback) {
@@ -527,7 +527,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
               borderRadius: BorderRadius.circular(24),
               side: const BorderSide(
                 color: Color.fromARGB(255, 175, 222, 248),
-                width:4,
+                width: 4,
               ),
             ),
             child: Padding(
@@ -547,9 +547,9 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       SizedBox(width: 8),
                       Text(
                         "Design Feedback",
-                     style: GoogleFonts.fredoka(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                        style: GoogleFonts.fredoka(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                           color: Colors.deepOrange,
                         ),
                       ),
@@ -588,10 +588,11 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                                   child: Text(
                                     line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
                                     style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4E4E4E), // Soft charcoal
-                    ),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.2,
+                                      color: Color(0xFF4E4E4E), // Soft charcoal
+                                    ),
                                   ),
                                 ),
                               ],
@@ -607,14 +608,14 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                   // Close button
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                     style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF59C3A6), // Mint Green
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF59C3A6), // Mint Green
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
                     child: Text(
                       "Close",
                       style: GoogleFonts.fredoka(

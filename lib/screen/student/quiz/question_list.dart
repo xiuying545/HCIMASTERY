@@ -41,6 +41,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFFFDF5),
       appBar: const AppBarWithBackBtn(
         title: "Question List",
       ),
@@ -108,7 +109,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                             title: Text(
                               "${index + 1}. ${quizViewModel.quizzes[index].question}",
                               style: GoogleFonts.poppins(
-                                fontSize: 17.0,
+                                fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
@@ -116,7 +117,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                             subtitle: Text(
                               selectedOption,
                               style: GoogleFonts.rubik(
-                                fontSize: 14.0,
+                                fontSize: 15.0,
                                 color: Colors.grey[600],
                               ),
                             ),

@@ -30,7 +30,7 @@ class _ForumPageState extends State<ForumPage> {
   @override
   void initState() {
     super.initState();
-        userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       loadPosts();
@@ -38,7 +38,6 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Future<void> loadPosts() async {
-
     await forumViewModel.loadForumData(userViewModel.user!);
     setState(() {
       isLoading = false;
@@ -70,25 +69,12 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Forum',
-          style: Theme.of(context).appBarTheme.titleTextStyle,
-        ),
-        backgroundColor: const Color(0xFFefeefb),
-        elevation: 2,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade700, Colors.blue.shade400],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: Color(0xFFFFFDF5
+),
+    
       body: Column(
         children: [
+          SizedBox(height:45),
           // Custom Tab Buttons
           Container(
             padding: const EdgeInsets.all(16.0),
@@ -103,9 +89,9 @@ class _ForumPageState extends State<ForumPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        showMyPosts ? Colors.grey[300] : Colors.blue.shade700,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
+                        showMyPosts ? Color(0xFFFFF6EE) : Color(0xff6C9FF6) ,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -113,9 +99,9 @@ class _ForumPageState extends State<ForumPage> {
                   child: Text(
                     'Posts',
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? Colors.black : Colors.white,
+                      color: showMyPosts ? Color(0xff475569) : Colors.white,
                     ),
                   ),
                 ),
@@ -127,9 +113,9 @@ class _ForumPageState extends State<ForumPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        showMyPosts ? Colors.blue.shade900 : Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
+                        showMyPosts ? Color(0xff6C9FF6) : Color(0xFFFFF6EE),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -137,9 +123,9 @@ class _ForumPageState extends State<ForumPage> {
                   child: Text(
                     'My Posts',
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? Colors.white : Colors.black,
+                      color: showMyPosts ? Colors.white : Color(0xff475569),
                     ),
                   ),
                 ),
@@ -177,7 +163,7 @@ class _ForumPageState extends State<ForumPage> {
           GoRouter.of(context).push("/student/forum/addPost");
         },
         shape: const CircleBorder(),
-        backgroundColor: Colors.blue.shade900,
+        backgroundColor: Color(0xFF5E9FEF),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -288,13 +274,13 @@ class _ForumPageState extends State<ForumPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Card(
-        elevation: 5,
+        elevation: 1,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Material(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          color: Color(0xFFF7F9FC),
           child: InkWell(
             onTap: () {
               if (post.postID != null) {
@@ -309,7 +295,13 @@ class _ForumPageState extends State<ForumPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(post.title, style: AppTheme.h2Style),
+                  Text(
+                    post.title,
+                    style: GoogleFonts.fredoka(
+                        fontSize: 23,
+                        color: Colors.blue.shade900,
+                        fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -329,15 +321,15 @@ class _ForumPageState extends State<ForumPage> {
                           Text(
                             forumViewModel.userMap[post.creator]?.name ??
                                 "unknown",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             DateFormat('dd MMM yyyy, hh:mm a')
                                 .format(post.timeCreated),
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.fredoka(
                               fontSize: 12,
                               color: Colors.grey[600],
                             ),
@@ -350,12 +342,13 @@ class _ForumPageState extends State<ForumPage> {
 
                   const SizedBox(height: 10),
                   // Post Content
-                  Text(post.content, style: AppTheme.h5Style
-                      // style: GoogleFonts.poppins(
-                      //   fontSize: 16,
-                      //   color: Colors.grey[800],
-                      // ),
-                      ),
+                  Text(
+                    post.content,
+                    style: GoogleFonts.fredoka(
+                      fontSize: 16,
+                      color: Colors.grey[800],
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   // Post Image (if any)
                   if (post.images != null && post.images!.isNotEmpty)
@@ -408,7 +401,7 @@ class _ForumPageState extends State<ForumPage> {
                         icon: Icon(
                           isLiked ? Icons.favorite : Icons.favorite_border,
                           color: isLiked
-                              ? Colors.pinkAccent
+                              ? Color(0xffFF6B6B)
                               : const Color(0xFF757575),
                         ),
                         onPressed: () async {
@@ -426,10 +419,10 @@ class _ForumPageState extends State<ForumPage> {
                       ),
                       Text(
                         '${forumViewModel.posts[index].likedByUserIds.length} likes',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.fredoka(
                           fontSize: 14,
-                          color: const Color(0xFF757575),
-                          fontWeight: FontWeight.w400,
+                          color: const Color(0xff94A3B8),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -438,10 +431,10 @@ class _ForumPageState extends State<ForumPage> {
                       const SizedBox(width: 5),
                       Text(
                         '${forumViewModel.posts[index].replies.length} replies',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.fredoka(
                           fontSize: 14,
                           color: const Color(0xFF757575),
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],

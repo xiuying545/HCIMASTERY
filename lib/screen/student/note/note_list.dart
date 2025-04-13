@@ -106,13 +106,17 @@ class _NoteListPageState extends State<NoteListPage> {
                   Container(
                     height: 300,
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.blue.shade700, Colors.blue.shade400],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
+                    // decoration: BoxDecoration(
+      //                image: DecorationImage(
+      // image: AssetImage('assets/Animation/book.png'),
+      // fit: BoxFit.cover,
+      //                ),
+                      // gradient: LinearGradient(
+                      //   colors: [Colors.blue.shade700, Colors.blue.shade400],
+                      //   begin: Alignment.topLeft,
+                      //   end: Alignment.bottomRight,
+                      // ),
+                    // ),
                     child: Stack(
                       children: [
                         Positioned(
@@ -167,7 +171,7 @@ class _NoteListPageState extends State<NoteListPage> {
                   ),
                   child: Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: RefreshIndicator(
                       onRefresh: () async {
                         await model.fetchNotesForChapter(widget.chapterId,
@@ -185,6 +189,8 @@ class _NoteListPageState extends State<NoteListPage> {
                                     .copyWith(color: AppTheme.textColor),
                                chapter.chapterName,
                               ),
+                            ),
+                            SizedBox(height:10
                             ),
                             const Divider(
                               color: Colors.grey,
@@ -329,7 +335,7 @@ class _NoteListPageState extends State<NoteListPage> {
   Widget _getStepIcon(String? status) {
     switch (status) {
       case "Completed":
-        return const Icon(Icons.check_circle, color: Colors.white, size: 30);
+        return const Icon(Icons.check_rounded, color: Colors.white, size: 30);
       case "In Progress":
         return const Icon(Icons.access_time, color: Colors.white, size: 30);
       case "Not Started":

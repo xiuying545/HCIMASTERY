@@ -69,6 +69,7 @@ class CourseTile extends StatelessWidget {
                     subtitle,
                     style: GoogleFonts.poppins(
                       color: Colors.black54,
+                      fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
                   ),
@@ -80,7 +81,7 @@ class CourseTile extends StatelessWidget {
                       minHeight: 8,
                       
                       backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade300),
                     ),
                   ),
                 ],

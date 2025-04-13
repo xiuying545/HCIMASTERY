@@ -85,6 +85,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFFFFDF5
+),
       appBar: const AppBarWithBackBtn(
         title: 'Post Detail',
       ),
@@ -115,104 +117,126 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   Widget _buildPostHeader(Post post) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              post.title,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade900,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: NetworkImage(
-                    forumViewModel.userMap[post.creator]?.profileImagePath ??
-                        "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Card(
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Material(
+          borderRadius: BorderRadius.circular(20),
+          color: Color(0xFFF7F9FC),
+          child: InkWell(
+ 
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.title,
+                    style: GoogleFonts.fredoka(
+                        fontSize: 23,
+                        color: Colors.blue.shade900,
+                        fontWeight: FontWeight.bold),
                   ),
-                  backgroundColor: Colors.grey,
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      forumViewModel.userMap[post.creator]?.name ?? "unknown",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      !post.editStatus
-                          ? "posted on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}"
-                          : "edited on ${DateFormat('yyyy-MM-dd').format(post.timeCreated)}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              post.content,
-              style: const TextStyle(fontSize: 16, height: 1.5),
-            ),
-            const SizedBox(height: 12),
-            if (post.images != null && post.images!.isNotEmpty)
-              SizedBox(
-                height: 80, // Adjust height as needed
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: post.images!.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          post.images![index], // Firebase Storage URL
-
-                          height: 80,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(Icons.error, color: Colors.red);
-                          },
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage(
+                          forumViewModel
+                                  .userMap[post.creator]?.profileImagePath ??
+                              "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                         ),
+                        backgroundColor: Colors.grey,
                       ),
-                    );
-                  },
-                ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            forumViewModel.userMap[post.creator]?.name ??
+                                "unknown",
+                            style: GoogleFonts.fredoka(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            DateFormat('dd MMM yyyy, hh:mm a')
+                                .format(post.timeCreated),
+                            style: GoogleFonts.fredoka(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  const SizedBox(height: 10),
+                  // Post Content
+                  Text(
+                    post.content,
+                    style: GoogleFonts.fredoka(
+                      fontSize: 16,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Post Image (if any)
+                  if (post.images != null && post.images!.isNotEmpty)
+                    SizedBox(
+                      height: 80,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: post.images!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                post.images![index],
+                                height: 80,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.error,
+                                      color: Colors.red);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+                
+                ],
               ),
-          ],
+            ),
+          ),
         ),
       ),
     );

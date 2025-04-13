@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/banner.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/course_tile.dart';
+import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -18,6 +19,16 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   late NoteViewModel noteViewModel;
   bool isLoading = true;
+  
+  final List<IconData> icons = [
+  Icons.play_circle_fill,
+  Icons.person,
+  Icons.book,
+  Icons.code,
+  Icons.lightbulb,
+];
+
+
   @override
   void initState() {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
@@ -46,6 +57,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       backgroundColor: const Color(0xFFF3EFFF),
       body: Column(
         children: [
           const SizedBox(
@@ -76,7 +88,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           Text(
             'Hi, Evelyn 👋',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.fredoka(
               color: Colors.black,
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -85,7 +97,7 @@ class _MainPageState extends State<MainPage> {
           const SizedBox(height: 10),
           Text(
             'Let\'s start learning!',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.fredoka(
                 color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
           ),
         ],
@@ -115,7 +127,7 @@ class _MainPageState extends State<MainPage> {
             children: [
               Text(
                 '📚 Courses',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.fredoka(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue.shade700,
@@ -129,13 +141,13 @@ class _MainPageState extends State<MainPage> {
                   itemBuilder: (context, index) {
                     Chapter chapter = viewModel.chapters[index];
                     return CourseTile(
-                      icon: Icons.book,
+                       icon: icons[index % icons.length],
                       title: chapter.chapterName,
                       subtitle:
                           "${viewModel.noteCount[chapter.chapterID]} lessons",
                       chapterId: chapter.chapterID!,
                       progress: viewModel.progressMap[chapter.chapterID]??0,
-                      color: Colors.blue.shade400,
+                   color: pastelColors[index % pastelColors.length],
                     );
                   },
                 ),

@@ -6,6 +6,7 @@ import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common/common_widget/custom_input_field.dart';
 import 'package:fyp1/model/user.dart';
+import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -123,245 +124,91 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const AppBarWithBackBtn(
-        title: 'Edit Profile',
-      ),
+      backgroundColor: const Color(0xFFFDF6F1),
+      appBar: const AppBarWithBackBtn(title: 'Edit Profile'),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              // Profile photo section with fun decoration
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 4,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width * 0.18,
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: _profileImage != null
-                                  ? Image.network(
-                                      _profileImage!,
-                                      width: 110,
-                                      height: 110,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                            color: AppTheme.primaryColor,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) => Icon(
-                                        Icons.person,
-                                        size: 60,
-                                        color: AppTheme.primaryColor,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: AppTheme.primaryColor,
-                                    ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryColor,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
-                          child: IconButton(
-                            onPressed: _pickImage,
-                            icon: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
-
-              // Editable fields with fun styling
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.purple.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      "⭐Edit your personal details⭐",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    CustomInputField(
-                      icon: Icons.person,
-                      label: "Name",
-                      controller: _nameController,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomInputField(
-                      icon: Icons.person,
-                      label: "Username",
-                      controller: _usernameController,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomInputField(
-                      icon: Icons.phone,
-                      label: "Phone",
-                      controller: _phoneController,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomInputField(
-                      icon: Icons.email,
-                      label: "Email",
-                      controller: _emailController,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Edit Button with Fun Shape
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              const SizedBox(height: 24),
+              Stack(
+                alignment: Alignment.bottomRight,
                 children: [
-                  // Edit Password Button
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        GoRouter.of(context).push("/editPassword");
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 4,
-                        shadowColor: Colors.blue.withOpacity(0.3),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.lock_outline,
-                              color: Colors.white, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Password',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
+                  CircleAvatar(
+                    radius: MediaQuery.of(context).size.width * 0.15,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: _profileImage != null
+                          ? Image.network(
+                              _profileImage!,
+                              width: 110,
+                              height: 110,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (_, child, progress) {
+                                if (progress == null) return child;
+                                return CircularProgressIndicator(
+                                  color: AppTheme.primaryColor,
+                                );
+                              },
+                              errorBuilder: (_, __, ___) => Icon(Icons.person,
+                                  size: 60, color: AppTheme.primaryColor),
+                            )
+                          : Icon(Icons.person,
+                              size: 60, color: AppTheme.primaryColor),
                     ),
                   ),
-
-                  const SizedBox(width: 16), // Space between buttons
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    // Save Changes Button
-                    child: ElevatedButton(
-                      onPressed: _saveProfile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 4,
-                        shadowColor: Colors.blue.withOpacity(0.3),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.save, color: Colors.white, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Save",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                  Positioned(
+                    right: 0,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      radius: 20,
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt,
+                            size: 18, color: Colors.white),
+                        onPressed: _pickImage,
                       ),
                     ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
+              Text(
+                "⭐ Edit your personal details ⭐",
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _buildInputCard(Icons.person, "Name", _nameController),
+              _buildInputCard(
+                  Icons.person_outline, "Username", _usernameController),
+              _buildInputCard(Icons.phone, "Phone", _phoneController),
+              _buildInputCard(Icons.email, "Email", _emailController),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildRoundedButton(
+                    icon: Icons.lock_outline,
+                    label: "Password",
+                    onTap: () => GoRouter.of(context).push("/editPassword"),
+                    color: Color(0xffEA7A84),
+                       context: context
+                  ),
+                  const SizedBox(width: 16),
+                  buildRoundedButton(
+                    icon: Icons.save,
+                    label: "Save",
+                    onTap: _saveProfile,
+                    color: Color(0xffF79F3C),
+                       context: context
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -369,6 +216,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  Widget _buildInputCard(
+      IconData icon, String label, TextEditingController controller) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Color(0xFFFDFB),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: getBubbleColor(icon), // pick pastel bg based on icon type
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              icon,
+              color: getIconColor(icon),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                    )),
+                TextField(
+                  controller: controller,
+                  style: GoogleFonts.poppins(fontSize: 17),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   @override
   void dispose() {
     _nameController.dispose();

@@ -36,7 +36,23 @@ class _ProductDesignChallengePage
       //   // ),
       // ),
       // body: buildCanvasBody(backgroundImage: 'assets/Animation/weatherbackground.png'),
-      body: buildCanvasBody(),
+      body:Stack(
+      children: [
+        buildCanvasBody(),
+
+        // Top-left button like AppBar back button
+        Positioned(
+          top: 40,
+          left: 16,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+    ),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
