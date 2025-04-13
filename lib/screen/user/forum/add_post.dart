@@ -124,183 +124,210 @@ class _CreatePostPageState extends State<CreatePostPage> {
     final themeColor = Colors.blue.shade900;
 
     return Scaffold(
-      appBar: const AppBarWithBackBtn(
-        title: 'Create Post',
-      ),
-      backgroundColor: Colors.grey.shade100,
-      body: Padding(
-        padding: const EdgeInsets.all(22.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title Field
-              Text(
-                'Title',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        appBar: const AppBarWithBackBtn(
+          title: 'Create Post',
+        ),
+        backgroundColor: Color(0xffDDF4FF),
+        body: Padding(
+          padding: const EdgeInsets.all(22.0),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Color(0xFFFFF9F1),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: Color(0xFFB5E5F4),
+                  width: 2.5,
                 ),
               ),
-              const SizedBox(height: 8),
-              Material(
-                elevation: 4,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: 63,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title Field
+                  Text(
+                    'Title',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2D7D84),
+                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      controller: _titleController,
-                      style: GoogleFonts.poppins(fontSize: 16),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter post title",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey, fontWeight: FontWeight.w500),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _titleController,
+                    style: GoogleFonts.poppins(fontSize: 16),
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter post title",
+                      hintStyle: GoogleFonts.poppins(
+                        color: Color(0xFF7C6F64),
+                        fontSize: 16,
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // Image Upload Section
-              Text(
-                'Upload post images',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImages,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Icon(
-                      Icons.add_photo_alternate,
-                      size: 40,
-                      color: themeColor,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              _images.isNotEmpty
-                  ? SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _images.length,
-                        itemBuilder: (context, index) => Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                _images[index],
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: IconButton(
-                                icon:
-                                    const Icon(Icons.close, color: Colors.red),
-                                onPressed: () => _removeImage(index),
-                              ),
-                            ),
-                          ],
+                      filled: true,
+                      fillColor: Color(0xFFFFF9F1),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Color(0xFFECE7D9),
+                          width: 1.5,
                         ),
                       ),
-                    )
-                  : Center(
-                      child: Text(
-                        'No images selected',
-                        style: GoogleFonts.poppins(color: Colors.grey),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Color(0xFFD9CFC2),
+                          width: 2,
+                        ),
                       ),
                     ),
-              const SizedBox(height: 30),
+                  ),
+                  const SizedBox(height: 30),
 
-              // Content Field
-              Text(
-                'Content',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Material(
-                elevation: 4,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
+                  // Image Upload Section
+                  Text(
+                    'Upload post images',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2D7D84),
+                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      controller: _contentController,
-                      style: GoogleFonts.poppins(fontSize: 16),
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter post content",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey, fontWeight: FontWeight.w500),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImages,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border:
+                              Border.all(color: Color(0xff2D7D84), width: 2),
+                        ),
+                        child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Image.asset("assets/Animation/upload.png")),
                       ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 30),
+                  const SizedBox(height: 12),
+                  _images.isNotEmpty
+                      ? SizedBox(
+                          height: 100,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _images.length,
+                            itemBuilder: (context, index) => Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    _images[index],
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.close,
+                                        color: Colors.red),
+                                    onPressed: () => _removeImage(index),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No images selected',
+                            style: GoogleFonts.poppins(color: Colors.grey),
+                          ),
+                        ),
+                  const SizedBox(height: 30),
 
-              // Submit Button
-              Center(
-                child: SizedBox(
-                  width: 263,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _uploadPost,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: themeColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+                  // Content Field
+                  Text(
+                    'Content',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff2D7D84),
                     ),
-                    child: Text(
-                      'Submit',
-                      style: GoogleFonts.poppins(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _contentController,
+                    style: GoogleFonts.poppins(fontSize: 16),
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter post content",
+                      hintStyle: GoogleFonts.poppins(
+                        color: Color(0xFF7C6F64),
+                        fontSize: 16,
+                      ),
+                      filled: true,
+                      fillColor: Color(0xFFFFF9F1),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Color(0xFFECE7D9),
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Color(0xFFD9CFC2),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 30),
+
+                  // Submit Button
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _uploadPost,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFF58C6C),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                           side: const BorderSide(
+              color: Color(0xFFDB745A),
+              width: 2,
+            ),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

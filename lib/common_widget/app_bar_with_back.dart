@@ -33,17 +33,13 @@ class AppBarWithBackBtn extends StatelessWidget implements PreferredSizeWidget {
       elevation: 2,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xff0052B4), Color(0xff1683E8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+  color:Color(0xffFEFEFE),
         ),
       ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),
         child: Container(
-          color: const Color.fromARGB(255, 214, 214, 214),
+          color: const Color(0xff2E3A46),
           height: 1.0,
         ),
       ),

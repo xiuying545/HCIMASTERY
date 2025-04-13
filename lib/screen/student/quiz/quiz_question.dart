@@ -27,18 +27,13 @@ class _QuizPageState extends State<QuizPage> {
   late UserViewModel userViewModel;
   late QuizViewModel quizViewModel;
 
-
   @override
   void initState() {
     super.initState();
     currentQuestionIndex = widget.questionIndex;
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
-
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +42,9 @@ class _QuizPageState extends State<QuizPage> {
     final choices = ['A', 'B', 'C', 'D'];
 
     return Scaffold(
+      backgroundColor: Color(0xffFFF1F7),
       appBar: AppBar(
+        backgroundColor: const Color(0xffFEFEFE),
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
               color: Colors.blue.shade700.withOpacity(0.9)),
@@ -59,7 +56,7 @@ class _QuizPageState extends State<QuizPage> {
           },
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
+     
         title: Text(
           '${currentQuestionIndex + 1} Of ${widget.quizzes.length} Question',
           style: GoogleFonts.poppins(
@@ -69,217 +66,213 @@ class _QuizPageState extends State<QuizPage> {
           ),
         ),
       ),
-      body:  Container(
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  // Progress Bar
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.zero,
-                    child: SizedBox(
-                      height: 8,
-                      child: LinearProgressIndicator(
-                        value:
-                            (currentQuestionIndex + 1) / widget.quizzes.length,
-                        backgroundColor: Colors.blue.shade700.withOpacity(0.2),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.blue.shade700.withOpacity(0.9)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          // Quiz Image
-                          quiz.imageUrl != null
-                              ? Image.network(
-                                  quiz.imageUrl!,
-                                  width: 400,
-                                  height: 200,
-                                )
-                              : const SizedBox.shrink(),
-                          const SizedBox(height: 20),
-                          // Question Text
-                          Text(
-                            quiz.question,
-                            style: GoogleFonts.poppins(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          // Options List
-
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: quiz.options.length,
-                            itemBuilder: (context, index) {
-                              final isSelected =
-                                  quizViewModel.cachedAnswers[quizId] == index;
-                              final backgroundColor = isSelected
-                                  ? Colors.blue.shade400.withOpacity(0.9)
-                                  : Colors.white;
-                              final textColor = isSelected
-                                  ? Colors.white
-                                  : Colors.transparent;
-
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 5, 5, 15),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await quizViewModel.saveAnswerLocally(
-                                        quizId!, index);
-
-                                    updateQuestionIndex();
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.easeInOut,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: backgroundColor,
-                                      border: Border.all(
-                                        color: Colors.blue.shade400
-                                            .withOpacity(0.9),
-                                        width: 2,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 5,
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 5, 5, 5),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              color: textColor,
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8,
-                                                      horizontal: 12),
-                                              child: Text(
-                                                choices[index],
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10,
-                                                      horizontal: 10),
-                                              child: AutoSizeText(
-                                                quiz.options[index],
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: isSelected
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                                minFontSize: 10,
-                                                maxLines: 2,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-
-                          const SizedBox(height: 20),
-                          // Navigation Buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (currentQuestionIndex > 0)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        currentQuestionIndex--;
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.blue.shade700.withOpacity(0.9),
-                                      elevation: 4,
-                                      shape: const CircleBorder(),
-                                      padding: const EdgeInsets.all(15),
-                                    ),
-                                    child: const Icon(Icons.arrow_back,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Colors.blue.shade700.withOpacity(0.9),
-                                    elevation: 4,
-                                    shape: const CircleBorder(),
-                                    padding: const EdgeInsets.all(15),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (currentQuestionIndex <
-                                          widget.quizzes.length - 1) {
-                                        currentQuestionIndex++;
-                                      } else {
-                                        _showCompletionDialog(context);
-                                      }
-                                    });
-                                  },
-                                  child: Icon(
-                                    currentQuestionIndex ==
-                                            widget.quizzes.length - 1
-                                        ? Icons.check
-                                        : Icons.arrow_forward,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            // Progress Bar
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.zero,
+              child: SizedBox(
+                height: 8,
+                child: LinearProgressIndicator(
+                  value: (currentQuestionIndex + 1) / widget.quizzes.length,
+                  backgroundColor: Colors.blue.shade700.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.blue.shade700.withOpacity(0.9)),
+                ),
               ),
             ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    // Quiz Image
+                    quiz.imageUrl != null
+                        ? Image.network(
+                            quiz.imageUrl!,
+                            width: 400,
+                            height: 200,
+                          )
+                        : const SizedBox.shrink(),
+                    const SizedBox(height: 20),
+                    // Question Text
+                    Text(
+                      quiz.question,
+                      style: GoogleFonts.poppins(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff2D2E33),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    // Options List
+
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: quiz.options.length,
+                      itemBuilder: (context, index) {
+                        final isSelected =
+                            quizViewModel.cachedAnswers[quizId] == index;
+                        final backgroundColor =
+                            isSelected ? Color(0xffD9EBFF) : Colors.white;
+                        final borderColor =
+                            isSelected ? Color(0xff6EA5FF) : Colors.white;
+
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 5, 5, 15),
+                          child: GestureDetector(
+                            onTap: () async {
+                              await quizViewModel.saveAnswerLocally(
+                                  quizId!, index);
+
+                              updateQuestionIndex();
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: isSelected
+                                    ? Color(0xffD9EBFF)
+                                    : Colors.white,
+                                border: Border.all(
+                                  color: Color(0xff9DC9FF),
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                     shape: BoxShape.circle, 
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? Color(0xffD9EBFF)
+                                              : Colors.white,
+                                        ),
+                                        color: borderColor,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 12),
+                                        child: Text(
+                                          choices[index],
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: isSelected
+                                           ? Colors.white
+                                                :Color(0xff1F1F1F)
+                                              
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child: AutoSizeText(
+                                          quiz.options[index],
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xff1F1F1F),
+                                          ),
+                                          minFontSize: 10,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 20),
+                    // Navigation Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (currentQuestionIndex > 0)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  currentQuestionIndex--;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color(0xff80BFFF),
+                                elevation: 4,
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(15),
+                              ),
+                              child: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color(0xff80BFFF),
+                              elevation: 4,
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(15),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (currentQuestionIndex <
+                                    widget.quizzes.length - 1) {
+                                  currentQuestionIndex++;
+                                } else {
+                                  _showCompletionDialog(context);
+                                }
+                              });
+                            },
+                            child: Icon(
+                              currentQuestionIndex == widget.quizzes.length - 1
+                                  ? Icons.check
+                                  : Icons.arrow_forward,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

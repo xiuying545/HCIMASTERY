@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
-import 'package:image_picker/image_picker.dart'; // For image picking
-import 'package:firebase_storage/firebase_storage.dart'; // For Firebase Storage
-import 'dart:io'; // For File handling
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class AddQuizPage extends StatefulWidget {
   final String chapterId;
@@ -22,13 +22,13 @@ class _AddQuizPageState extends State<AddQuizPage> {
   final List<TextEditingController> _optionControllers = [
     TextEditingController(),
     TextEditingController(),
-  ]; // Start with 2 options
-  int _selectedAnswer = 0; // Index of the correct answer
+  ];
+  int _selectedAnswer = 0;
   late QuizViewModel quizViewModel;
 
-  File? _image; // To store the selected image
-  final ImagePicker _picker = ImagePicker(); // For image picking
-  bool _isUploading = false; // To track image upload state
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -63,10 +63,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
     }
   }
 
-  // Pick an image from the gallery
   Future<void> _pickImage() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -74,7 +72,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
     }
   }
 
-  // Upload image to Firebase Storage
   Future<String?> _uploadImage() async {
     if (_image == null) return null;
 
@@ -85,24 +82,12 @@ class _AddQuizPageState extends State<AddQuizPage> {
     try {
       String fileName = '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
       Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-
-      print('Uploading file: ${_image!.path}');
-      print('File size: ${_image!.lengthSync()} bytes');
-      print('File name: $fileName');
-
       UploadTask uploadTask = storageRef.putFile(_image!);
-      TaskSnapshot taskSnapshot =
-          await uploadTask.whenComplete(() {}).catchError((error) {
-        print('Error uploading file: $error');
-        throw error;
-      });
+      TaskSnapshot taskSnapshot = await uploadTask;
 
       if (taskSnapshot.state == TaskState.success) {
-        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-        print('File uploaded successfully: $downloadUrl');
-        return downloadUrl;
+        return await taskSnapshot.ref.getDownloadURL();
       } else {
-        print('Upload failed for file: ${_image!.path}');
         return null;
       }
     } catch (e) {
@@ -116,8 +101,7 @@ class _AddQuizPageState extends State<AddQuizPage> {
   }
 
   Future<void> _uploadQuiz() async {
-    if (_questionController.text.isEmpty ||
-        _optionControllers.any((controller) => controller.text.isEmpty)) {
+    if (_questionController.text.isEmpty || _optionControllers.any((c) => c.text.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all the fields.')),
       );
@@ -129,23 +113,21 @@ class _AddQuizPageState extends State<AddQuizPage> {
     });
 
     try {
-      // Upload image if selected
       String? imageUrl = await _uploadImage();
 
       Quiz quiz = Quiz(
         chapter: widget.chapterId,
         question: _questionController.text,
-        options:
-            _optionControllers.map((controller) => controller.text).toList(),
+        options: _optionControllers.map((c) => c.text).toList(),
         answer: _selectedAnswer,
-        imageUrl: imageUrl, // Include the image URL
+        imageUrl: imageUrl,
       );
 
       await quizViewModel.addQuiz(widget.chapterId, quiz);
 
       _questionController.clear();
-      for (var controller in _optionControllers) {
-        controller.clear();
+      for (var c in _optionControllers) {
+        c.clear();
       }
       setState(() {
         _selectedAnswer = 0;
@@ -171,224 +153,162 @@ class _AddQuizPageState extends State<AddQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = Colors.blue.shade900;
-
     return Scaffold(
-  appBar: const AppBarWithBackBtn(
-        title: 'Create Quiz',
-      ),
-      backgroundColor: Colors.grey.shade100,
+      appBar: const AppBarWithBackBtn(title: 'Create Quiz'),
+      backgroundColor: const Color(0xffDDF4FF),
       body: Padding(
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Question Field
-              Text(
-                'Question',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Material(
-                elevation: 4,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: 63,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      controller: _questionController,
-                      style: GoogleFonts.poppins(fontSize: 16),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter quiz question",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey, fontWeight: FontWeight.w500),
-                      ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF9F1),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFB5E5F4), width: 2.5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Question', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                const SizedBox(height: 8),
+                TextField(
+                       maxLines: 2,
+                  controller: _questionController,
+                  style: GoogleFonts.poppins(fontSize: 16),
+                  decoration: InputDecoration(
+                 
+                    hintText: "Enter quiz question",
+                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    filled: true,
+                    fillColor: const Color(0xFFFFF9F1),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // Options Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Options',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _addOption,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: themeColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                    ),
-                    child: Text(
-                      'Add Option',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ...List.generate(_optionControllers.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Material(
-                    elevation: 4,
-                    shadowColor: Colors.grey.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _optionControllers[index],
-                                style: GoogleFonts.poppins(fontSize: 16),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Option ${index + 1}",
-                                  hintStyle: GoogleFonts.poppins(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.remove_circle,
-                                  color: Colors.red),
-                              onPressed: () => _removeOption(index),
-                            ),
-                            Radio<int>(
-                              value: index,
-                              groupValue: _selectedAnswer,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedAnswer = value!;
-                                });
-                              },
-                              activeColor: themeColor,
-                            ),
-                          ],
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Options', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                    ElevatedButton(
+                      onPressed: _addOption,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF58C6C),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: const BorderSide(color: Color(0xFFDB745A), width: 2),
                         ),
                       ),
+                      child: const Text('Add Option', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 4), // Spacing
-              Text(
-                'Tick the option to mark it as the correct answer.',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+                  ],
                 ),
-              ),
-              const SizedBox(height: 30),
-              // Image Upload Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Image (Optional)',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                const SizedBox(height: 8),
+                ...List.generate(_optionControllers.length, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                                  maxLines: 2,
+                            controller: _optionControllers[index],
+                            style: GoogleFonts.poppins(fontSize: 16),
+                            decoration: InputDecoration(
+                              hintText: "Option ${index + 1}",
+                              hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                              filled: true,
+                              fillColor: const Color(0xFFFFF9F1),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle, color: Colors.red),
+                          onPressed: () => _removeOption(index),
+                        ),
+                        Radio<int>(
+                          value: index,
+                          groupValue: _selectedAnswer,
+                          onChanged: (value) => setState(() => _selectedAnswer = value!),
+                          activeColor: const Color(0xff2D7D84),
+                        ),
+                      ],
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: themeColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  );
+                }),
+                const SizedBox(height: 4),
+                Text('Tick the option to mark it as the correct answer.', style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600])),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Image (Optional)', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF58C6C),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                    ),
-                    child: Text(
-                      _image == null ? 'Add Image' : 'Change Image',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                      child: Text(
+                        _image == null ? 'Add Image' : 'Change Image',
+                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              if (_image != null)
-                Container(
-                  width: double.infinity,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: FileImage(_image!),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  ],
                 ),
-              const SizedBox(height: 8),
-
-              const SizedBox(height: 30),
-
-              // Submit Button
-              Center(
-                child: SizedBox(
-                  width: 263,
-                  height: 56,
+                const SizedBox(height: 8),
+                if (_image != null)
+                  Container(
+                    width: double.infinity,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                        image: FileImage(_image!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 30),
+                Center(
                   child: ElevatedButton(
                     onPressed: _isUploading ? null : _uploadQuiz,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: themeColor,
+                      backgroundColor: const Color(0xFFF58C6C),
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(30),
+                        side: const BorderSide(color: Color(0xFFDB745A), width: 2),
                       ),
                     ),
                     child: _isUploading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            'Submit',
-                            style: GoogleFonts.poppins(
-                              fontSize: 19,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
+                        : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

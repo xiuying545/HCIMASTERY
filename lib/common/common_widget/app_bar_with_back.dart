@@ -13,7 +13,7 @@ class AppBarWithBackBtn extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: Color(0xff2E3A46)),
         onPressed: () {
           if (route != null) {
             GoRouter.of(context).go(route!);
@@ -26,27 +26,18 @@ class AppBarWithBackBtn extends StatelessWidget implements PreferredSizeWidget {
         fit: BoxFit.scaleDown,
         child: Text(
           title,
-          style: Theme.of(context).appBarTheme.titleTextStyle,
+          
+          style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color:Color(0xff2E3A46)),
         ),
       ),
       actions: actions,
       elevation: 2,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade900, Colors.blue.shade700],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+color:Color(0xffFEFEFE),
         ),
       ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1.0),
-        child: Container(
-          color: const Color.fromARGB(255, 214, 214, 214),
-          height: 1.0,
-        ),
-      ),
+     
     );
   }
 

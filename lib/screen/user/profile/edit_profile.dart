@@ -67,7 +67,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _profileImage = downloadUrl;
         });
       } finally {
-        Navigator.of(context).pop(); // Dismiss loading indicator
+        Navigator.of(context).pop(); 
       }
     }
   }
@@ -125,8 +125,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6F1),
-      appBar: const AppBarWithBackBtn(title: 'Edit Profile'),
-      body: SafeArea(
+      
+      body: Stack(
+      children: [
+SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
@@ -213,6 +215,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
+      
+        Positioned(
+          top: 40,
+          left: 16,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+      )
     );
   }
 
@@ -273,6 +288,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ],
       ),
     );
+  
+  
   }
   @override
   void dispose() {

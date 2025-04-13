@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
@@ -8,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
-
 import 'package:provider/provider.dart';
 
 class AddNotePage extends StatefulWidget {
@@ -22,13 +23,10 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePage extends State<AddNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  final List<TextEditingController> _videoControllers = [
-    TextEditingController()
-  ];
+  final List<TextEditingController> _videoControllers = [TextEditingController()];
   final List<File> _images = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
-  bool isLoading = false;
 
   @override
   void initState() {
@@ -79,10 +77,8 @@ class _AddNotePage extends State<AddNotePage> {
 
     try {
       for (File image in _images) {
-        String fileName =
-            '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef =
-            FirebaseStorage.instance.ref().child('notes/$fileName');
+        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -123,262 +119,191 @@ class _AddNotePage extends State<AddNotePage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = Colors.blue.shade900;
-
     return Scaffold(
-      appBar: const AppBarWithBackBtn(
-        title: 'Create Note',
-      ),
-      backgroundColor: Colors.grey.shade100,
+      appBar: const AppBarWithBackBtn(title: 'Create Note'),
+      backgroundColor: const Color(0xffDDF4FF),
       body: Padding(
         padding: const EdgeInsets.all(22.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title Field
-              Text(
-                'Title',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Material(
-                elevation: 4,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: 63,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF9F1),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFB5E5F4), width: 2.5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Title', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _titleController,
+                  style: GoogleFonts.poppins(fontSize: 16),
+                  decoration: InputDecoration(
+                    hintText: "Enter note title",
+                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    filled: true,
+                    fillColor: const Color(0xFFFFF9F1),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      controller: _titleController,
-                      style: GoogleFonts.poppins(fontSize: 16),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter note title",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 30),
+                Text('Upload Images', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                const SizedBox(height: 20),
+                Center(
+                  child: GestureDetector(
+                    onTap: _pickImages,
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xff2D7D84), width: 2),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset("assets/Animation/upload.png"),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // Image Upload Section
-              Text(
-                'Upload Images',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImages,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Icon(
-                      Icons.add_photo_alternate,
-                      size: 40,
-                      color: themeColor,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              _images.isNotEmpty
-                  ? SizedBox(
-                      height: 150,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _images.length,
-                        itemBuilder: (context, index) => Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                _images[index],
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: IconButton(
-                                icon:
-                                    const Icon(Icons.close, color: Colors.red),
-                                onPressed: () => _removeImage(index),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        'No images selected',
-                        style: GoogleFonts.poppins(color: Colors.grey),
-                      ),
-                    ),
-              const SizedBox(height: 30),
-
-              // Content Field
-              Text(
-                'Content',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Material(
-                elevation: 4,
-                shadowColor: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      controller: _contentController,
-                      style: GoogleFonts.poppins(fontSize: 16),
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Enter note content",
-                        hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // Video Links Section
-              Text(
-                'Video Links',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Column(
-                children: _videoControllers
-                    .asMap()
-                    .entries
-                    .map((entry) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
+                const SizedBox(height: 12),
+                _images.isNotEmpty
+                    ? SizedBox(
+                        height: 150,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _images.length,
+                          itemBuilder: (context, index) => Stack(
                             children: [
-                              Expanded(
-                                child: Material(
-                                  elevation: 4,
-                                  shadowColor: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      child: TextField(
-                                        controller: entry.value,
-                                        style:
-                                            GoogleFonts.poppins(fontSize: 16),
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Enter video link",
-                                          hintStyle: GoogleFonts.poppins(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(_images[index], height: 150, fit: BoxFit.cover),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle,
-                                    color: Colors.red),
-                                onPressed: () => _removeVideoField(entry.key),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: const Icon(Icons.close, color: Colors.red),
+                                  onPressed: () => _removeImage(index),
+                                ),
                               ),
                             ],
                           ),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _addVideoField,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                        ),
+                      )
+                    : Center(
+                        child: Text('No images selected', style: GoogleFonts.poppins(color: Colors.grey)),
+                      ),
+                const SizedBox(height: 30),
+                Text('Content', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _contentController,
+                  style: GoogleFonts.poppins(fontSize: 16),
+                  maxLines: 15,
+                  decoration: InputDecoration(
+                    hintText: "Enter note content",
+                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    filled: true,
+                    fillColor: const Color(0xFFFFF9F1),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                  ),
-                  child: Text(
-                    'Add Video Link',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // Submit Button
-              Center(
-                child: SizedBox(
-                  width: 263,
-                  height: 56,
+                const SizedBox(height: 30),
+                Text('Video Links', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                Column(
+                  children: _videoControllers.asMap().entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: entry.value,
+                              style: GoogleFonts.poppins(fontSize: 16),
+                              decoration: InputDecoration(
+                                hintText: "Enter video link",
+                                hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                                filled: true,
+                                fillColor: const Color(0xFFFFF9F1),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle, color: Colors.red),
+                            onPressed: () => _removeVideoField(entry.key),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _addVideoField,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF58C6C),
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Video Link',
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Center(
                   child: ElevatedButton(
                     onPressed: _uploadNote,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: themeColor,
+                      backgroundColor: const Color(0xFFF58C6C),
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(30),
+                        side: const BorderSide(color: Color(0xFFDB745A), width: 2),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Submit',
-                      style: GoogleFonts.poppins(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

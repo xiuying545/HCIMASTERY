@@ -74,24 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: Color(0xFFFFF9F0),
-      appBar: AppBar(
-        title: Text(
-          "My Profile",
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: AppTheme.primaryColor,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _showLogoutConfirmation,
-          ),
-        ],
-      ),
+    
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -185,7 +168,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.person_outline,
                       title: "Username",
                       value: userViewModel.user!.username ?? "Not set yet",
-              
                     ),
 
                     const SizedBox(height: 16),
@@ -194,7 +176,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.phone,
                       title: "Phone Number",
                       value: userViewModel.user!.phone ?? "Not set yet",
-                
                     ),
 
                     const SizedBox(height: 16),
@@ -202,20 +183,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildInfoCard(
                       icon: Icons.email,
                       title: "Email",
-                      value: userViewModel.user!.email , 
+                      value: userViewModel.user!.email,
                     ),
 
                     const SizedBox(height: 24),
-                    buildRoundedButton(
-                      icon: Icons.edit,
-                      label: "Edit Profile",
-                      onTap: () {
-                        GoRouter.of(context)
-                            .push("/editProfile/${userViewModel.userId!}");
-                      },
-                      color: Color(0xffF79F3C),
-                      context: context
-                    ),
+ Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildRoundedButton(
+                    icon: Icons.logout,
+                    label: "Logout",
+                    onTap: () => _showLogoutConfirmation(),
+                    color: Color(0xffEA7A84),
+                       context: context
+                  ),
+                  const SizedBox(width: 16),
+                   buildRoundedButton(
+                        icon: Icons.edit,
+                        label: "Edit Profile",
+                        onTap: () {
+                          GoRouter.of(context)
+                              .push("/editProfile/${userViewModel.userId!}");
+                        },
+                        color: Color(0xffF79F3C),
+                        context: context),
+                ],
+              ),
+
+                  
 
                     const SizedBox(height: 16),
 
@@ -228,28 +223,25 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  
-
   Widget _buildInfoCard({
     required IconData icon,
     required String title,
     required String value,
   }) {
     return Container(
-    
       margin: const EdgeInsets.symmetric(vertical: 2),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: getBubbleColor(icon),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: getBubbleColor(icon), 
+          color: getBubbleColor(icon),
           width: 1,
         ),
       ),
       child: Row(
         children: [
-         Container(
+          Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: getBubbleColor(icon), // pick pastel bg based on icon type
