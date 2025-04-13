@@ -77,17 +77,17 @@ class _QuestionListPageState extends State<QuestionListPage> {
                       }
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
+                            horizontal: 16.0, vertical: 8),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white,
+                            color: const Color(
+                                0xFFFFFFFF), // or 0xFFFFFDF5 for warmer white
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
+                                color: const Color(0xFFD0D8E2).withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
@@ -97,7 +97,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
                             leading: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.blue.shade700.withOpacity(0.9),
+                                color:
+                                    const Color(0xFF5E9FEF), // softer cute blue
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: const Icon(
@@ -110,15 +111,15 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               "${index + 1}. ${quizViewModel.quizzes[index].question}",
                               style: GoogleFonts.poppins(
                                 fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1F2937),
                               ),
                             ),
                             subtitle: Text(
                               selectedOption,
                               style: GoogleFonts.rubik(
-                                fontSize: 15.0,
-                                color: Colors.grey[600],
+                                fontSize: 14.5,
+                                color: const Color(0xFF6B7280),
                               ),
                             ),
                             onTap: () {

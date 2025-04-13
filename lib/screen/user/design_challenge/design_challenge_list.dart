@@ -32,7 +32,7 @@ class DesignChallengesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade100,
+        backgroundColor: Color(0xffFFF9F0),
         body: SizedBox(
           height: double.infinity,
           width: double.infinity,

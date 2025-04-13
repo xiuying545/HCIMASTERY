@@ -64,6 +64,7 @@ class _NotePageState extends State<NotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffCDE4DA),
       appBar: AppBarWithBackBtn(
         title: currentNote.title,
       ),
@@ -74,7 +75,7 @@ class _NotePageState extends State<NotePage> {
 
   Widget _buildNoteContent() {
     return Container(
-      color: Colors.white,
+      color: Color(0xffCDE4DA),
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
@@ -82,20 +83,13 @@ class _NotePageState extends State<NotePage> {
           Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: Color(0xffFDF6EC),
                 borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+               
               ),
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -183,14 +177,14 @@ class _NotePageState extends State<NotePage> {
                   // Header with Book Icon
                   Row(
                     children: [
-                      Icon(Icons.menu_book, color: Colors.brown.shade700, size: 28),
+                      Icon(Icons.menu_book, color: Color(0xff368173), size: 28),
                       const SizedBox(width: 10),
                       Text(
                         'Note Content',
                         style: GoogleFonts.merriweather(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown.shade800,
+                          color: Color(0xff3B2B2F),
                         ),
                       ),
                     ],
@@ -207,19 +201,19 @@ class _NotePageState extends State<NotePage> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: currentNote.content[0], // First letter
+                          text: currentNote.content[0],
                           style: GoogleFonts.merriweather(
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
-                            color: Colors.brown.shade800,
+                             color: Color(0xff4E3C36),
                           ),
                         ),
                         TextSpan(
-                          text: currentNote.content.substring(1), // Rest of the content
+                          text: currentNote.content.substring(1),
                           style: GoogleFonts.merriweather(
                             fontSize: 16,
-                            color: Colors.grey[800],
-                            height: 1.6, // Line height for readability
+                            color: Color(0xff4E3C36),
+                            height: 1.6, 
                           ),
                         ),
                       ],

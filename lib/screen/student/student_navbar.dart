@@ -28,12 +28,10 @@ class _StudentNavBar extends State<StudentNavBar> {
     super.initState();
     _selectedIndex = widget.bottomIndex;
 
-    // Set user ID (example)
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-          Provider.of<UserViewModel>(context, listen: false)
-        .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
-    Provider.of<UserViewModel>(context, listen: false).role = "Student";
+      Provider.of<UserViewModel>(context, listen: false)
+          .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
+      Provider.of<UserViewModel>(context, listen: false).role = "Student";
       Provider.of<UserViewModel>(context, listen: false)
           .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
     });
@@ -60,75 +58,52 @@ class _StudentNavBar extends State<StudentNavBar> {
       body: getBodyWidget(_selectedIndex),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: const Color(0xFFFFFDF5),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
-              spreadRadius: 2,
               offset: const Offset(0, -3),
             ),
           ],
         ),
-        child: ClipRRect(
+        padding: EdgeInsets.symmetric(vertical: 5),
+          child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            items: [
+            backgroundColor: const Color(0xFFFFFDF5),
+            elevation: 0,
+            selectedFontSize: 14,
+            unselectedFontSize: 12,
+            iconSize: 28,
+            selectedItemColor: Color(0xFF2773C8), // 明亮蓝色
+            unselectedItemColor: Color(0xFF9CA3AF), // 柔和灰蓝
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: const [
               BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.all(8), // Padding around the icon
-                  child: const Icon(Icons.home_outlined),
-                ),
-                activeIcon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.home),
-                ),
+                icon: Icon(Icons.house_outlined),
+                activeIcon: Icon(Icons.house),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.forum_outlined),
-                ),
-                activeIcon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.forum),
-                ),
+                icon: Icon(Icons.chat_bubble_outline),
+                activeIcon: Icon(Icons.chat_bubble),
                 label: 'Forum',
               ),
               BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.build_outlined),
-                ),
-                activeIcon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.build),
-                ),
+                icon: Icon(Icons.extension_outlined),
+                activeIcon: Icon(Icons.extension),
                 label: 'Exercise',
               ),
               BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.person_outline),
-                ),
-                activeIcon: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.person),
-                ),
+                icon: Icon(Icons.person_outline),
+                activeIcon: Icon(Icons.person),
                 label: 'Me',
               ),
             ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.blue.shade900, // Vibrant orange
-            unselectedItemColor: Colors.grey.shade600, // Soft grey
-            iconSize: 30,
-            showSelectedLabels: true,
-            showUnselectedLabels: false,
-            onTap: _onItemTapped,
-            backgroundColor: Colors.white, // White background
-            elevation: 10, // Add elevation for a floating effect
           ),
         ),
       ),
