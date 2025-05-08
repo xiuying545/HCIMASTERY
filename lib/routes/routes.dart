@@ -28,6 +28,7 @@ import 'package:fyp1/screen/student/quiz/quiz_question.dart';
 import 'package:fyp1/screen/student/quiz/quiz_answer.dart';
 import 'package:fyp1/screen/student/quiz/quiz_score_list.dart';
 import 'package:fyp1/screen/user/design_challenge/profile_page_design.dart';
+import 'package:fyp1/screen/user/profile/delete_account.dart';
 import 'package:fyp1/screen/user/profile/edit_profile.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
 import 'package:fyp1/screen/admin/admin_navbar.dart';
@@ -46,9 +47,9 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-              //  return  SplashScreen();
-          // return const AdminNavBar();
-          return  const StudentNavBar(bottomIndex: 1,);
+              //  return  SignInScreen();
+          return const AdminNavBar();
+          // return  const StudentNavBar(bottomIndex: 1,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   CoffeeGame();
@@ -67,6 +68,12 @@ GoRouter router() {
         path: '/practicalExercise/coffeegame',
         builder: (context, state) => const CoffeeGame(),
       ),
+
+             GoRoute(
+        path: '/deleteAccount',
+        builder: (context, state) => const DeleteAccountPage(),
+      ),
+
 
                    GoRoute(
         path: '/practicalExercise/productgame',

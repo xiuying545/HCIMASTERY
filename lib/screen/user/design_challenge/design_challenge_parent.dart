@@ -152,6 +152,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
             if (comp.isEditable == true) {
               setState(() => selectedIndex = index);
               editComponent2(index);
+              
             }
           },
           child: Transform.scale(
@@ -331,14 +332,15 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         ],
       ),
     );
+  
   }
 
-  void editComponent2(int index) {
+  Future<void> editComponent2(int index) async {
     UIComponent comp = components[index];
     TextEditingController fontSizeController =
         TextEditingController(text: comp.fontSize.toString());
     Color currentColor = comp.color;
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -508,6 +510,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         );
       },
     );
+         setState(() {});
   }
 
   void submitDesign(void Function(String feedback) onResult) {}

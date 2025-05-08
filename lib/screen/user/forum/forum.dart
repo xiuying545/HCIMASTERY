@@ -309,7 +309,7 @@ class _ForumPageState extends State<ForumPage> {
                         radius: 25,
                         backgroundImage: NetworkImage(
                           forumViewModel
-                                  .userMap[post.creator]?.profileImagePath ??
+                                  .userMap[post.creator]?.profileImage ??
                               "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                         ),
                         backgroundColor: Colors.grey,

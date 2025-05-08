@@ -27,7 +27,7 @@ class _EditNotePageState extends State<EditNotePage> {
   final TextEditingController _contentController = TextEditingController();
   List<TextEditingController> _videoControllers = [TextEditingController()];
   List<File> _images = [];
-  List<String>? _existingImageUrls = [];
+  List<String> _existingImageUrls = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
   Note? _existingNote;
@@ -91,8 +91,8 @@ class _EditNotePageState extends State<EditNotePage> {
 
   void _removeExistingImage(int index) {
     setState(() {
-      if(_existingImageUrls!=null) {
-        _existingImageUrls!.removeAt(index);
+      if(_existingImageUrls.isNotEmpty) {
+        _existingImageUrls.removeAt(index);
       }
     });
   }
@@ -105,7 +105,7 @@ class _EditNotePageState extends State<EditNotePage> {
       return;
     }
 
-    List<String> imageUrls =  List.from(_existingImageUrls ?? []);
+    List<String> imageUrls =  List.from(_existingImageUrls);
     List<String> videoLinks = _videoControllers
         .map((controller) => controller.text.trim())
         .where((link) => link.isNotEmpty)
@@ -208,16 +208,15 @@ class _EditNotePageState extends State<EditNotePage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      if (_existingImageUrls==null && _images.isEmpty)
-                        Center(child: Text('No images selected', style: GoogleFonts.poppins(color: Colors.grey)))
-                      else
+                      if (_existingImageUrls.isNotEmpty || _images.isNotEmpty)
+                
                         SizedBox(
                           height: 100,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             children: [
-                              if(_existingImageUrls!=null)
-                              ..._existingImageUrls!.asMap().entries.map((entry) {
+                              if(_existingImageUrls.isNotEmpty)
+                              ..._existingImageUrls.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 String url = entry.value;
                                 return Stack(

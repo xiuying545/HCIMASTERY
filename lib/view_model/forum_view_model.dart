@@ -60,7 +60,8 @@ class ForumViewModel extends BaseViewModel {
   /// Adds a new post and updates the local list
   Future<void> addPost(Post post) async {
     await tryFunction(() async {
-      await _postService.addPost(post);
+     final postId = await _postService.addPost(post);
+     post.postID=postId;
       _posts.add(post);
     });
   }
@@ -108,6 +109,7 @@ class ForumViewModel extends BaseViewModel {
     await tryFunction(() async {
       await _postService.addReplyToPost(postID, reply);
       _posts.firstWhere((post) => post.postID == postID).replies.add(reply);
+            notifyListeners();
     });
   }
 
@@ -116,6 +118,8 @@ class ForumViewModel extends BaseViewModel {
     await tryFunction(() async {
       await _postService.deleteReply(postID, replyIndex);
       _posts.firstWhere((post) => post.postID == postID).replies.removeAt(replyIndex);
+      notifyListeners();
     });
   }
+
 }

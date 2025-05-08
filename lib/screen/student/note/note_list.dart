@@ -157,7 +157,7 @@ class _NoteListPageState extends State<NoteListPage> {
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: Colors.black,
                         size: 30,
                       ),
                       onPressed: () {

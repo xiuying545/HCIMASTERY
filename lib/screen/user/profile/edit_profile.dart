@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
+import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/custom_input_field.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/common/common_widget/helpers.dart';
@@ -27,6 +30,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   late String? _profileImage =
       "https://cdn-icons-png.flaticon.com/512/9368/9368192.png";
@@ -42,7 +46,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      // Show loading indicator
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -67,7 +70,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _profileImage = downloadUrl;
         });
       } finally {
-        Navigator.of(context).pop(); 
+        Navigator.of(context).pop();
       }
     }
   }
@@ -82,14 +85,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _nameController.text = user.name;
         _phoneController.text = user.phone ?? "";
         _emailController.text = user.email;
-        _profileImage = user.profileImagePath;
+        _profileImage = user.profileImage;
         _usernameController.text = user.username ?? "";
       });
     }
   }
 
   Future<void> _saveProfile() async {
-    // Show saving indicator
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -109,130 +114,202 @@ class _EditProfilePageState extends State<EditProfilePage> {
         name: _nameController.text,
         phone: _phoneController.text,
         email: _emailController.text,
-        profileImagePath: _profileImage,
+        profileImage: _profileImage,
         role: userViewModel.user!.role,
         username: _usernameController.text,
       );
 
       await userViewModel.saveUser(user);
-      GoRouter.of(context).pop(); // Navigate back after saving
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Profile edited successfully!',
+                        style: AppTheme.snackBarText),
+                    backgroundColor: Colors.green,
+                  ),
+                );
     } finally {
-      Navigator.of(context).pop(); // Dismiss saving indicator
+      Navigator.of(context).pop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xFFFDF6F1),
-      
       body: Stack(
-      children: [
-SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  CircleAvatar(
-                    radius: MediaQuery.of(context).size.width * 0.15,
-                    backgroundColor: Colors.white,
-                    child: ClipOval(
-                      child: _profileImage != null
-                          ? Image.network(
-                              _profileImage!,
-                              width: 110,
-                              height: 110,
-                              fit: BoxFit.cover,
-                              loadingBuilder: (_, child, progress) {
-                                if (progress == null) return child;
-                                return CircularProgressIndicator(
-                                  color: AppTheme.primaryColor,
-                                );
-                              },
-                              errorBuilder: (_, __, ___) => Icon(Icons.person,
-                                  size: 60, color: AppTheme.primaryColor),
-                            )
-                          : Icon(Icons.person,
-                              size: 60, color: AppTheme.primaryColor),
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    child: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      radius: 20,
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt,
-                            size: 18, color: Colors.white),
-                        onPressed: _pickImage,
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).viewPadding.top -
+                      MediaQuery.of(context).viewPadding.bottom,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: MediaQuery.of(context).size.width * 0.15,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: _profileImage != null
+                                  ? Image.network(
+                                      _profileImage!,
+                                      width: 110,
+                                      height: 110,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (_, child, progress) {
+                                        if (progress == null) return child;
+                                        return CircularProgressIndicator(
+                                          color: AppTheme.primaryColor,
+                                        );
+                                      },
+                                      errorBuilder: (_, __, ___) => Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: AppTheme.primaryColor),
+                                    )
+                                  : Icon(Icons.person,
+                                      size: 60, color: AppTheme.primaryColor),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.blue,
+                              radius: 20,
+                              child: IconButton(
+                                icon: const Icon(Icons.camera_alt,
+                                    size: 18, color: Colors.white),
+                                onPressed: _pickImage,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      const SizedBox(height: 30),
+                      Text(
+                        "⭐ Edit your personal details ⭐",
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // all your widgets including:
+                            _buildInputCard(
+                              Icons.person,
+                              "Name",
+                              _nameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Name is required';
+                                }
+                                if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                                  return 'Name can only contain alphabets';
+                                }
+                                return null;
+                              },
+                            ),
+                            _buildInputCard(Icons.person_outline, "Username",
+                                _usernameController),
+                            _buildInputCard(
+                                Icons.phone, "Phone", _phoneController  ,validator: (value) {
+             
+                       if(value!=null) {if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+  return 'Phone can only contain numbers';}
+}
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildRoundedButton(
+                              icon: Icons.lock_outline,
+                              label: "Password",
+                              onTap: () =>
+                                  GoRouter.of(context).push("/editPassword"),
+                              color: Color(0xffEA7A84),
+                              context: context),
+                          const SizedBox(width: 16),
+                          buildRoundedButton(
+                              icon: Icons.save,
+                              label: "Save",
+                              onTap: _saveProfile,
+                              color: Color(0xffF79F3C),
+                              context: context),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () =>
+                              GoRouter.of(context).push("/deleteAccount"),
+                          icon: Icon(Icons.delete_forever_outlined,
+                              color: Colors.white, size: 18),
+                          label: Text(
+                            "Delete Account",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromARGB(255, 243, 102, 114),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "⭐ Edit your personal details ⭐",
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildInputCard(Icons.person, "Name", _nameController),
-              _buildInputCard(
-                  Icons.person_outline, "Username", _usernameController),
-              _buildInputCard(Icons.phone, "Phone", _phoneController),
-              _buildInputCard(Icons.email, "Email", _emailController),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildRoundedButton(
-                    icon: Icons.lock_outline,
-                    label: "Password",
-                    onTap: () => GoRouter.of(context).push("/editPassword"),
-                    color: Color(0xffEA7A84),
-                       context: context
-                  ),
-                  const SizedBox(width: 16),
-                  buildRoundedButton(
-                    icon: Icons.save,
-                    label: "Save",
-                    onTap: _saveProfile,
-                    color: Color(0xffF79F3C),
-                       context: context
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 40,
+            left: 16,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
-      
-        Positioned(
-          top: 40,
-          left: 16,
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ],
-      )
     );
   }
 
   Widget _buildInputCard(
-      IconData icon, String label, TextEditingController controller) {
+      IconData icon, String label, TextEditingController controller,
+      {String? Function(String?)? validator}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -253,7 +330,7 @@ SafeArea(
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: getBubbleColor(icon), // pick pastel bg based on icon type
+              color: getBubbleColor(icon),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
@@ -273,7 +350,8 @@ SafeArea(
                       fontWeight: FontWeight.w500,
                       color: Colors.grey[600],
                     )),
-                TextField(
+                TextFormField(
+                  validator: validator,
                   controller: controller,
                   style: GoogleFonts.poppins(fontSize: 17),
                   decoration: const InputDecoration(
@@ -288,9 +366,8 @@ SafeArea(
         ],
       ),
     );
-  
-  
   }
+
   @override
   void dispose() {
     _nameController.dispose();

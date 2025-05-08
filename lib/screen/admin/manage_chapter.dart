@@ -255,7 +255,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
       builder: (BuildContext context) {
         return InputDialog(
             title: 'Add Chapter',
-            hintText: 'Enter  chapter name',
+            hintText: 'chapter name',
             onSave: (chapterName) async {
               if (chapterName.isNotEmpty) {
                 final chapter = Chapter(
@@ -277,7 +277,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
         return InputDialog(
           title: 'Edit Chapter',
           initialValue: chapter.chapterName,
-          hintText: 'Enter new chapter name',
+          hintText: 'new chapter name',
           onSave: (newChapterName) async {
             await Provider.of<NoteViewModel>(context, listen: false)
                 .updateChapterName(chapter.chapterID!, newChapterName);

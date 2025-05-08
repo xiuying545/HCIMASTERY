@@ -173,13 +173,13 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  '${viewModel.noteCount[chapter.chapterID]} lessons',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
+                                // Text(
+                                //   '${viewModel.noteCount[chapter.chapterID]} lessons',
+                                //   style: GoogleFonts.poppins(
+                                //     fontSize: 14,
+                                //     color: Colors.grey[600],
+                                //   ),
+                                // ),
                                 const SizedBox(height: 6),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),

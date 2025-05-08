@@ -74,7 +74,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: Color(0xFFFFF9F0),
-    
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -112,10 +111,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: CircleAvatar(
                         radius: size.width * 0.15,
                         backgroundColor: Colors.grey[200],
-                        backgroundImage: userViewModel.user?.profileImagePath !=
+                        backgroundImage: userViewModel.user?.profileImage !=
                                 null
-                            ? NetworkImage(
-                                userViewModel.user!.profileImagePath!)
+                            ? NetworkImage(userViewModel.user!.profileImage!)
                             : const NetworkImage(
                                 "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
                       ),
@@ -167,7 +165,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildInfoCard(
                       icon: Icons.person_outline,
                       title: "Username",
-                      value: userViewModel.user!.username ?? "Not set yet",
+                      value: userViewModel.user!.username == null ||
+                              userViewModel.user!.username!.isEmpty
+                          ? "Not set yet"
+                          : userViewModel.user!.username!,
                     ),
 
                     const SizedBox(height: 16),
@@ -175,7 +176,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildInfoCard(
                       icon: Icons.phone,
                       title: "Phone Number",
-                      value: userViewModel.user!.phone ?? "Not set yet",
+                      value: userViewModel.user!.phone == null ||
+                              userViewModel.user!.phone!.isEmpty
+                          ? "Not set yet"
+                          : userViewModel.user!.phone!,
                     ),
 
                     const SizedBox(height: 16),
@@ -187,30 +191,27 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
 
                     const SizedBox(height: 24),
- Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildRoundedButton(
-                    icon: Icons.logout,
-                    label: "Logout",
-                    onTap: () => _showLogoutConfirmation(),
-                    color: Color(0xffEA7A84),
-                       context: context
-                  ),
-                  const SizedBox(width: 16),
-                   buildRoundedButton(
-                        icon: Icons.edit,
-                        label: "Edit Profile",
-                        onTap: () {
-                          GoRouter.of(context)
-                              .push("/editProfile/${userViewModel.userId!}");
-                        },
-                        color: Color(0xffF79F3C),
-                        context: context),
-                ],
-              ),
-
-                  
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildRoundedButton(
+                            icon: Icons.logout,
+                            label: "Logout",
+                            onTap: () => _showLogoutConfirmation(),
+                            color: Color(0xffEA7A84),
+                            context: context),
+                        const SizedBox(width: 16),
+                        buildRoundedButton(
+                            icon: Icons.edit,
+                            label: "Edit Profile",
+                            onTap: () {
+                              GoRouter.of(context).push(
+                                  "/editProfile/${userViewModel.userId!}");
+                            },
+                            color: Color(0xffF79F3C),
+                            context: context),
+                      ],
+                    ),
 
                     const SizedBox(height: 16),
 

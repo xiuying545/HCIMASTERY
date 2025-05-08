@@ -44,6 +44,7 @@ class _SignInScreenState extends State<SignInScreen> {
         await _redirectUserBasedOnRole(user.uid);
       }
     } on FirebaseAuthException catch (e) {
+      print('Error code: ${e.code}');
       _handleAuthError(e);
     } finally {
       if (mounted) {
@@ -55,12 +56,12 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _redirectUserBasedOnRole(String userId) async {
     if (mounted) {
       userViewModel.setUserId(userId);
-      userViewModel.loadUser(userId);
+      await userViewModel.loadUser(userId);
       String route;
       if (userViewModel.user?.role == ROLE_ADMIN) {
         route = '/adminNav';
         GoRouter.of(context).go(route);
-      } else if (userViewModel.user?.role ==  ROLE_STUDENT) {
+      } else if (userViewModel.user?.role == ROLE_STUDENT) {
         route = '/studentNav';
         GoRouter.of(context).go(route);
       } else {
@@ -72,10 +73,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Exception(errorMessage),
           StackTrace.current,
         );
-        
       }
-      
-
     }
   }
 
@@ -83,19 +81,23 @@ class _SignInScreenState extends State<SignInScreen> {
     String message;
     switch (e.code) {
       case 'user-not-found':
-        message = 'No user found with this email.';
+        message = 'No user found with this email address.';
         break;
       case 'wrong-password':
-        message = 'Incorrect password. Try again.';
+        message = 'Incorrect password. Please try again.';
         break;
       case 'invalid-email':
-        message = 'Invalid email format.';
+        message = 'Please enter a valid email address.';
         break;
       case 'too-many-requests':
-        message = 'Too many failed attempts. Try again later.';
+        message = 'Too many failed login attempts. Please try again later.';
+        break;
+      case 'invalid-credential':
+        message = 'Wrong email or password.';
         break;
       default:
-        message = 'Failed to sign in. Please try again.';
+        message = 'An unexpected error occurred. Please try again later.';
+        print("Unhandled Auth Error:${e.message}");
     }
     _showSnackBar(message);
   }

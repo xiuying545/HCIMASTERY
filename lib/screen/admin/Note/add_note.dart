@@ -60,12 +60,19 @@ class _AddNotePage extends State<AddNotePage> {
   }
 
   Future<void> _uploadNote() async {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
-      return;
-    }
+if (_titleController.text.isEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Title is required.')),
+  );
+  return;
+}
+
+if (_contentController.text.isEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Content is required.')),
+  );
+  return;
+}
 
     LoadingDialog.show(context, "Uploading your note...");
 

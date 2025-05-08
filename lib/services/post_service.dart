@@ -103,20 +103,22 @@ class PostService {
         .toList();
   }
 
-  // Method to add a new post
-  Future<void> addPost(Post post) async {
-    // Save the post to Firestore and get the document reference
-    DocumentReference docRef = await _firestore.collection('Forum').add({
-      'title': post.title,
-      'content': post.content,
-      'creator': post.creator,
-      'images': post.images,
-      'likes': [],
-      'replies': [],
-      'editStatus': false,
-      'timeCreated': post.timeCreated,
-    });
-  }
+
+Future<String> addPost(Post post) async {
+
+  final DocumentReference docRef = await _firestore.collection('Forum').add({
+    'title': post.title,
+    'content': post.content,
+    'creator': post.creator,
+    'images': post.images,
+    'likes': <String>[],
+    'replies': <String>[],
+    'editStatus': false,
+    'timeCreated': post.timeCreated,
+  });
+
+  return docRef.id;
+}
 
   // Method to edit an existing post
   Future<void> editPost(Post post) async {

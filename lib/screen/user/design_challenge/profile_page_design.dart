@@ -88,10 +88,9 @@ Widget buildBottomBar() {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
              _buildNavItem(
-            icon: Icons.lock_rounded,
-            label: 'Lock',
+            icon: isPlay?Icons.lock_rounded:Icons.lock_open_rounded,
+            label: isPlay?'Lock':'Unlock',
             onTap: () => setState(() => isPlay = !isPlay),
-            isActive: isPlay,
             key: lockKey,
           ),
           _buildNavItem(

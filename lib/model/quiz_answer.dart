@@ -1,14 +1,14 @@
 class QuizAnswer {
   String? answerID; 
   final String userID;
-  final String chapter; // Add chapter field
+  final String chapterID; 
   final List<String> quizzID;
   final List<int> studentAnswer;
 
   QuizAnswer({
     this.answerID, 
     required this.userID,
-    required this.chapter, // Require chapter in constructor
+    required this.chapterID, 
     required this.quizzID,
     required this.studentAnswer,
   });
@@ -16,7 +16,7 @@ class QuizAnswer {
   Map<String, dynamic> toJson() {
     return {
       'userID': userID,
-      'chapter': chapter, // Include chapter in JSON
+      'chapterID': chapterID, 
       'quizzID': quizzID,
       'studentAnswer': studentAnswer,
     };
@@ -26,8 +26,8 @@ class QuizAnswer {
     return QuizAnswer(
       answerID: json['answerID'], 
       userID: json['userID'],
-      chapter: json['chapter'], // Include chapter in fromJson
-      quizzID: List<String>.from(json['quizzID']), // Ensure quizzID is a List<String>
+      chapterID: json['chapterID'], 
+      quizzID: List<String>.from(json['quizzID']), 
       studentAnswer: List<int>.from(json['studentAnswer']), 
     );
   }

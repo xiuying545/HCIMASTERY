@@ -101,6 +101,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         CustomInputField(
                           label: "Name",
                           controller: _nameController,
+                          validators: [
+                            (value) {
+                              if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value!)) {
+                                return 'Name can only contain alphabets.';
+                              }
+                              return null;
+                            },
+                          ],
                         ),
                         const SizedBox(height: 16.0),
                         CustomInputField(
@@ -126,6 +134,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             (value) {
                               if (value!.length < 6) {
                                 return 'Password must be at least 6 characters.';
+                              }
+                              final passwordPattern = RegExp(
+                                  r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).+$');
+                              if (!passwordPattern.hasMatch(value)) {
+                                return 'Combination of characters, numbers, and special characters.';
                               }
                               return null;
                             },

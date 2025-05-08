@@ -160,7 +160,20 @@ class _QuizResultPageState extends State<QuizResultPage> {
           final quiz = quizViewModel.quizzes[index];
           final isCorrect = quiz.answer == quizViewModel.cachedAnswers[quiz.quizzID];
 
-          return Container(
+          return 
+          GestureDetector(
+            onTap:   ()  {
+              String? quizzID = quiz.quizzID;
+         
+
+     
+                context.push(
+                  '/student/quizAnswer?quizzID=${quizzID}',
+                );
+            
+            },
+          child:Container(
+      
             margin: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -224,7 +237,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                 ],
               ),
             ),
-          );
+          ));
         },
       ),
     );

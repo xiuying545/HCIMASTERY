@@ -28,7 +28,7 @@ class _EditPostPageState extends State<EditPostPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   List<File> _images = [];
-  List<String>? _existingImageUrls = [];
+  List<String> _existingImageUrls = [];
   final _picker = ImagePicker();
 
   @override
@@ -48,7 +48,7 @@ class _EditPostPageState extends State<EditPostPage> {
        setState(() {
       _titleController.text = forumViewModel.post.title;
       _contentController.text = forumViewModel.post.content;
-        _existingImageUrls = forumViewModel.post.images;
+        _existingImageUrls = forumViewModel.post.images??[];
            });
         print('Error loading post: $_existingImageUrls');
     } catch (e) {
@@ -80,7 +80,7 @@ class _EditPostPageState extends State<EditPostPage> {
     }
 
     LoadingDialog.show(context, "Updating your post...");
-List<String> imageUrls = List.from(_existingImageUrls ?? []);
+List<String> imageUrls = List.from(_existingImageUrls);
 
     try {
       for (File image in _images) {
@@ -116,9 +116,9 @@ List<String> imageUrls = List.from(_existingImageUrls ?? []);
       _contentController.clear();
       setState(() {
         _images.clear();
-        if(_existingImageUrls!=null) {
+      
           _existingImageUrls!.clear();
-        }
+     
       });
 
       LoadingDialog.hide(context);
@@ -197,16 +197,15 @@ List<String> imageUrls = List.from(_existingImageUrls ?? []);
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (_existingImageUrls==null && _images.isEmpty)
-                  Center(child: Text('No images selected', style: GoogleFonts.poppins(color: Colors.grey)))
-                else
+                if (_existingImageUrls.isNotEmpty || _images.isNotEmpty)
+               
                   SizedBox(
                     height: 100,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                          if (_existingImageUrls!=null)
-                        ..._existingImageUrls!.asMap().entries.map((entry) {
+                          if (_existingImageUrls.isNotEmpty)
+                        ..._existingImageUrls.asMap().entries.map((entry) {
                           int index = entry.key;
                           String url = entry.value;
                           return Stack(
@@ -233,7 +232,7 @@ List<String> imageUrls = List.from(_existingImageUrls ?? []);
                                 right: 0,
                                 child: IconButton(
                                   icon: const Icon(Icons.close, color: Colors.red),
-                                  onPressed: () => setState(() => _existingImageUrls!.removeAt(index)),
+                                  onPressed: () => setState(() => _existingImageUrls.removeAt(index)),
                                 ),
                               ),
                             ],

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore for Timestamp
 
 class Post {
-  final String? postID;
+   String? postID;
   final String title;
   String creator;
   final String content;
@@ -80,7 +80,6 @@ class Post {
 class Reply {
   String creator;
   final String content;
-  String? creatorProfileImg;
   final DateTime timeCreated;
 
   Reply({

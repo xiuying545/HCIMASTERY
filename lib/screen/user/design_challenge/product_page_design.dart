@@ -78,13 +78,12 @@ class _ProductDesignChallengePage
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(
-              icon: Icons.lock_rounded,
-              label: 'Lock',
-              onTap: () => setState(() => isPlay = !isPlay),
-              isActive: isPlay,
-              key: lockKey,
-            ),
+              _buildNavItem(
+            icon: isPlay?Icons.lock_rounded:Icons.lock_open_rounded,
+            label: isPlay?'Lock':'Unlock',
+            onTap: () => setState(() => isPlay = !isPlay),
+            key: lockKey,
+          ),
             _buildNavItem(
               icon: Icons.send_rounded,
               label: 'Submit',

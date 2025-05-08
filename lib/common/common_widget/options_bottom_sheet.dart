@@ -17,145 +17,148 @@ class OptionItem {
 
 class CustomOptionsBottomSheet extends StatelessWidget {
   final List<OptionItem> options;
-  final String? title;
 
-  const CustomOptionsBottomSheet({
-    super.key, 
-    required this.options,
-    this.title,
-  });
+  const CustomOptionsBottomSheet({super.key, required this.options});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? theme.cardColor : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        color: const Color(0xFFE3F2FD), 
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
-      padding: const EdgeInsets.only(top: 12, bottom: 8),
+      padding: const EdgeInsets.only(top: 8, bottom: 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Fun drag handle
-          Center(
-            child: Container(
-              width: 60,
-              height: 6,
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[600] : Colors.grey[400],
-                borderRadius: BorderRadius.circular(3),
-              ),
+          // Drag handle
+          Container(
+            width: 60,
+            height: 6,
+            margin: const EdgeInsets.only(top: 12, bottom: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(3),
             ),
           ),
-          
-          // Title (optional) with fun style
-          if (title != null) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Text(
-                title!,
-                style: GoogleFonts.comicNeue(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Colors.blue[800],
-                  letterSpacing: 0.5,
-                ),
+
+          // Option container
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white, width: 2.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
+            child: Column(
+              children: options.map((option) {
+                return Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      option.onTap();
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: option.color.withOpacity(0.15),
+                              border: Border.all(
+                                color: option.color.withOpacity(0.4),
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              option.icon,
+                              color: option.color,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              option.label,
+                              style: GoogleFonts.comicNeue(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFF0645AD),
+                              ),
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Color(0xff9CA3AF),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Cancel button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFD2E7FB),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  )
+                ],
               ),
-            ),
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: isDark ? Colors.grey[700] : Colors.grey[300],
-            ),
-          ],
-          
-          // Options list with more playful design
-          ...options.map((option) {
-            return Material(
-              color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                  option.onTap();
-                },
-                splashColor: option.color.withOpacity(0.2),
-                highlightColor: option.color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
+                onTap: () => Navigator.pop(context),
+                borderRadius: BorderRadius.circular(20),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 14, horizontal: 16),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: option.color.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: option.color.withOpacity(0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          option.icon, 
-                          color: option.color, 
-                          size: 24,
+                      Text(
+                        'Cancel',
+                        style: GoogleFonts.comicNeue(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: const Color(0xFF0645AD),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          option.label,
-                          style: GoogleFonts.comicNeue(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.blue[900],
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        size: 24,
-                      ),
+                      const SizedBox(width: 6),
+                  
                     ],
                   ),
-                ),
-              ),
-            );
-          }),
-          
-          // Fun cancel button
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.comicNeue(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Colors.blue[900],
                 ),
               ),
             ),

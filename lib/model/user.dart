@@ -3,7 +3,7 @@ class Profile {
   String name;
   String? phone;
   String email;
-  String? profileImagePath;
+  String? profileImage;
   String role;
   String? username;
 
@@ -12,7 +12,7 @@ class Profile {
     required this.name,
     this.phone,
     required this.email,
-    this.profileImagePath,
+    this.profileImage,
     required this.role,
     this.username,
   });
@@ -23,7 +23,7 @@ class Profile {
     required this.name,
     this.phone,
     required this.email,
-    this.profileImagePath,
+    this.profileImage,
     required this.role,
     this.username,
   });
@@ -32,7 +32,7 @@ class Profile {
         'name': name,
         'phone': phone,
         'email': email,
-        'profileImagePath': profileImagePath,
+        'profileImage': profileImage,
         'role': role,
         'username': username,
       };
@@ -42,7 +42,7 @@ class Profile {
         name: json['name'],
         phone: json['phone'],
         email: json['email'],
-        profileImagePath: json['profileImagePath'],
+        profileImage: json['profileImage'],
         role: json['role'],
         username: json['username'],
       );

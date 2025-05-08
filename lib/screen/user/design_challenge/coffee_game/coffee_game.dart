@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/feedback_screen.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_A.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_B.dart';
@@ -67,6 +68,7 @@ body: Stack(
                       fontWeight: FontWeight.w600,
                     )),
                 onPressed: () {
+                   
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -75,7 +77,28 @@ body: Stack(
                 },
               ),
               SizedBox(height: 20),
-              // Add Flow B button here if needed
+                ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink[200],
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: Text('Start Flow B',
+                    style: GoogleFonts.fredoka(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    )),
+                onPressed: () {
+                
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FlowBScreen()),
+                  );
+                },
+              ),
             ],
           ),
         ),

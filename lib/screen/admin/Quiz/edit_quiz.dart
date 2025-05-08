@@ -295,8 +295,8 @@ class _EditQuizPageState extends State<EditQuizPage> {
                       const SizedBox(height: 8),
                       if (_currentImageUrl != null || _image != null)
                         Container(
-                          width: double.infinity,
-                          height: 150,
+                  
+                          height: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(

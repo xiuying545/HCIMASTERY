@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/explanation_page.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/feedback_screen.dart';
+import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_A.dart';
 
 class FlowBScreen extends StatefulWidget {
-  const FlowBScreen({super.key});
+  final bool fromFlowA;
+
+  const FlowBScreen({super.key, this.fromFlowA = false});
 
   _FlowBScreenState createState() => _FlowBScreenState();
 }
@@ -13,8 +17,10 @@ class _FlowBScreenState extends State<FlowBScreen> {
   String? milkType;
   double sugarAmount = 0;
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.yellow.shade50,
       appBar: AppBar(
@@ -100,13 +106,26 @@ class _FlowBScreenState extends State<FlowBScreen> {
                       borderRadius: BorderRadius.circular(24)),
                 ),
                 onPressed: () {
+                               if(widget.fromFlowA == true) {
+                                 Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FeedbackScreen()),
+                          );
+                          } else{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const FeedbackScreen()),
+                        builder: (context) => const FlowAScreen(fromFlowB: true)),
                   );
+                          }
                 },
-                child: const Text('Give Feedback 💌',
+                child: 
+                
+                
+                 Text(widget.fromFlowA == true
+                          ? 'Give Feedback 💌'
+                          : "Next: Flow A 🌈",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),

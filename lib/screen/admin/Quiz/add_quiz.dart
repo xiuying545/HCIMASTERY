@@ -101,12 +101,21 @@ class _AddQuizPageState extends State<AddQuizPage> {
   }
 
   Future<void> _uploadQuiz() async {
-    if (_questionController.text.isEmpty || _optionControllers.any((c) => c.text.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
-      return;
-    }
+    if (_questionController.text.isEmpty) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Question field is required.')),
+  );
+  return;
+}
+
+for (int i = 0; i < _optionControllers.length; i++) {
+  if (_optionControllers[i].text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Option ${i + 1} is required.')),
+    );
+    return;
+  }
+}
 
     setState(() {
       _isUploading = true;

@@ -22,6 +22,7 @@ class InputDialog extends StatefulWidget {
 
 class _InputDialogState extends State<InputDialog> {
   late TextEditingController _controller;
+  bool _isEmpty = false; // ✅ move here
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _InputDialogState extends State<InputDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-          shape: RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
       elevation: 10,
@@ -47,16 +48,21 @@ class _InputDialogState extends State<InputDialog> {
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              widget.title,
-              style: AppTheme.h1Style
-            ),
+            Text(widget.title, style: AppTheme.h1Style),
             const SizedBox(height: 20),
             TextField(
               controller: _controller,
+              onChanged: (value) {
+                if (_isEmpty && value.trim().isNotEmpty) {
+                  setState(() {
+                    _isEmpty = false;
+                  });
+                }
+              },
               decoration: InputDecoration(
-                hintText: widget.hintText,
+                hintText: "Enter ${widget.hintText}",
                 hintStyle: GoogleFonts.poppins(
                   fontSize: 16,
                   color: Colors.grey.shade700,
@@ -66,11 +72,24 @@ class _InputDialogState extends State<InputDialog> {
                 ),
               ),
             ),
+            if (_isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  "${widget.hintText} cannot be empty",
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             const SizedBox(height: 24),
             Row(
-               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-              OutlinedButton(
+                OutlinedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -92,9 +111,13 @@ class _InputDialogState extends State<InputDialog> {
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                    onPressed: () {
+                  onPressed: () {
                     final newValue = _controller.text.trim();
-                    if (newValue.isNotEmpty) {
+                    if (newValue.isEmpty) {
+                      setState(() {
+                        _isEmpty = true;
+                      });
+                    } else {
                       widget.onSave(newValue);
                       Navigator.of(context).pop();
                     }
@@ -115,7 +138,6 @@ class _InputDialogState extends State<InputDialog> {
                     ),
                   ),
                 ),
-             
               ],
             ),
           ],

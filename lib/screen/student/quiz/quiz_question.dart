@@ -98,6 +98,20 @@ class _QuizPageState extends State<QuizPage> {
                             quiz.imageUrl!,
                             width: 400,
                             height: 200,
+                                                 loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress.expectedTotalBytes != null
+                                                  ? loadingProgress.cumulativeBytesLoaded /
+                                                      loadingProgress.expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return const Icon(Icons.error, color: Colors.red);
+                                        },
                           )
                         : const SizedBox.shrink(),
                     const SizedBox(height: 20),
