@@ -27,6 +27,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final List<File> _images = [];
   final _picker = ImagePicker();
   late UserViewModel userViewModel;
+  bool _isTitleEmpty = false;
+  bool _isContentEmpty = false;
 
   @override
   void initState() {
@@ -50,12 +52,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Future<void> _uploadPost() async {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
+    setState(() {
+      _isTitleEmpty = _titleController.text.trim().isEmpty;
+      _isContentEmpty = _contentController.text.trim().isEmpty;
+    });
+
+    if (_isTitleEmpty || _isContentEmpty) {
       return;
     }
+
     LoadingDialog.show(context, "Uploading your post...");
 
     List<String> imageUrls = [];
@@ -185,6 +190,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     ),
                   ),
+                  if (_isTitleEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, left: 8),
+                      child: Text(
+                        "Title is required",
+                        style:
+                            TextStyle(color: Colors.red.shade700, fontSize: 13),
+                      ),
+                    ),
                   const SizedBox(height: 30),
 
                   // Image Upload Section
@@ -262,6 +276,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       color: Color(0xff2D7D84),
                     ),
                   ),
+
                   const SizedBox(height: 8),
                   TextField(
                     controller: _contentController,
@@ -294,6 +309,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     ),
                   ),
+                  if (_isContentEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, left: 8),
+                      child: Text(
+                        "Content is required",
+                        style:
+                            TextStyle(color: Colors.red.shade700, fontSize: 13),
+                      ),
+                    ),
                   const SizedBox(height: 30),
 
                   // Submit Button
@@ -306,10 +330,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                             horizontal: 32, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                           side: const BorderSide(
-              color: Color(0xFFDB745A),
-              width: 2,
-            ),
+                          side: const BorderSide(
+                            color: Color(0xFFDB745A),
+                            width: 2,
+                          ),
                         ),
                         elevation: 2,
                       ),
@@ -323,7 +347,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),

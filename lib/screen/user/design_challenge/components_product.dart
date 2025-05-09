@@ -133,7 +133,7 @@ class SearchBarUI extends UIComponent {
           const Icon(Icons.search, color: Colors.grey),
           const SizedBox(width: 10),
           Text(text,
-              style: GoogleFonts.fredoka(fontSize: fontSize, color: color)),
+              style: GoogleFonts.fredoka(fontSize: fontSize.toDouble(), color: color)),
         ],
       ),
     );
@@ -279,7 +279,7 @@ class ProductGridItem extends UIComponent {
           Text(
             text,
             style: GoogleFonts.fredoka(
-              fontSize: fontSize,
+              fontSize: fontSize.toDouble(),
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),

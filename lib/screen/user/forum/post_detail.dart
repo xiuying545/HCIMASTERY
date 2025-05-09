@@ -41,14 +41,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
     });
   }
 
-  Future<void> fetchPostDetails() async {
-  
+Future<void> fetchPostDetails({bool forceRefresh = false}) async {
     try {
-      await forumViewModel.fetchPostById(widget.postID);
+      await forumViewModel.fetchPostById(widget.postID, forceRefresh: forceRefresh);
       setState(() {
         post = forumViewModel.post;
       });
-        repliesNotifier = ValueNotifier([...forumViewModel.post.replies]);
+      repliesNotifier = ValueNotifier([...forumViewModel.post.replies]);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch post details: $error')),
@@ -100,234 +99,251 @@ class _PostDetailPageState extends State<PostDetailPage> {
           : SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildPostHeader(post),
-                              const SizedBox(height: 16),
-                            ValueListenableBuilder<List<Reply>>(
-  valueListenable: repliesNotifier,
-  builder: (context, replies, _) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Text(
-        'Replies (${replies.length})',
-        style: GoogleFonts.poppins(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  },
-),
-                              const SizedBox(height: 8),
-                              // Scrollable Replies List
-                              SizedBox(
-                                height: constraints.maxHeight * 0.45,
-                                child: Expanded(
-                                  child: 
-                                  
-                                  ValueListenableBuilder<List<Reply>>(
-  valueListenable: repliesNotifier,
-  builder: (context, replies, _) {
-    return
-                                  ListView.builder(
-                                    itemCount: post.replies.length,
-                                    itemBuilder: (context, index) {
-                                      var reply = replies[index];
-                                      bool isMyReply =
-                                          post.replies[index].creator ==
-                                              userViewModel.userId;
-                                      return InkWell(
-                                          onLongPress: () =>
-                                              _showReplyOptionsBottomSheet(
-                                                  post, index),
-                                          child: Card(
-                                            elevation: 2,
-                                            margin: const EdgeInsets.only(
-                                                bottom: 8.0),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            color: Colors.white,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                      forumViewModel
-                                                              .userMap[
-                                                                  reply.creator]
-                                                              ?.profileImage ??
-                                                          "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
-                                                    ),
-                                                    backgroundColor:
-                                                        Colors.grey[300],
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          isMyReply
-                                                              ? "${forumViewModel.userMap[reply.creator]?.name ?? "unknown"} (You)"
-                                                              : forumViewModel
-                                                                      .userMap[reply
-                                                                          .creator]
-                                                                      ?.name ??
-                                                                  "unknown",
-                                                          style: GoogleFonts
-                                                              .fredoka(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
-                                                          style: GoogleFonts
-                                                              .fredoka(
-                                                            fontSize: 12,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 8),
-                                                        Text(
-                                                          reply.content,
-                                                          style: GoogleFonts
-                                                              .fredoka(
-                                                                  fontSize: 14),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  if (userViewModel.role ==
-                                                      "admin")
-                                                    IconButton(
-                                                      icon: const Icon(
-                                                          Icons.delete),
-                                                      color: const Color(
-                                                          0xFF757575),
-                                                      onPressed: () =>
-                                                          confirmDeleteReply(
-                                                              index),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ));
-                                    },
-                                  );
-  }
-                                ),
-                              ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Reply Input Field (bottom pinned)
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: MediaQuery.of(context).viewInsets.bottom + 10,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.08),
-                                spreadRadius: 1,
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _replyController,
-                                  style: GoogleFonts.poppins(fontSize: 15),
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Type your reply...',
-                                    hintStyle: GoogleFonts.poppins(
-                                      color: Colors.grey,
-                                      fontSize: 14,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  if (_replyController.text.isNotEmpty) {
-                                    // if (isSendingReply) {
-                                    //   return;
-                                    // }
-                                    // setState(() => isSendingReply = true);
-                                    Reply reply = Reply(
-                                      content: _replyController.text,
-                                      creator: userViewModel.userId!,
-                                      timeCreated: DateTime.now(),
-                                    );
-
-                                    setState(() {
-                                      // post.replies.add(reply);
-                                    });
-                                    repliesNotifier.value = [...repliesNotifier.value, reply];
-
-                                    forumViewModel.addReplyToPost(
-                                        post.postID!, reply);
-                                    _replyController.clear();
-                                    // setState(() => isSendingReply = false);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Reply cannot be empty',
-                                            style: AppTheme.snackBarText),
-                                        backgroundColor: Colors.green,
+                  return RefreshIndicator(
+                    onRefresh: () => fetchPostDetails(forceRefresh: true),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildPostHeader(post),
+                                const SizedBox(height: 16),
+                                ValueListenableBuilder<List<Reply>>(
+                                  valueListenable: repliesNotifier,
+                                  builder: (context, replies, _) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Text(
+                                        'Replies (${replies.length})',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
                                       ),
                                     );
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF3f5fd7),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(Icons.send,
-                                      color: Colors.white, size: 20),
+                                  },
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                // Scrollable Replies List
+                                SizedBox(
+                                  height: constraints.maxHeight * 0.45,
+                                  child: Expanded(
+                                    child: ValueListenableBuilder<List<Reply>>(
+                                        valueListenable: repliesNotifier,
+                                        builder: (context, replies, _) {
+                                          return ListView.builder(
+                                            itemCount: post.replies.length,
+                                            itemBuilder: (context, index) {
+                                              var reply = replies[index];
+                                              bool isMyReply =
+                                                  post.replies[index].creator ==
+                                                      userViewModel.userId;
+                                              return InkWell(
+                                                  onLongPress: () =>
+                                                      _showReplyOptionsBottomSheet(
+                                                          post, index),
+                                                  child: Card(
+                                                    elevation: 2,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8.0),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16),
+                                                    ),
+                                                    color: Colors.white,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              16.0),
+                                                      child: Row(
+                                                        children: [
+                                                          CircleAvatar(
+                                                            radius: 20,
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                              forumViewModel
+                                                                      .userMap[reply
+                                                                          .creator]
+                                                                      ?.profileImage ??
+                                                                  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
+                                                            ),
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .grey[300],
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 12),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  isMyReply
+                                                                      ? "${forumViewModel.userMap[reply.creator]?.name ?? "unknown"} (You)"
+                                                                      : forumViewModel
+                                                                              .userMap[reply.creator]
+                                                                              ?.name ??
+                                                                          "unknown",
+                                                                  style: GoogleFonts
+                                                                      .fredoka(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
+                                                                  style: GoogleFonts
+                                                                      .fredoka(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 8),
+                                                                Text(
+                                                                  reply.content,
+                                                                  style: GoogleFonts
+                                                                      .fredoka(
+                                                                          fontSize:
+                                                                              14),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          if (userViewModel
+                                                                  .role ==
+                                                              "admin")
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.delete),
+                                                              color: const Color(
+                                                                  0xFF757575),
+                                                              onPressed: () =>
+                                                                  confirmDeleteReply(
+                                                                      index),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ));
+                                            },
+                                          );
+                                        }),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        // Reply Input Field (bottom pinned)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 10,
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.08),
+                                  spreadRadius: 1,
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _replyController,
+                                    style: GoogleFonts.poppins(fontSize: 15),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Type your reply...',
+                                      hintStyle: GoogleFonts.poppins(
+                                        color: Colors.grey,
+                                        fontSize: 14,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (_replyController.text.isNotEmpty) {
+                                      // if (isSendingReply) {
+                                      //   return;
+                                      // }
+                                      // setState(() => isSendingReply = true);
+                                      Reply reply = Reply(
+                                        content: _replyController.text,
+                                        creator: userViewModel.userId!,
+                                        timeCreated: DateTime.now(),
+                                      );
+
+                                      setState(() {
+                                        // post.replies.add(reply);
+                                      });
+                                      repliesNotifier.value = [
+                                        ...repliesNotifier.value,
+                                        reply
+                                      ];
+
+                                      forumViewModel.addReplyToPost(
+                                          post.postID!, reply);
+                                      _replyController.clear();
+                                      // setState(() => isSendingReply = false);
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Reply cannot be empty',
+                                              style: AppTheme.snackBarText),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF3f5fd7),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.send,
+                                        color: Colors.white, size: 20),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -510,7 +526,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
               action: 'Alert',
               onConfirm: () {
                 Navigator.of(context).pop();
-                repliesNotifier.value = List.from(repliesNotifier.value)..removeAt(index);
+                repliesNotifier.value = List.from(repliesNotifier.value)
+                  ..removeAt(index);
                 forumViewModel.deleteReply(post.postID!, index);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

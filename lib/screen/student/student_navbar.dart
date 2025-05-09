@@ -28,13 +28,13 @@ class _StudentNavBar extends State<StudentNavBar> {
     super.initState();
     _selectedIndex = widget.bottomIndex;
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Provider.of<UserViewModel>(context, listen: false)
-    //       .setUserId("fYD79MVprcRdfvTktnzEbbDued23");
-    //   Provider.of<UserViewModel>(context, listen: false).role = "Student";
-    //   Provider.of<UserViewModel>(context, listen: false)
-    //       .loadUser("fYD79MVprcRdfvTktnzEbbDued23");
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserViewModel>(context, listen: false)
+          .setUserId("7Q1VrD4dMXY03yTY2bUgcq9kNwf1");
+      Provider.of<UserViewModel>(context, listen: false).role = "Student";
+      Provider.of<UserViewModel>(context, listen: false)
+          .loadUser("7Q1VrD4dMXY03yTY2bUgcq9kNwf1");
+    });
   }
 
   @override

@@ -93,11 +93,7 @@ class _NoteListPageState extends State<NoteListPage> {
 
         return Container(
           decoration: const BoxDecoration(
-            // gradient: LinearGradient(
-            //   colors: [Colors.blue.shade700, Colors.blue.shade400],
-            //   begin: Alignment.topLeft,
-            //   end: Alignment.bottomRight,
-            // ),
+        
             image: DecorationImage(
               image: AssetImage("assets/Animation/notelistbackground.png"),
               fit: BoxFit.cover,
@@ -109,19 +105,9 @@ class _NoteListPageState extends State<NoteListPage> {
               Stack(
                 children: [
                   Container(
-                    height: 300,
+                    height: MediaQuery.of(context).size.height * 0.35,
                     width: double.infinity,
-                    // decoration: BoxDecoration(
-                    //                image: DecorationImage(
-                    // image: AssetImage('assets/Animation/book.png'),
-                    // fit: BoxFit.cover,
-                    //                ),
-                    // gradient: LinearGradient(
-                    //   colors: [Colors.blue.shade700, Colors.blue.shade400],
-                    //   begin: Alignment.topLeft,
-                    //   end: Alignment.bottomRight,
-                    // ),
-                    // ),
+                 
                     child: Stack(
                       children: [
                         Positioned(
@@ -129,24 +115,11 @@ class _NoteListPageState extends State<NoteListPage> {
                           right: 50,
                           child: Image.asset(
                             'assets/Animation/book.png',
-                            width: 300,
-                            height: 300,
+                            width:  MediaQuery.of(context).size.height * 0.5,
+                            height: MediaQuery.of(context).size.height * 0.35,
                           ),
                         ),
-                        // Positioned(
-                        //   bottom: 20,
-                        //   left: 20,
-                        //   child: SizedBox(
-                        //     width: MediaQuery.of(context).size.width * 0.6,
-                        //     child: Text(
-                        //       chapter.chapterName,
-                        //       style: AppTheme.h1Style
-                        //           .copyWith(color: Colors.white),
-                        //       maxLines: 2,
-                        //       overflow: TextOverflow.ellipsis,
-                        //     ),
-                        //   ),
-                        // ),
+                      
                       ],
                     ),
                   ),

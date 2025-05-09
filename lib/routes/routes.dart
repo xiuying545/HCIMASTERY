@@ -48,8 +48,8 @@ GoRouter router() {
           //   return const Homepage();
           // }
               //  return  SignInScreen();
-          return const AdminNavBar();
-          // return  const StudentNavBar(bottomIndex: 1,);
+          // return const AdminNavBar();
+          return  const StudentNavBar(bottomIndex: 1,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   CoffeeGame();

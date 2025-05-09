@@ -6,7 +6,6 @@ import 'package:fyp1/services/post_service.dart';
 import 'package:fyp1/services/user_service.dart';
 import 'package:fyp1/view_model/base_view_model.dart';
 
-
 class ForumViewModel extends BaseViewModel {
   final PostService _postService = PostService();
   final UserService _userService = UserService();
@@ -23,10 +22,14 @@ class ForumViewModel extends BaseViewModel {
   Map<String, Profile> get userMap => _userMap;
 
   /// Fetch a post by ID from the local list (avoids unnecessary API calls)
-  Future<void> fetchPostById(String postId) async {
+  Future<void> fetchPostById(String postId, {bool forceRefresh = false}) async {
     await tryFunction(() async {
-      int index = _posts.indexWhere((post) => post.postID == postId);
-      _post = _posts[index];
+      if (forceRefresh == false) {
+        int index = _posts.indexWhere((post) => post.postID == postId);
+        _post = _posts[index];
+      } else {
+        _post = await _postService.getPostById(postId);
+      }
     });
   }
 
@@ -34,34 +37,34 @@ class ForumViewModel extends BaseViewModel {
   Future<void> loadForumData(Profile newUser) async {
     if (_posts.isNotEmpty) return;
     await tryFunction(() async {
-       _userId = StorageHelper.get(USER_ID)!;
+      _userId = StorageHelper.get(USER_ID)!;
       await fetchPost();
       _userMap[_userId] = newUser;
-     
     });
   }
 
   /// Fetches posts and populates `_userMap` with creator information
   Future<void> fetchPost() async {
-
     await tryFunction(() async {
       _posts = await _postService.fetchPosts();
       Set<String> creatorIds = _posts
-          .expand((post) => [post.creator, ...post.replies.map((reply) => reply.creator)])
+          .expand((post) =>
+              [post.creator, ...post.replies.map((reply) => reply.creator)])
           .toSet();
       _userMap = await _userService.fetchUsersByIds(creatorIds);
 
       for (var post in _posts) {
         _isLikedByUser[post.postID!] = post.likedByUserIds.contains(_userId);
       }
+      notifyListeners();
     });
   }
 
   /// Adds a new post and updates the local list
   Future<void> addPost(Post post) async {
     await tryFunction(() async {
-     final postId = await _postService.addPost(post);
-     post.postID=postId;
+      final postId = await _postService.addPost(post);
+      post.postID = postId;
       _posts.add(post);
     });
   }
@@ -86,7 +89,7 @@ class ForumViewModel extends BaseViewModel {
   Future<void> likePost(int index, String userId) async {
     _isLikedByUser[_posts[index].postID!] = true;
     notifyListeners();
-    
+
     await tryFunction(() async {
       await _postService.likePost(_posts[index].postID!, userId);
       _posts[index].likedByUserIds.add(userId);
@@ -97,7 +100,7 @@ class ForumViewModel extends BaseViewModel {
   Future<void> unlikePost(int index, String userId) async {
     _isLikedByUser[_posts[index].postID!] = false;
     notifyListeners();
-    
+
     await tryFunction(() async {
       await _postService.unlikePost(_posts[index].postID!, userId);
       _posts[index].likedByUserIds.remove(userId);
@@ -109,7 +112,7 @@ class ForumViewModel extends BaseViewModel {
     await tryFunction(() async {
       await _postService.addReplyToPost(postID, reply);
       _posts.firstWhere((post) => post.postID == postID).replies.add(reply);
-            notifyListeners();
+      notifyListeners();
     });
   }
 
@@ -117,9 +120,11 @@ class ForumViewModel extends BaseViewModel {
   Future<void> deleteReply(String postID, int replyIndex) async {
     await tryFunction(() async {
       await _postService.deleteReply(postID, replyIndex);
-      _posts.firstWhere((post) => post.postID == postID).replies.removeAt(replyIndex);
+      _posts
+          .firstWhere((post) => post.postID == postID)
+          .replies
+          .removeAt(replyIndex);
       notifyListeners();
     });
   }
-
 }

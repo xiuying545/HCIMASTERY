@@ -6,7 +6,7 @@ abstract class UIComponent {
   String type;
   String text;
   Color color;
-  double fontSize;
+  int fontSize;
   double x;
   double y;
   double width;
@@ -135,7 +135,7 @@ class Name extends UIComponent {
           type: 'Name',
           text: 'John Doe',
           fontSize: 20,
-          color: const Color(0xFFED5546),
+          color: const Color(0xFFF26722),
           x: 40,
           y: 250,
           width: 320,
@@ -151,7 +151,7 @@ class Name extends UIComponent {
       value: text,
       background: color,
       shadow: getDarkerColor(color),
-      fontSize: fontSize,
+      fontSize: fontSize.toDouble(),
       color: Colors.white,
     );
   }
@@ -162,9 +162,9 @@ class Bio extends UIComponent {
   Bio()
       : super(
           type: 'Bio',
-          text: 'A passionate developer',
+          text: 'A developer',
           fontSize: 10,
-          color: const Color(0xFF0033A0),
+          color: const Color(0xFFFABD42),
           x: 120,
           y: 330,
           width: 320,
@@ -180,7 +180,7 @@ class Bio extends UIComponent {
       value: text,
       background: color,
       shadow: getDarkerColor(color),
-      fontSize: fontSize,
+      fontSize: fontSize.toDouble(),
       color: Colors.white,
     );
   }
@@ -193,7 +193,7 @@ class ContactInfo extends UIComponent {
           type: 'ContactInfo',
           text: 'john@gmail.com',
           fontSize: 25,
-          color: const Color.fromARGB(255, 242, 240, 240),
+          color: const Color(0xffEEEEEE),
           x: 40,
           y: 450,
           width: 320,
@@ -209,7 +209,7 @@ class ContactInfo extends UIComponent {
       value: text,
       background: color,
       shadow: getDarkerColor(color),
-      fontSize: fontSize,
+      fontSize: fontSize.toDouble(),
       color: Colors.white,
     );
   }
@@ -238,7 +238,7 @@ class Address extends UIComponent {
       value: text,
       background: color,
       shadow: getDarkerColor(color),
-      fontSize: fontSize,
+      fontSize: fontSize.toDouble(),
       color: Colors.white,
     );
   }
@@ -251,7 +251,7 @@ class EditProfile extends UIComponent {
           type: 'Button',
           text: 'Edit Profile',
           fontSize: 18,
-          color: Colors.white,
+          color: Color(0xFFF26722),
           x: 100,
           y: 50,
           width: 200,
@@ -265,19 +265,19 @@ class EditProfile extends UIComponent {
       width: width,
       height: height + (fontSize - 18),
       decoration: BoxDecoration(
-        color: Colors.redAccent,
+        color: color,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.red.shade700, offset: const Offset(4, 4))
+          BoxShadow(color: getDarkerColor(color), offset: const Offset(4, 4))
         ],
       ),
       alignment: Alignment.center,
       child: Text(
         text,
         style: GoogleFonts.fredoka(
-          fontSize: fontSize,
+          fontSize: fontSize.toDouble(),
           fontWeight: FontWeight.bold,
-          color: color,
+          color: Colors.white,
         ),
       ),
     );

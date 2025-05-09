@@ -66,7 +66,7 @@ class DesignChallengesPage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                  SizedBox(height: MediaQuery.of(context).size.width*0.5 ),
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),

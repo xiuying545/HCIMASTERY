@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'components_profile.dart';
 
@@ -17,6 +18,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   OverlayEntry? overlayEntry;
   bool showTrashBin = false;
   Color primaryColor = Colors.orange;
+  final PageController _pageController = PageController();
 
   GlobalKey lockKey = GlobalKey();
   GlobalKey backgroundColorKey = GlobalKey();
@@ -24,7 +26,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   GlobalKey checkButtonKey = GlobalKey();
 
   int score = 0;
-  String feedbackText = "";
+  List<Map<String, String>> feedbackList = [];
 
   @override
   void initState() {
@@ -152,7 +154,6 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
             if (comp.isEditable == true) {
               setState(() => selectedIndex = index);
               editComponent2(index);
-              
             }
           },
           child: Transform.scale(
@@ -275,71 +276,9 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     );
   }
 
-  void editComponent(int index) {
-    UIComponent comp = components[index];
-    if (comp is ProfilePicture) {
-      return;
-    }
-    TextEditingController fontSizeController =
-        TextEditingController(text: comp.fontSize.toString());
-    Color currentColor = comp.color;
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('${comp.type} Component'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: fontSizeController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Font Size'),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () async {
-                Color? picked = await showColorPickerDialog(currentColor);
-                if (picked != null) setState(() => currentColor = picked);
-              },
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                    color: currentColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.orange, width: 2)),
-                child: const Icon(Icons.color_lens, color: Colors.white),
-              ),
-            )
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                comp.fontSize =
-                    double.tryParse(fontSizeController.text) ?? comp.fontSize;
-                comp.color = currentColor;
-              });
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
-          ),
-        ],
-      ),
-    );
-  
-  }
-
   Future<void> editComponent2(int index) async {
     UIComponent comp = components[index];
-    TextEditingController fontSizeController =
-        TextEditingController(text: comp.fontSize.toString());
-    Color currentColor = comp.color;
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -393,14 +332,14 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
 
                     // Font Size Slider
                     Slider(
-                      value: comp.fontSize,
+                      value: comp.fontSize.toDouble(),
                       min: 10,
-                      max: 40,
+                      max: 28,
                       activeColor: Color(0xFF45C1A1), // Teal Green
                       thumbColor: Color(0xFFFF9641), // Warm Orange
                       onChanged: (value) {
                         setState(() {
-                          comp.fontSize = value;
+                          comp.fontSize = value.toInt();
                         });
                       },
                     ),
@@ -422,11 +361,11 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                     Wrap(
                       spacing: 10,
                       children: [
-                        Color(0xFFF26722),
-                        Color(0xFFFABD42),
+                        Color(0xFFF76707),
+                        Color(0xFFF4B400),
                         Color(0xFFA0C94F),
                         Color(0xFF40BEB0),
-                        Color(0xFF4D89FF),
+                        Color(0xFFEEEEEE),
                         Color(0xFFA564E9),
                       ].map((color) {
                         return GestureDetector(
@@ -510,126 +449,158 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         );
       },
     );
-         setState(() {});
+    setState(() {});
   }
 
-  void submitDesign(void Function(String feedback) onResult) {}
+  void submitDesign(
+      void Function(List<Map<String, String>> feedback) onResult) {}
 
   void handleSubmitDesign() {
     submitDesign((feedback) {
       setState(() {
-        feedbackText = feedback;
+        feedbackList = feedback;
       });
 
       showDialog(
         context: context,
+        barrierColor: Colors.black.withOpacity(0.9),
         builder: (BuildContext context) {
           return Dialog(
-            backgroundColor: const Color(0xFFDBF2FF),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-              side: const BorderSide(
-                color: Color.fromARGB(255, 175, 222, 248),
-                width: 4,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header with Emoji and Title
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            backgroundColor: Colors.transparent, // Let Stack background show
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: [
+                Positioned(
+                  top: 10,
+                  child: Image.asset(
+        feedback.any((f) => f['text']?.contains('Well done') ?? false)
+            ? 'assets/Animation/grandmahappy.png'
+            : 'assets/Animation/grandmasad.png',
+                    height: MediaQuery.of(context).size.height * 0.23,
+                  ),
+                ),
+                // Main dialog box
+                Container(
+                  margin:  EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.23), 
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDBF2FF),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 175, 222, 248),
+                      width: 4,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.emoji_emotions,
-                        size: 25,
-                        color: Colors.deepOrange,
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.emoji_emotions,
+                              size: 25, color: Colors.deepOrange),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Design Feedback",
+                            style: GoogleFonts.fredoka(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepOrange,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Design Feedback",
-                        style: GoogleFonts.fredoka(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepOrange,
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        height: feedback.any((line) => line["image"] != null)
+                            ? MediaQuery.of(context).size.height * 0.40
+                            : MediaQuery.of(context).size.height * 0.2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: PageView.builder(
+                                controller: _pageController,
+                                itemCount: feedback.length,
+                                itemBuilder: (context, index) {
+                                  final line = feedback[index];
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (line["image"] != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 12.0),
+                                          child: Image.asset(
+                                            line["image"]!,
+                                            height: MediaQuery.of(context).size.height * 0.25,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: Text(
+                                          line["text"] ??
+                                              "Something went wrong.",
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.2,
+                                            color: Color(0xFF4E4E4E),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                           if( feedback.length>1)
+                            SmoothPageIndicator(
+                              controller: _pageController,
+                              count: feedback.length,
+                              effect: WormEffect(
+                                dotHeight: 10,
+                                dotWidth: 10,
+                                activeDotColor: Colors.deepOrange,
+                                dotColor: Colors.orange.shade200,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Close button
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF59C3A6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          "Close",
+                          style: GoogleFonts.fredoka(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                  const SizedBox(height: 20),
-
-                  // Scrollable feedback content
-                  SizedBox(
-                    height: 250,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: feedback.split('\n').map((line) {
-                          IconData icon;
-                          Color iconColor;
-
-                          if (line.contains("✅")) {
-                            icon = Icons.check_circle;
-                            iconColor = Colors.green;
-                          } else if (line.contains("⚠️")) {
-                            icon = Icons.warning_amber_rounded;
-                            iconColor = Colors.orange;
-                          } else {
-                            icon = Icons.bubble_chart;
-                            iconColor = Colors.grey;
-                          }
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(icon, color: iconColor),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    line.replaceAll(RegExp(r"✅|⚠️"), "").trim(),
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2,
-                                      color: Color(0xFF4E4E4E), // Soft charcoal
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Close button
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF59C3A6), // Mint Green
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      "Close",
-                      style: GoogleFonts.fredoka(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

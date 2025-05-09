@@ -30,27 +30,27 @@ class _EditPostPageState extends State<EditPostPage> {
   List<File> _images = [];
   List<String> _existingImageUrls = [];
   final _picker = ImagePicker();
+  bool _isTitleEmpty = false;
+  bool _isContentEmpty = false;
 
   @override
   void initState() {
     super.initState();
-       userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
-  
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    forumViewModel = Provider.of<ForumViewModel>(context, listen: false);
+
     loadPosts();
   }
 
   Future<void> loadPosts() async {
     try {
-   
-
       await forumViewModel.fetchPostById(widget.postId);
-       setState(() {
-      _titleController.text = forumViewModel.post.title;
-      _contentController.text = forumViewModel.post.content;
-        _existingImageUrls = forumViewModel.post.images??[];
-           });
-        print('Error loading post: $_existingImageUrls');
+      setState(() {
+        _titleController.text = forumViewModel.post.title;
+        _contentController.text = forumViewModel.post.content;
+        _existingImageUrls = forumViewModel.post.images ?? [];
+      });
+      print('Error loading post: $_existingImageUrls');
     } catch (e) {
       print('Error loading post: $e');
       ScaffoldMessenger.of(context)
@@ -72,15 +72,17 @@ class _EditPostPageState extends State<EditPostPage> {
   }
 
   Future<void> _editPost() async {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
+    setState(() {
+      _isTitleEmpty = _titleController.text.trim().isEmpty;
+      _isContentEmpty = _contentController.text.trim().isEmpty;
+    });
+
+    if (_isTitleEmpty || _isContentEmpty) {
       return;
     }
 
     LoadingDialog.show(context, "Updating your post...");
-List<String> imageUrls = List.from(_existingImageUrls);
+    List<String> imageUrls = List.from(_existingImageUrls);
 
     try {
       for (File image in _images) {
@@ -116,9 +118,8 @@ List<String> imageUrls = List.from(_existingImageUrls);
       _contentController.clear();
       setState(() {
         _images.clear();
-      
-          _existingImageUrls!.clear();
-     
+
+        _existingImageUrls.clear();
       });
 
       LoadingDialog.hide(context);
@@ -153,7 +154,11 @@ List<String> imageUrls = List.from(_existingImageUrls);
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Title', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                Text('Title',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff2D7D84))),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _titleController,
@@ -161,22 +166,39 @@ List<String> imageUrls = List.from(_existingImageUrls);
                   maxLines: 2,
                   decoration: InputDecoration(
                     hintText: "Enter post title",
-                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    hintStyle: GoogleFonts.poppins(
+                        color: const Color(0xFF7C6F64), fontSize: 16),
                     filled: true,
                     fillColor: const Color(0xFFFFF9F1),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                      borderSide: const BorderSide(
+                          color: Color(0xFFECE7D9), width: 1.5),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                      borderSide:
+                          const BorderSide(color: Color(0xFFD9CFC2), width: 2),
                     ),
                   ),
                 ),
+                if (_isTitleEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 8),
+                    child: Text(
+                      "Title is required",
+                      style:
+                          TextStyle(color: Colors.red.shade700, fontSize: 13),
+                    ),
+                  ),
                 const SizedBox(height: 30),
-                Text('Upload post images', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                Text('Upload post images',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff2D7D84))),
                 const SizedBox(height: 20),
                 Center(
                   child: GestureDetector(
@@ -187,7 +209,8 @@ List<String> imageUrls = List.from(_existingImageUrls);
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xff2D7D84), width: 2),
+                        border: Border.all(
+                            color: const Color(0xff2D7D84), width: 2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(10),
@@ -198,46 +221,59 @@ List<String> imageUrls = List.from(_existingImageUrls);
                 ),
                 const SizedBox(height: 12),
                 if (_existingImageUrls.isNotEmpty || _images.isNotEmpty)
-               
                   SizedBox(
                     height: 100,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                          if (_existingImageUrls.isNotEmpty)
-                        ..._existingImageUrls.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          String url = entry.value;
-                          return Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(url, width: 100, height: 100, fit: BoxFit.cover,  loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
+                        if (_existingImageUrls.isNotEmpty)
+                          ..._existingImageUrls.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            String url = entry.value;
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    url,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error,
+                                          color: Colors.red);
+                                    },
                                   ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error, color: Colors.red);
-                              },),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.red),
-                                  onPressed: () => setState(() => _existingImageUrls.removeAt(index)),
                                 ),
-                              ),
-                            ],
-                          );
-                        }),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.close,
+                                        color: Colors.red),
+                                    onPressed: () => setState(() =>
+                                        _existingImageUrls.removeAt(index)),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
                         ..._images.asMap().entries.map((entry) {
                           int index = entry.key;
                           File file = entry.value;
@@ -245,14 +281,17 @@ List<String> imageUrls = List.from(_existingImageUrls);
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.file(file, width: 100, height: 100, fit: BoxFit.cover),
+                                child: Image.file(file,
+                                    width: 100, height: 100, fit: BoxFit.cover),
                               ),
                               Positioned(
                                 top: 0,
                                 right: 0,
                                 child: IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.red),
-                                  onPressed: () => setState(() => _images.removeAt(index)),
+                                  icon: const Icon(Icons.close,
+                                      color: Colors.red),
+                                  onPressed: () =>
+                                      setState(() => _images.removeAt(index)),
                                 ),
                               ),
                             ],
@@ -262,7 +301,11 @@ List<String> imageUrls = List.from(_existingImageUrls);
                     ),
                   ),
                 const SizedBox(height: 30),
-                Text('Content', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                Text('Content',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff2D7D84))),
                 const SizedBox(height: 8),
                 TextField(
                   controller: _contentController,
@@ -270,36 +313,54 @@ List<String> imageUrls = List.from(_existingImageUrls);
                   maxLines: 5,
                   decoration: InputDecoration(
                     hintText: "Enter post content",
-                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    hintStyle: GoogleFonts.poppins(
+                        color: const Color(0xFF7C6F64), fontSize: 16),
                     filled: true,
                     fillColor: const Color(0xFFFFF9F1),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                      borderSide: const BorderSide(
+                          color: Color(0xFFECE7D9), width: 1.5),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                      borderSide:
+                          const BorderSide(color: Color(0xFFD9CFC2), width: 2),
                     ),
                   ),
                 ),
+                if (_isContentEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 8),
+                    child: Text(
+                      "Content is required",
+                      style:
+                          TextStyle(color: Colors.red.shade700, fontSize: 13),
+                    ),
+                  ),
                 const SizedBox(height: 30),
                 Center(
                   child: ElevatedButton(
                     onPressed: _editPost,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF58C6C),
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
-                        side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                        side: const BorderSide(
+                            color: Color(0xFFDB745A), width: 2),
                       ),
                       elevation: 2,
                     ),
                     child: const Text(
                       'Update',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

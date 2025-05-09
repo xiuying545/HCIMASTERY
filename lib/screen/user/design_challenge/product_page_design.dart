@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/design_challenge/components_product.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
@@ -36,23 +35,23 @@ class _ProductDesignChallengePage
       //   // ),
       // ),
       // body: buildCanvasBody(backgroundImage: 'assets/Animation/weatherbackground.png'),
-      body:Stack(
-      children: [
-        buildCanvasBody(),
+      body: Stack(
+        children: [
+          buildCanvasBody(),
 
-        // Top-left button like AppBar back button
-        Positioned(
-          top: 40,
-          left: 16,
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          // Top-left button like AppBar back button
+          Positioned(
+            top: 40,
+            left: 16,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
@@ -78,12 +77,12 @@ class _ProductDesignChallengePage
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-              _buildNavItem(
-            icon: isPlay?Icons.lock_rounded:Icons.lock_open_rounded,
-            label: isPlay?'Lock':'Unlock',
-            onTap: () => setState(() => isPlay = !isPlay),
-            key: lockKey,
-          ),
+            _buildNavItem(
+              icon: isPlay ? Icons.lock_rounded : Icons.lock_open_rounded,
+              label: isPlay ? 'Lock' : 'Unlock',
+              onTap: () => setState(() => isPlay = !isPlay),
+              key: lockKey,
+            ),
             _buildNavItem(
               icon: Icons.send_rounded,
               label: 'Submit',
@@ -172,7 +171,6 @@ class _ProductDesignChallengePage
                   _buildOverlayIconButton(Icons.search, 'SearchBar'),
                   _buildOverlayIconButton(Icons.filter_list, 'FilterTabs'),
                   _buildOverlayIconButton(Icons.local_mall, 'ProductCard'),
-                  _buildOverlayIconButton(Icons.grid_view, 'ProductGridItem'),
                   _buildOverlayIconButton(Icons.navigation, 'BottomNavBar'),
                 ],
               ),
@@ -217,36 +215,41 @@ class _ProductDesignChallengePage
     );
   }
 
-
-  @override
-  void submitDesign(void Function(String feedback) onResult) {
+  void submitDesign(
+      void Function(List<Map<String, String>> feedback) onResult) {
     int total = components.length;
+
     if (total == 0) {
-      onResult(
-          "Your canvas is empty. Try dragging in some UI components to begin your design!");
+      onResult([
+        {
+          "text":
+              "⚠️ Your canvas is empty. Try dragging in some UI components to begin your design!",
+          "image": "assets/Game/empty.png",
+        }
+      ]);
       return;
     }
 
-    List<String> feedbackList = [];
+    List<Map<String, String>> feedbackList = [];
 
-    // Required Elements Check
+    // Missing Required Elements
     final hasSearchBar = components.any((c) => c.type == 'SearchBarUI');
     final hasFilter = components.any((c) => c.type == 'FilterTabs');
     final hasProduct = components
         .any((c) => c.type == 'ProductCard' || c.type == 'ProductGridItem');
     final hasNav = components.any((c) => c.type == 'BottomNavBar');
 
-    if (hasSearchBar && hasFilter && hasProduct && hasNav) {
-      feedbackList.add(
-          "✅ Your page includes all the essential UI components. Well done!");
-    } else {
-      List<String> missing = [];
-      if (!hasSearchBar) missing.add("Search Bar");
-      if (!hasFilter) missing.add("Filter Tabs");
-      if (!hasProduct) missing.add("Product Item");
-      if (!hasNav) missing.add("Bottom Navigation");
-      feedbackList
-          .add("⚠️ You're missing some key components: ${missing.join(", ")}.");
+    List<String> missing = [];
+    if (!hasSearchBar) missing.add("Search Bar");
+    if (!hasFilter) missing.add("Filter Tabs");
+    if (!hasProduct) missing.add("Product Item");
+    if (!hasNav) missing.add("Bottom Navigation");
+
+    if (missing.isNotEmpty) {
+      feedbackList.add({
+        "text": "⚠️ You're missing some key components: ${missing.join(", ")}.",
+        "image": "assets/Game/missingcomponent.png"
+      });
     }
 
     // Layout Boundaries
@@ -255,24 +258,27 @@ class _ProductDesignChallengePage
         c.y >= 0 &&
         c.x + c.width <= canvasWidth &&
         c.y + c.height <= canvasHeight);
-    if (layoutOk) {
-      feedbackList
-          .add("✅ All components fit well within the canvas. Nice layout!");
-    } else {
-      feedbackList.add(
-          "⚠️ Some components extend beyond the canvas. Try adjusting their position.");
+
+    if (!layoutOk) {
+      feedbackList.add({
+        "text":
+            "⚠️ Some components extend beyond the canvas. Try adjusting their position.",
+        "image": "assets/Game/withinscreen.png"
+      });
     }
 
-    // Bottom Nav Placement
+    // Bottom Navigation Placement
     double bottomThreshold = canvasHeight * 0.75;
     bool navAtBottom = components.any(
-        (c) => c.type == 'BottomNavBar' && (c.y + c.height) >= bottomThreshold);
-    if (navAtBottom) {
-      feedbackList.add(
-          "✅ Bottom navigation is well-placed toward the bottom of the screen.");
-    } else {
-      feedbackList.add(
-          "⚠️ Consider placing the Bottom Navigation at the bottom for better usability.");
+      (c) => c.type == 'BottomNavBar' && (c.y + c.height) >= bottomThreshold,
+    );
+
+    if (!navAtBottom) {
+      feedbackList.add({
+        "text":
+            "⚠️ Consider placing the Bottom Navigation at the bottom for better usability.",
+        "image": "assets/Game/layout.png"
+      });
     }
 
     // Search & Filter at Top
@@ -280,38 +286,39 @@ class _ProductDesignChallengePage
         .any((c) => c.type == 'SearchBarUI' && c.y < canvasHeight * 0.3);
     bool filterAtTop = components
         .any((c) => c.type == 'FilterTabs' && c.y < canvasHeight * 0.4);
-    if (searchAtTop && filterAtTop) {
-      feedbackList.add(
-          "✅ Search and filter components are appropriately placed near the top.");
-    } else {
-      feedbackList.add(
-          "⚠️ Place Search Bar and Filters near the top where users expect them.");
+
+    if (!searchAtTop || !filterAtTop) {
+      feedbackList.add({
+        "text":
+            "⚠️ Place Search Bar and Filters near the top where users expect them.",
+        "image": "assets/Game/topbar_hint.png"
+      });
     }
 
-    // Alignment Check (Product Items)
+    // Product Alignment
     final productCards = components
         .where((c) => c.type == 'ProductCard' || c.type == 'ProductGridItem')
         .toList();
-    bool alignedX = _isAlignedHorizontally(productCards);
-    bool alignedY = _isAlignedVertically(productCards);
 
-    if (alignedX || alignedY) {
-    } else {
-      feedbackList.add(
-          "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.");
+    if (!(_isAlignedHorizontally(productCards) ||
+        _isAlignedVertically(productCards))) {
+      feedbackList.add({
+        "text":
+            "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
+        "image": "assets/Game/misaligned.png"
+      });
     }
 
     // Even Spacing
-    if (_hasConsistentSpacing(productCards)) {
-    } else {
-      feedbackList.add(
-          "⚠️ Try to use even spacing between items for a more balanced layout.");
+    if (!_hasConsistentSpacing(productCards)) {
+      feedbackList.add({
+        "text":
+            "⚠️ Try to use even spacing between items for a more balanced layout.",
+        "image": "assets/Game/spacing.png"
+      });
     }
 
-    // Final Feedback
-    String feedback =
-        "${feedbackList.join("\n")}";
-    onResult(feedback);
+    onResult(feedbackList);
   }
 
   bool _isAlignedHorizontally(List<UIComponent> components) {
