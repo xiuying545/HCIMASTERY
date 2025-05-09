@@ -16,7 +16,8 @@ import 'package:provider/provider.dart';
 class EditNotePage extends StatefulWidget {
   final String noteId;
   final String chapterId;
-  const EditNotePage({super.key, required this.noteId, required this.chapterId});
+  const EditNotePage(
+      {super.key, required this.noteId, required this.chapterId});
 
   @override
   _EditNotePageState createState() => _EditNotePageState();
@@ -32,6 +33,8 @@ class _EditNotePageState extends State<EditNotePage> {
   late NoteViewModel noteViewModel;
   Note? _existingNote;
   bool isLoading = true;
+  bool _isTitleEmpty = false;
+  bool _isContentEmpty = false;
 
   @override
   void initState() {
@@ -45,13 +48,17 @@ class _EditNotePageState extends State<EditNotePage> {
 
   Future<void> _fetchNoteData() async {
     try {
-      Note? fetchedNote = await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
+      Note? fetchedNote =
+          await noteViewModel.getNoteById(widget.chapterId, widget.noteId);
       if (fetchedNote != null) {
         setState(() {
           _existingNote = fetchedNote;
           _titleController.text = fetchedNote.title;
           _contentController.text = fetchedNote.content;
-          _videoControllers = fetchedNote.videoLink?.map((link) => TextEditingController(text: link)).toList() ?? [];
+          _videoControllers = fetchedNote.videoLink
+                  ?.map((link) => TextEditingController(text: link))
+                  .toList() ??
+              [];
           _existingImageUrls = fetchedNote.images ?? [];
           isLoading = false;
         });
@@ -91,21 +98,22 @@ class _EditNotePageState extends State<EditNotePage> {
 
   void _removeExistingImage(int index) {
     setState(() {
-      if(_existingImageUrls.isNotEmpty) {
+      if (_existingImageUrls.isNotEmpty) {
         _existingImageUrls.removeAt(index);
       }
     });
   }
 
   Future<void> _uploadNote() async {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all the fields.')),
-      );
+    setState(() {
+      _isTitleEmpty = _titleController.text.trim().isEmpty;
+      _isContentEmpty = _contentController.text.trim().isEmpty;
+    });
+
+    if (_isTitleEmpty || _isContentEmpty) {
       return;
     }
-
-    List<String> imageUrls =  List.from(_existingImageUrls);
+    List<String> imageUrls = List.from(_existingImageUrls);
     List<String> videoLinks = _videoControllers
         .map((controller) => controller.text.trim())
         .where((link) => link.isNotEmpty)
@@ -113,8 +121,10 @@ class _EditNotePageState extends State<EditNotePage> {
 
     try {
       for (File image in _images) {
-        String fileName = '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
-        Reference storageRef = FirebaseStorage.instance.ref().child('notes/$fileName');
+        String fileName =
+            '${DateTime.now().millisecondsSinceEpoch}_${image.path.split('/').last}';
+        Reference storageRef =
+            FirebaseStorage.instance.ref().child('notes/$fileName');
         UploadTask uploadTask = storageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -160,34 +170,55 @@ class _EditNotePageState extends State<EditNotePage> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF9F1),
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: const Color(0xFFB5E5F4), width: 2.5),
+                    border:
+                        Border.all(color: const Color(0xFFB5E5F4), width: 2.5),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Title', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                      Text('Title',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff2D7D84))),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _titleController,
                         style: GoogleFonts.poppins(fontSize: 16),
                         decoration: InputDecoration(
                           hintText: "Enter note title",
-                          hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                          hintStyle: GoogleFonts.poppins(
+                              color: const Color(0xFF7C6F64), fontSize: 16),
                           filled: true,
                           fillColor: const Color(0xFFFFF9F1),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                            borderSide: const BorderSide(
+                                color: Color(0xFFECE7D9), width: 1.5),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                            borderSide: const BorderSide(
+                                color: Color(0xFFD9CFC2), width: 2),
                           ),
                         ),
                       ),
+                      if (_isTitleEmpty)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4, left: 8),
+                          child: Text(
+                            "Title is required",
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
+                        ),
                       const SizedBox(height: 30),
-                      Text('Upload Images', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                      Text('Upload Images',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff2D7D84))),
                       const SizedBox(height: 20),
                       Center(
                         child: GestureDetector(
@@ -198,7 +229,8 @@ class _EditNotePageState extends State<EditNotePage> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xff2D7D84), width: 2),
+                              border: Border.all(
+                                  color: const Color(0xff2D7D84), width: 2),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(10),
@@ -209,52 +241,64 @@ class _EditNotePageState extends State<EditNotePage> {
                       ),
                       const SizedBox(height: 12),
                       if (_existingImageUrls.isNotEmpty || _images.isNotEmpty)
-                
                         SizedBox(
                           height: 100,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             children: [
-                              if(_existingImageUrls.isNotEmpty)
-                              ..._existingImageUrls.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                String url = entry.value;
-                                return Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        url,
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress.expectedTotalBytes != null
-                                                  ? loadingProgress.cumulativeBytesLoaded /
-                                                      loadingProgress.expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          );
-                                        },
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return const Icon(Icons.error, color: Colors.red);
-                                        },
+                              if (_existingImageUrls.isNotEmpty)
+                                ..._existingImageUrls
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  String url = entry.value;
+                                  return Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          url,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return const Icon(Icons.error,
+                                                color: Colors.red);
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: IconButton(
-                                        icon: const Icon(Icons.close, color: Colors.red),
-                                        onPressed: () => _removeExistingImage(index),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.close,
+                                              color: Colors.red),
+                                          onPressed: () =>
+                                              _removeExistingImage(index),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }),
+                                    ],
+                                  );
+                                }),
                               ..._images.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 File file = entry.value;
@@ -262,13 +306,17 @@ class _EditNotePageState extends State<EditNotePage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
-                                      child: Image.file(file, width: 100, height: 100, fit: BoxFit.cover),
+                                      child: Image.file(file,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover),
                                     ),
                                     Positioned(
                                       top: 0,
                                       right: 0,
                                       child: IconButton(
-                                        icon: const Icon(Icons.close, color: Colors.red),
+                                        icon: const Icon(Icons.close,
+                                            color: Colors.red),
                                         onPressed: () => _removeImage(index),
                                       ),
                                     ),
@@ -279,7 +327,11 @@ class _EditNotePageState extends State<EditNotePage> {
                           ),
                         ),
                       const SizedBox(height: 30),
-                      Text('Content', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                      Text('Content',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff2D7D84))),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _contentController,
@@ -287,24 +339,41 @@ class _EditNotePageState extends State<EditNotePage> {
                         maxLines: 15,
                         decoration: InputDecoration(
                           hintText: "Enter note content",
-                          hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                          hintStyle: GoogleFonts.poppins(
+                              color: const Color(0xFF7C6F64), fontSize: 16),
                           filled: true,
                           fillColor: const Color(0xFFFFF9F1),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                            borderSide: const BorderSide(
+                                color: Color(0xFFECE7D9), width: 1.5),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                            borderSide: const BorderSide(
+                                color: Color(0xFFD9CFC2), width: 2),
                           ),
                         ),
                       ),
+                      if (_isContentEmpty)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4, left: 8),
+                          child: Text(
+                            "Content is required",
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
+                        ),
                       const SizedBox(height: 30),
-                      Text('Video Links', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                      Text('Video Links',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xff2D7D84))),
                       Column(
-                        children: _videoControllers.asMap().entries.map((entry) {
+                        children:
+                            _videoControllers.asMap().entries.map((entry) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Row(
@@ -315,23 +384,31 @@ class _EditNotePageState extends State<EditNotePage> {
                                     style: GoogleFonts.poppins(fontSize: 16),
                                     decoration: InputDecoration(
                                       hintText: "Enter video link",
-                                      hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
+                                      hintStyle: GoogleFonts.poppins(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500),
                                       filled: true,
                                       fillColor: const Color(0xFFFFF9F1),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFECE7D9),
+                                            width: 1.5),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFD9CFC2), width: 2),
                                       ),
                                     ),
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                  icon: const Icon(Icons.remove_circle,
+                                      color: Colors.red),
                                   onPressed: () => _removeVideoField(entry.key),
                                 ),
                               ],
@@ -345,15 +422,20 @@ class _EditNotePageState extends State<EditNotePage> {
                           onPressed: _addVideoField,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF58C6C),
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
-                              side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                              side: const BorderSide(
+                                  color: Color(0xFFDB745A), width: 2),
                             ),
                           ),
                           child: const Text(
                             'Add Video Link',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -363,15 +445,20 @@ class _EditNotePageState extends State<EditNotePage> {
                           onPressed: _uploadNote,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF58C6C),
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
-                              side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                              side: const BorderSide(
+                                  color: Color(0xFFDB745A), width: 2),
                             ),
                           ),
                           child: const Text(
                             'Update Note',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),

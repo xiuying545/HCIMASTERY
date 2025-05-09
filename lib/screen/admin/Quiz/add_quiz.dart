@@ -29,6 +29,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
+  bool _isQuestionEmpty = false;
+  List<bool> _isOptionEmpty = [];
 
   @override
   void initState() {
@@ -64,7 +66,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -80,7 +83,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
     });
 
     try {
-      String fileName = '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
+      String fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
       Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = storageRef.putFile(_image!);
       TaskSnapshot taskSnapshot = await uploadTask;
@@ -101,21 +105,15 @@ class _AddQuizPageState extends State<AddQuizPage> {
   }
 
   Future<void> _uploadQuiz() async {
-    if (_questionController.text.isEmpty) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Question field is required.')),
-  );
-  return;
-}
+    setState(() {
+      _isQuestionEmpty = _questionController.text.trim().isEmpty;
+      _isOptionEmpty =
+          _optionControllers.map((c) => c.text.trim().isEmpty).toList();
+    });
 
-for (int i = 0; i < _optionControllers.length; i++) {
-  if (_optionControllers[i].text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Option ${i + 1} is required.')),
-    );
-    return;
-  }
-}
+    if (_isQuestionEmpty || _isOptionEmpty.contains(true)) {
+      return;
+    }
 
     setState(() {
       _isUploading = true;
@@ -178,110 +176,173 @@ for (int i = 0; i < _optionControllers.length; i++) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Question', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                Text('Question',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xff2D7D84))),
                 const SizedBox(height: 8),
                 TextField(
-                       maxLines: 2,
+                  maxLines: 2,
                   controller: _questionController,
                   style: GoogleFonts.poppins(fontSize: 16),
                   decoration: InputDecoration(
-                 
                     hintText: "Enter quiz question",
-                    hintStyle: GoogleFonts.poppins(color: const Color(0xFF7C6F64), fontSize: 16),
+                    hintStyle: GoogleFonts.poppins(
+                        color: const Color(0xFF7C6F64), fontSize: 16),
                     filled: true,
                     fillColor: const Color(0xFFFFF9F1),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
+                      borderSide: const BorderSide(
+                          color: Color(0xFFECE7D9), width: 1.5),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
+                      borderSide:
+                          const BorderSide(color: Color(0xFFD9CFC2), width: 2),
                     ),
                   ),
                 ),
+                if (_isQuestionEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4, left: 8),
+                    child: Text(
+                      "Question is required",
+                      style: TextStyle(color: Colors.red, fontSize: 13),
+                    ),
+                  ),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Options', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                    Text('Options',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff2D7D84))),
                     ElevatedButton(
                       onPressed: _addOption,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF58C6C),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                          side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                          side: const BorderSide(
+                              color: Color(0xFFDB745A), width: 2),
                         ),
                       ),
-                      child: const Text('Add Option', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                      child: const Text('Add Option',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                ...List.generate(_optionControllers.length, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                                  maxLines: 2,
-                            controller: _optionControllers[index],
-                            style: GoogleFonts.poppins(fontSize: 16),
-                            decoration: InputDecoration(
-                              hintText: "Option ${index + 1}",
-                              hintStyle: GoogleFonts.poppins(color: Colors.grey, fontWeight: FontWeight.w500),
-                              filled: true,
-                              fillColor: const Color(0xFFFFF9F1),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFFECE7D9), width: 1.5),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFFD9CFC2), width: 2),
-                              ),
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.remove_circle, color: Colors.red),
-                          onPressed: () => _removeOption(index),
-                        ),
-                        Radio<int>(
-                          value: index,
-                          groupValue: _selectedAnswer,
-                          onChanged: (value) => setState(() => _selectedAnswer = value!),
-                          activeColor: const Color(0xff2D7D84),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+             ...List.generate(_optionControllers.length, (index) {
+                        return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          maxLines: 2,
+                                          controller: _optionControllers[index],
+                                          style:
+                                              GoogleFonts.poppins(fontSize: 16),
+                                          decoration: InputDecoration(
+                                            hintText: "Option ${index + 1}",
+                                            hintStyle: GoogleFonts.poppins(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w500),
+                                            filled: true,
+                                            fillColor: const Color(0xFFFFF9F1),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 12),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              borderSide: const BorderSide(
+                                                  color: Color(0xFFECE7D9),
+                                                  width: 1.5),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              borderSide: const BorderSide(
+                                                  color: Color(0xFFD9CFC2),
+                                                  width: 2),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.remove_circle,
+                                            color: Colors.red),
+                                        onPressed: () => _removeOption(index),
+                                      ),
+                                      Radio<int>(
+                                        value: index,
+                                        groupValue: _selectedAnswer,
+                                        onChanged: (value) => setState(
+                                            () => _selectedAnswer = value!),
+                                        activeColor: const Color(0xff2D7D84),
+                                      ),
+                                    ],
+                                  ),
+                                  if (_isOptionEmpty.length > index &&
+                                      _isOptionEmpty[index])
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 4, left: 8),
+                                      child: Text(
+                                        "Option can not be blank",
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 13),
+                                      ),
+                                    ),
+                                ]));
+                      }),
                 const SizedBox(height: 4),
-                Text('Tick the option to mark it as the correct answer.', style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600])),
+                Text('Tick the option to mark it as the correct answer.',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14, color: Colors.grey[600])),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Image (Optional)', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xff2D7D84))),
+                    Text('Image (Optional)',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff2D7D84))),
                     ElevatedButton(
                       onPressed: _pickImage,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF58C6C),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                          side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                          side: const BorderSide(
+                              color: Color(0xFFDB745A), width: 2),
                         ),
                       ),
                       child: Text(
                         _image == null ? 'Add Image' : 'Change Image',
-                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+                        style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
                       ),
                     ),
                   ],
@@ -305,15 +366,21 @@ for (int i = 0; i < _optionControllers.length; i++) {
                     onPressed: _isUploading ? null : _uploadQuiz,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF58C6C),
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
-                        side: const BorderSide(color: Color(0xFFDB745A), width: 2),
+                        side: const BorderSide(
+                            color: Color(0xFFDB745A), width: 2),
                       ),
                     ),
                     child: _isUploading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                        : const Text('Submit',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],

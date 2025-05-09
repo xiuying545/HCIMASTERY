@@ -120,13 +120,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
 
       await userViewModel.saveUser(user);
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Profile edited successfully!',
-                        style: AppTheme.snackBarText),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Profile edited successfully!',
+              style: AppTheme.snackBarText),
+          backgroundColor: Colors.green,
+        ),
+      );
     } finally {
       Navigator.of(context).pop();
     }
@@ -229,11 +229,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             _buildInputCard(Icons.person_outline, "Username",
                                 _usernameController),
                             _buildInputCard(
-                                Icons.phone, "Phone", _phoneController  ,validator: (value) {
-             
-                       if(value!=null) {if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-  return 'Phone can only contain numbers';}
-}
+                              Icons.phone,
+                              "Phone",
+                              _phoneController,
+                              validator: (value) {
+                                if (value != null) {
+                                  if (value.isNotEmpty &&
+                                      !RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                    return 'Phone can only contain numbers';
+                                  }
+                                }
                                 return null;
                               },
                             ),
