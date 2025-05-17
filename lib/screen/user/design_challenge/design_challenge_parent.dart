@@ -125,41 +125,32 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
 
   Widget buildDraggableComponent(int index) {
     final comp = components[index];
+
+
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 200),
       left: comp.x.clamp(0, canvasWidth - comp.width),
       top: comp.y.clamp(0, canvasHeight - comp.height),
-      child: LongPressDraggable<int>(
-        data: index,
-        feedback: Opacity(
-          opacity: 0.7,
-          child: SizedBox(
-            child: buildComponentWidget(comp),
-          ),
-        ),
-        childWhenDragging: Container(),
-        onDragStarted: () => setState(() => showTrashBin = true),
-        onDragEnd: (_) => setState(() => showTrashBin = false),
-        child: GestureDetector(
-          onPanUpdate: (details) {
-            if (!isPlay) return;
-            setState(() {
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          setState(() {
+            if (isPlay) {
               comp.x = (comp.x + details.delta.dx)
                   .clamp(0, canvasWidth - comp.width);
               comp.y = (comp.y + details.delta.dy)
                   .clamp(0, canvasHeight - comp.height);
-            });
-          },
-          onTap: () {
-            if (comp.isEditable == true) {
-              setState(() => selectedIndex = index);
-              editComponent2(index);
             }
-          },
-          child: Transform.scale(
-            scale: selectedIndex == index ? 1.05 : 1.0,
-            child: buildComponentWidget(comp),
-          ),
+          });
+        },
+        onTap: () {
+          setState(() {
+            selectedIndex = index;
+          });
+          editComponent2(index);
+        },
+        child: Transform.scale(
+          scale: selectedIndex == index ? 1.05 : 1.0,
+          child: buildComponentWidget(comp),
         ),
       ),
     );
@@ -294,6 +285,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       onChanged: (value) {
                         setState(() {
                           comp.fontSize = value.toInt();
+
                         });
                       },
                     ),
@@ -425,10 +417,10 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
         transitionDuration: const Duration(milliseconds: 300),
         pageBuilder: (context, animation, secondaryAnimation) {
           return SafeArea(
-           
-              child: Scaffold(
-                backgroundColor: const Color(0xFFDBF2FF),
-                body:   Center(child:Padding(
+            child: Scaffold(
+              backgroundColor: const Color(0xFFDBF2FF),
+              body: Center(
+                child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -450,13 +442,8 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                             : 'assets/Animation/grandmasad.png',
                         height: MediaQuery.of(context).size.height * 0.18,
                       ),
-    
-                        SizedBox(
-                    height:  MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.45, 
-                 
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.45,
                         child: PageView.builder(
                           controller: _pageController,
                           itemCount: feedback.length,

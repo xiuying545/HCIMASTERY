@@ -201,12 +201,54 @@ class _ProductDesignChallengePage
             case 'BottomNavBar':
               components.add(BottomNavBar());
               break;
-          
           }
         });
         _toggleOverlay();
       },
       tooltip: type,
+    );
+  }
+
+  @override
+  Widget buildDraggableComponent(int index) {
+    final comp = components[index];
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 200),
+      left: comp.x.clamp(0, canvasWidth - comp.width),
+      top: comp.y.clamp(0, canvasHeight - comp.height),
+      child: LongPressDraggable<int>(
+        data: index,
+        feedback: Opacity(
+          opacity: 0.7,
+          child: SizedBox(
+            child: buildComponentWidget(comp),
+          ),
+        ),
+        childWhenDragging: Container(),
+        onDragStarted: () => setState(() => showTrashBin = true),
+        onDragEnd: (_) => setState(() => showTrashBin = false),
+        child: GestureDetector(
+          onPanUpdate: (details) {
+            if (!isPlay) return;
+            setState(() {
+              comp.x = (comp.x + details.delta.dx)
+                  .clamp(0, canvasWidth - comp.width);
+              comp.y = (comp.y + details.delta.dy)
+                  .clamp(0, canvasHeight - comp.height);
+            });
+          },
+          onTap: () {
+            if (comp.isEditable == true) {
+              setState(() => selectedIndex = index);
+              editComponent2(index);
+            }
+          },
+          child: Transform.scale(
+            scale: selectedIndex == index ? 1.05 : 1.0,
+            child: buildComponentWidget(comp),
+          ),
+        ),
+      ),
     );
   }
 
@@ -292,9 +334,8 @@ class _ProductDesignChallengePage
     }
 
     // Product Alignment
-    final productCards = components
-        .where((c) => c.type == 'ProductCard')
-        .toList();
+    final productCards =
+        components.where((c) => c.type == 'ProductCard').toList();
 
     if (!(_isAlignedHorizontally(productCards) ||
         _isAlignedVertically(productCards))) {

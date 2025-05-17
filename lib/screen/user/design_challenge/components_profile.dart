@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract class UIComponent {
+  final GlobalKey _key = GlobalKey(); 
   String type;
   String text;
   Color color;
@@ -25,8 +26,28 @@ abstract class UIComponent {
     this.isEditable = false,
   });
 
-  
   Widget buildWidget(BuildContext context);
+
+
+  Widget wrapWithSizeUpdater(Widget child) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final RenderBox? box = _key.currentContext?.findRenderObject() as RenderBox?;
+          if (box != null) {
+            final newHeight = box.size.height;
+            final newWidth = box.size.width;
+            if ((height - newHeight).abs() > 1 || (width - newWidth).abs() > 1) {
+              height = newHeight;
+              width = newWidth;
+              debugPrint('📏 $type updated → height: $height, width: $width');
+            }
+          }
+        });
+        return Container(key: _key, child: child);
+      },
+    );
+  }
 }
 
 // ------------------ Profile Picture ------------------
@@ -44,24 +65,26 @@ class ProfilePicture extends UIComponent {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Container(
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withOpacity(0.5), // Shadow color
-        spreadRadius: 2, // Spread radius
-        blurRadius: 5, // Blur radius
-        offset: const Offset(4, 4), // Offset in x and y directions
+    return wrapWithSizeUpdater(
+      Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: CircleAvatar(
+          radius: width / 2,
+          backgroundColor: Colors.white,
+          backgroundImage: const AssetImage("assets/Animation/profile.png"),
+        ),
       ),
-    ],
-  ),
-  child: CircleAvatar(
-    radius: width / 2,
-    backgroundColor: Colors.white,
-    backgroundImage: const AssetImage("assets/Animation/profile.png"),
-  ),
-);
+    );
   }
 }
 
@@ -76,38 +99,35 @@ Widget buildLabeledCard({
   required Color color,
 }) {
   return Container(
-      width: 320,
-      height: fontSize * 4,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: shadow, offset: const Offset(4, 4))],
-      ),
-      child: 
-        Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Icon(icon, color: Colors.white, size: fontSize*2),
-            const SizedBox(width: 16),
-           
-     Flexible(
-           child:Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              label,
-              style: GoogleFonts.fredoka(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+    width: 320,
+    height: fontSize * 4,
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [BoxShadow(color: shadow, offset: const Offset(4, 4))],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(icon, color: Colors.white, size: fontSize * 2),
+        const SizedBox(width: 16),
+        Flexible(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.fredoka(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
-      
-            Text(
+              Text(
                 value,
-                 maxLines: 2,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.fredoka(
                   fontSize: fontSize,
@@ -115,11 +135,12 @@ Widget buildLabeledCard({
                   color: color,
                 ),
               ),
-         
+            ],
+          ),
+        ),
       ],
-      
-     )),
-      ]));
+    ),
+  );
 }
 
 Color getDarkerColor(Color color, [double amount = .2]) {
@@ -139,13 +160,12 @@ class Name extends UIComponent {
           x: 40,
           y: 250,
           width: 320,
-          height: 70,
-          isEditable:true
+          isEditable: true,
         );
 
   @override
   Widget buildWidget(BuildContext context) {
-    return buildLabeledCard(
+    return wrapWithSizeUpdater(buildLabeledCard(
       icon: Icons.person,
       label: 'Name',
       value: text,
@@ -153,7 +173,7 @@ class Name extends UIComponent {
       shadow: getDarkerColor(color),
       fontSize: fontSize.toDouble(),
       color: Colors.white,
-    );
+    ));
   }
 }
 
@@ -168,13 +188,12 @@ class Bio extends UIComponent {
           x: 120,
           y: 330,
           width: 320,
-          height: 80,
-               isEditable:true
+          isEditable: true,
         );
 
   @override
   Widget buildWidget(BuildContext context) {
-    return buildLabeledCard(
+    return wrapWithSizeUpdater(buildLabeledCard(
       icon: Icons.info,
       label: 'Bio',
       value: text,
@@ -182,7 +201,7 @@ class Bio extends UIComponent {
       shadow: getDarkerColor(color),
       fontSize: fontSize.toDouble(),
       color: Colors.white,
-    );
+    ));
   }
 }
 
@@ -197,13 +216,12 @@ class ContactInfo extends UIComponent {
           x: 40,
           y: 450,
           width: 320,
-          height: 70,
-               isEditable:true
+          isEditable: true,
         );
 
   @override
   Widget buildWidget(BuildContext context) {
-    return buildLabeledCard(
+    return wrapWithSizeUpdater(buildLabeledCard(
       icon: Icons.email,
       label: 'Email',
       value: text,
@@ -211,36 +229,7 @@ class ContactInfo extends UIComponent {
       shadow: getDarkerColor(color),
       fontSize: fontSize.toDouble(),
       color: Colors.white,
-    );
-  }
-}
-
-// ------------------ Address ------------------
-class Address extends UIComponent {
-  Address()
-      : super(
-          type: 'Address',
-          text: '123 Main St',
-          fontSize: 20,
-          color: Colors.white,
-          x: 40,
-          y: 440,
-          width: 320,
-          height: 70,
-               isEditable:true
-        );
-
-  @override
-  Widget buildWidget(BuildContext context) {
-    return buildLabeledCard(
-      icon: Icons.location_on,
-      label: 'Address',
-      value: text,
-      background: color,
-      shadow: getDarkerColor(color),
-      fontSize: fontSize.toDouble(),
-      color: Colors.white,
-    );
+    ));
   }
 }
 
@@ -255,29 +244,30 @@ class EditProfile extends UIComponent {
           x: 100,
           y: 50,
           width: 200,
-          height: 60,
-               isEditable:true
+          isEditable: true,
         );
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Container(
-      width: width,
-      height: height + (fontSize - 18),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(color: getDarkerColor(color), offset: const Offset(4, 4))
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: GoogleFonts.fredoka(
-          fontSize: fontSize.toDouble(),
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+    return wrapWithSizeUpdater(
+      Container(
+        width: width,
+        height: height + (fontSize - 18),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(color: getDarkerColor(color), offset: const Offset(4, 4))
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: GoogleFonts.fredoka(
+            fontSize: fontSize.toDouble(),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );

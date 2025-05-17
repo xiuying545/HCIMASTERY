@@ -270,7 +270,6 @@ class _ProfileDesignChallengePageState
 
     // Alignment
 
-
     double? commonX =
         checkedComponents.isNotEmpty ? checkedComponents.first.x : null;
     bool consistentAlignment = false;
@@ -290,11 +289,68 @@ class _ProfileDesignChallengePageState
     // If everything is good
     if (feedbackList.isEmpty) {
       feedbackList.add({
-        'text': "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
+        'text':
+            "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
         'image': 'assets/Game/welldone.png',
+      });
+    }
+    // Consistent Vertical Spacing
+    if (!hasConsistentVerticalSpacing(checkedComponents)) {
+      feedbackList.add({
+        'text':
+            "It seems the vertical spacing between elements is inconsistent. Consistent spacing improves readability and visual flow!",
+        'image': 'assets/Game/consistentspacing.png',
+      });
+    }
+
+    if (!hasMinimumVerticalSpacing(components)) {
+      feedbackList.add({
+        'text':
+            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+        'image': 'assets/Game/spacing.png',
       });
     }
 
     onResult(feedbackList);
+  }
+
+  bool hasMinimumVerticalSpacing(List<UIComponent> items,
+      {double minGap = 8.0}) {
+    if (items.length < 2) return true;
+
+    final sorted = List<UIComponent>.from(items)
+      ..sort((a, b) => a.y.compareTo(b.y));
+
+    for (int i = 1; i < sorted.length; i++) {
+      double prevBottom = sorted[i - 1].y + sorted[i - 1].height;
+      double currTop = sorted[i].y;
+      double gap = currTop - prevBottom;
+
+      if (gap < minGap) {
+        print(
+            '⚠️ Gap too small between ${sorted[i - 1].type} and ${sorted[i].type}: $gap');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool hasConsistentVerticalSpacing(List<UIComponent> items,
+      {double tolerance = 15.0}) {
+    if (items.length < 3) return true;
+
+    items.sort((a, b) => a.y.compareTo(b.y));
+
+    List<double> gaps = [];
+    for (int i = 1; i < items.length; i++) {
+      double previousBottom = items[i - 1].y + items[i - 1].height;
+      double currentTop = items[i].y;
+      gaps.add(currentTop - previousBottom);
+    }
+
+    double firstGap = gaps[0];
+
+    // 🔍 Compare every gap to the first one
+    return gaps.every((gap) => (gap - firstGap).abs() <= tolerance);
   }
 }

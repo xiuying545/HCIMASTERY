@@ -1,6 +1,8 @@
+// Shared Base Class
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fyp1/screen/user/design_challenge/components_profile.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 // ------------------ Product Card ------------------
 class ProductCard extends UIComponent {
@@ -9,11 +11,7 @@ class ProductCard extends UIComponent {
   static int productIndex = 0;
 
   static final List<Map<String, String>> productList = [
-    {
-      'image': 'assets/Animation/tshirt.png',
-      'name': 'T-Shirt',
-      'price': '\$20'
-    },
+    {'image': 'assets/Animation/tshirt.png', 'name': 'T-Shirt', 'price': '\$20'},
     {'image': 'assets/Animation/shoes.png', 'name': 'Shoes', 'price': '\$40'},
     {'image': 'assets/Animation/hat.png', 'name': 'Hat', 'price': '\$15'},
     {'image': 'assets/Animation/skirt.png', 'name': 'Skirt', 'price': '\$50'},
@@ -29,19 +27,17 @@ class ProductCard extends UIComponent {
           x: 40,
           y: 140,
         ) {
-    // Increment for next use
     productIndex = (productIndex + 1) % productList.length;
   }
 
   @override
   Widget buildWidget(BuildContext context) {
-    return _ProductCardWidget(product: selectedProduct);
+    return wrapWithSizeUpdater(_ProductCardWidget(product: selectedProduct));
   }
 }
 
 class _ProductCardWidget extends StatelessWidget {
   final Map<String, String> product;
-
   const _ProductCardWidget({required this.product});
 
   @override
@@ -85,18 +81,6 @@ class _ProductCardWidget extends StatelessWidget {
           ),
           Text(product['price']!,
               style: const TextStyle(color: Colors.deepOrange, fontSize: 15)),
-          // const SizedBox(height: 8),
-          // ElevatedButton(
-          //   onPressed: () {},
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor: Colors.blue.shade700,
-          //     shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(20)),
-          //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          //   ),
-          //   child: const Text("Add to Cart",
-          //       style: TextStyle(fontSize: 12, color: Colors.white)),
-          // )
         ],
       ),
     );
@@ -119,7 +103,7 @@ class SearchBarUI extends UIComponent {
   Widget buildWidget(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
+    return wrapWithSizeUpdater(Container(
       width: screenWidth * 0.9,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -132,11 +116,16 @@ class SearchBarUI extends UIComponent {
         children: [
           const Icon(Icons.search, color: Colors.grey),
           const SizedBox(width: 10),
-          Text(text,
-              style: GoogleFonts.fredoka(fontSize: fontSize.toDouble(), color: color)),
+          Text(
+            text,
+            style: GoogleFonts.fredoka(
+              fontSize: fontSize.toDouble(),
+              color: color,
+            ),
+          ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -155,7 +144,7 @@ class FilterTabs extends UIComponent {
   Widget buildWidget(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
+    return wrapWithSizeUpdater(Container(
       width: screenWidth,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -166,7 +155,7 @@ class FilterTabs extends UIComponent {
           _buildTab("New", Colors.blue.shade100, false),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildTab(String label, Color color, bool selected) {
@@ -203,7 +192,7 @@ class BottomNavBar extends UIComponent {
   Widget buildWidget(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
+    return wrapWithSizeUpdater(Container(
       width: screenWidth,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -221,19 +210,20 @@ class BottomNavBar extends UIComponent {
           _buildNavItem(Icons.person, 'Profile', Colors.grey),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildNavItem(IconData icon, String label, Color color) {
     return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 10),
-            Text(label, style: GoogleFonts.fredoka(color: Colors.black))
-          ],
-        ));
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(height: 10),
+          Text(label, style: GoogleFonts.fredoka(color: Colors.black)),
+        ],
+      ),
+    );
   }
 }
