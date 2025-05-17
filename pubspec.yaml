@@ -126,6 +126,8 @@ flutter:
   - assets/Game/fontsizetoosmall.png
   - assets/Game/withinscreen.png
   - assets/Game/missingcomponent.png
+  - assets/Game/welldone.png
+  - assets/Game/empty.png
 
 
 

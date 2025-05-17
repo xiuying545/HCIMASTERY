@@ -15,6 +15,8 @@ import 'package:fyp1/model/quiz.dart';
 import 'package:fyp1/screen/user/authenication/login.dart';
 import 'package:fyp1/screen/user/authenication/register.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/coffee_game.dart';
+import 'package:fyp1/screen/user/design_challenge/design_challenge_list.dart';
+import 'package:fyp1/screen/user/design_challenge/fixgame.dart';
 import 'package:fyp1/screen/user/design_challenge/product_page_design.dart';
 import 'package:fyp1/screen/user/error_page.dart';
 import 'package:fyp1/screen/user/forum/edit_post.dart';
@@ -48,7 +50,7 @@ GoRouter router() {
           //   return const Homepage();
           // }
               //  return  SignInScreen();
-          return const AdminNavBar();
+          return  DesignChallengesPage();
           // return  const StudentNavBar(bottomIndex: 1,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();

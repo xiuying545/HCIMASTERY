@@ -27,7 +27,7 @@ class DesignChallengesPage extends StatelessWidget {
     },
   ];
 
-   DesignChallengesPage({super.key});
+  DesignChallengesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class DesignChallengesPage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.width*0.5 ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.5),
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),

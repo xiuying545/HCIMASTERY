@@ -13,6 +13,8 @@ class ProductDesignChallengePage extends StatefulWidget {
 
 class _ProductDesignChallengePage
     extends DesignChallengeUIState<ProductDesignChallengePage> {
+  OverlayEntry? overlayEntry;
+  bool showOverlay = false;
   @override
   void initState() {
     super.initState();
@@ -23,18 +25,6 @@ class _ProductDesignChallengePage
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      // appBar: AppBar(
-      //   // backgroundColor: Colors.blue.shade900,
-      //   // foregroundColor: Colors.white,
-      //   // title: Text(
-      //   //   'Profile Page',
-      //   //   style: GoogleFonts.poppins(
-      //   //     fontSize: 24,
-      //   //     fontWeight: FontWeight.w600,
-      //   //   ),
-      //   // ),
-      // ),
-      // body: buildCanvasBody(backgroundImage: 'assets/Animation/weatherbackground.png'),
       body: Stack(
         children: [
           buildCanvasBody(),
@@ -46,6 +36,9 @@ class _ProductDesignChallengePage
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
               onPressed: () {
+                if (showOverlay) {
+                  _toggleOverlay();
+                }
                 Navigator.pop(context);
               },
             ),
@@ -95,8 +88,8 @@ class _ProductDesignChallengePage
               onTap: () => showTutorial(true),
             ),
             _buildNavItem(
-              icon: Icons.add,
-              label: 'Add',
+              icon: showOverlay ? Icons.close : Icons.add,
+              label: showOverlay ? 'Close' : 'Add',
               onTap: _toggleOverlay,
             ),
           ],
@@ -151,7 +144,11 @@ class _ProductDesignChallengePage
   }
 
   void _toggleOverlay() {
-    if (overlayEntry == null) {
+    setState(() {
+      showOverlay = !showOverlay;
+    });
+
+    if (showOverlay) {
       overlayEntry = OverlayEntry(
         builder: (context) => Positioned(
           top: 100,
@@ -204,9 +201,7 @@ class _ProductDesignChallengePage
             case 'BottomNavBar':
               components.add(BottomNavBar());
               break;
-            case 'ProductGridItem':
-              components.add(ProductGridItem());
-              break;
+          
           }
         });
         _toggleOverlay();
@@ -215,6 +210,7 @@ class _ProductDesignChallengePage
     );
   }
 
+  @override
   void submitDesign(
       void Function(List<Map<String, String>> feedback) onResult) {
     int total = components.length;
@@ -223,7 +219,7 @@ class _ProductDesignChallengePage
       onResult([
         {
           "text":
-              "⚠️ Your canvas is empty. Try dragging in some UI components to begin your design!",
+              "⚠️ Try dragging in some UI components to start your design . You're creating a product listing page where users can easily find, view product, and navigate to other sections.",
           "image": "assets/Game/empty.png",
         }
       ]);
@@ -297,7 +293,7 @@ class _ProductDesignChallengePage
 
     // Product Alignment
     final productCards = components
-        .where((c) => c.type == 'ProductCard' || c.type == 'ProductGridItem')
+        .where((c) => c.type == 'ProductCard')
         .toList();
 
     if (!(_isAlignedHorizontally(productCards) ||
@@ -317,40 +313,114 @@ class _ProductDesignChallengePage
         "image": "assets/Game/spacing.png"
       });
     }
-
+    if (feedbackList.isEmpty) {
+      feedbackList.add({
+        'text':
+            "Well done! Your design looks great overall. HCI reminds us that users don’t read manuals — they rely on design to guide them. Make every element speak for itself. 🎉",
+      });
+    }
     onResult(feedbackList);
   }
 
+  void printComponentPositions(List<UIComponent> components) {
+    for (var c in components) {
+      print('Component at x: ${c.x}, y: ${c.y}');
+    }
+  }
+
   bool _isAlignedHorizontally(List<UIComponent> components) {
-    const tolerance = 10.0;
-    List<double> xValues = components.map((c) => c.x).toList();
-    for (int i = 0; i < xValues.length; i++) {
-      for (int j = i + 1; j < xValues.length; j++) {
-        if ((xValues[i] - xValues[j]).abs() > tolerance) return false;
+    const rowTolerance = 50.0;
+    const alignTolerance = 10.0;
+    for (var row in _groupByRow(components, rowTolerance)) {
+      double referenceY = 0;
+      print(row.length);
+      for (var c in row) {
+        if (referenceY == 0) {
+          referenceY = c.y;
+          print('referenceY $referenceY');
+        } else {
+          if ((c.y - referenceY).abs() > alignTolerance) return false;
+          print((c.y - referenceY).abs());
+        }
       }
     }
     return true;
   }
 
   bool _isAlignedVertically(List<UIComponent> components) {
-    const tolerance = 10.0;
-    List<double> yValues = components.map((c) => c.y).toList();
-    for (int i = 0; i < yValues.length; i++) {
-      for (int j = i + 1; j < yValues.length; j++) {
-        if ((yValues[i] - yValues[j]).abs() > tolerance) return false;
+    const columnTolerance = 100.0;
+    const alignTolerance = 10.0;
+    for (var col in _groupByColumn(components, columnTolerance)) {
+      double? referenceX;
+      for (var c in col) {
+        referenceX ??= c.x;
+        if ((c.x - referenceX).abs() > alignTolerance) return false;
       }
     }
     return true;
   }
 
   bool _hasConsistentSpacing(List<UIComponent> components) {
-    if (components.length < 2) return true;
-    List<double> sortedX = components.map((c) => c.x).toList()..sort();
-    List<double> gaps = [];
-    for (int i = 1; i < sortedX.length; i++) {
-      gaps.add((sortedX[i] - sortedX[i - 1]).abs());
+    const spacingTolerance = 10.0;
+    for (var row in _groupByRow(components, 10.0)) {
+      final sorted = row..sort((a, b) => a.x.compareTo(b.x));
+      final gaps = <double>[];
+      for (int i = 1; i < sorted.length; i++) {
+        gaps.add(sorted[i].x - sorted[i - 1].x);
+      }
+      if (gaps.isEmpty) continue;
+      final avgGap = gaps.reduce((a, b) => a + b) / gaps.length;
+      if (!gaps.every((gap) => (gap - avgGap).abs() <= spacingTolerance)) {
+        return false;
+      }
     }
-    double avgGap = gaps.reduce((a, b) => a + b) / gaps.length;
-    return gaps.every((gap) => (gap - avgGap).abs() <= 10);
+    return true;
+  }
+
+  List<List<UIComponent>> _groupByRow(
+      List<UIComponent> components, double threshold) {
+    components.sort((a, b) => a.y.compareTo(b.y));
+    List<List<UIComponent>> rows = [];
+
+    for (var comp in components) {
+      bool added = false;
+      for (var row in rows) {
+        if ((row.first.y - comp.y).abs() <= threshold) {
+          row.add(comp);
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        rows.add([comp]);
+      }
+    }
+
+// Print rows with components
+    for (int i = 0; i < rows.length; i++) {
+      print('🔹 Row $i contains:');
+      for (var comp in rows[i]) {
+        print('   → Component: x=${comp.x}, y=${comp.y}');
+      }
+    }
+
+    return rows;
+  }
+
+  List<List<UIComponent>> _groupByColumn(
+      List<UIComponent> components, double threshold) {
+    components.sort((a, b) => a.x.compareTo(b.x));
+    List<List<UIComponent>> cols = [];
+    for (var comp in components) {
+      final col = cols.firstWhere(
+        (c) => (c.first.x - comp.x).abs() <= threshold,
+        orElse: () {
+          cols.add([comp]);
+          return cols.last;
+        },
+      );
+      if (!col.contains(comp)) col.add(comp);
+    }
+    return cols;
   }
 }

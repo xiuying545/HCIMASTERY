@@ -15,7 +15,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   double canvasHeight = 600;
   int? selectedIndex;
   bool isPlay = true;
-  OverlayEntry? overlayEntry;
+
   bool showTrashBin = false;
   Color primaryColor = Colors.orange;
   final PageController _pageController = PageController();
@@ -167,52 +167,6 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
 
   Widget buildComponentWidget(UIComponent comp) {
     return comp.buildWidget(context);
-  }
-
-  Future<Color?> showColorPickerDialog(Color initialColor) async {
-    Color tempColor = initialColor;
-    return await showDialog<Color>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.blue.shade50,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-        title: Text("Pick a color",
-            style: TextStyle(
-                color: Colors.blue.shade900, fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
-          child: ColorPicker(
-            pickerColor: tempColor,
-            onColorChanged: (color) => tempColor = color,
-            showLabel: true,
-            pickerAreaBorderRadius: BorderRadius.circular(8),
-            enableAlpha: false,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(null),
-            child: Text('Cancel',
-                style: TextStyle(
-                    color: Colors.blue.shade900, fontWeight: FontWeight.bold)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            onPressed: () => Navigator.of(context).pop(tempColor),
-            child: const Text('Save',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16)),
-          ),
-        ],
-      ),
-    );
   }
 
   void showTutorial(bool hasAdd) {
@@ -460,147 +414,135 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
       setState(() {
         feedbackList = feedback;
       });
+      bool postiveFeedback =
+          feedback.any((f) => f["text"]?.contains("Well done") ?? false);
 
-      showDialog(
+      showGeneralDialog(
         context: context,
-        barrierColor: Colors.black.withOpacity(0.9),
-        builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.transparent, // Let Stack background show
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.topCenter,
-              children: [
-                Positioned(
-                  top: 10,
-                  child: Image.asset(
-        feedback.any((f) => f['text']?.contains('Well done') ?? false)
-            ? 'assets/Animation/grandmahappy.png'
-            : 'assets/Animation/grandmasad.png',
-                    height: MediaQuery.of(context).size.height * 0.23,
-                  ),
-                ),
-                // Main dialog box
-                Container(
-                  margin:  EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.23), 
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDBF2FF),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 175, 222, 248),
-                      width: 4,
-                    ),
-                  ),
+        barrierDismissible: true,
+        barrierLabel: 'Feedback dialog',
+        barrierColor: Colors.black.withOpacity(0.8),
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return SafeArea(
+           
+              child: Scaffold(
+                backgroundColor: const Color(0xFFDBF2FF),
+                body:   Center(child:Padding(
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.emoji_emotions,
-                              size: 25, color: Colors.deepOrange),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Design Feedback",
-                            style: GoogleFonts.fredoka(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepOrange,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      SizedBox(
-                        height: feedback.any((line) => line["image"] != null)
-                            ? MediaQuery.of(context).size.height * 0.40
-                            : MediaQuery.of(context).size.height * 0.2,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: PageView.builder(
-                                controller: _pageController,
-                                itemCount: feedback.length,
-                                itemBuilder: (context, index) {
-                                  final line = feedback[index];
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (line["image"] != null)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 12.0),
-                                          child: Image.asset(
-                                            line["image"]!,
-                                            height: MediaQuery.of(context).size.height * 0.25,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        child: Text(
-                                          line["text"] ??
-                                              "Something went wrong.",
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.2,
-                                            color: Color(0xFF4E4E4E),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                           if( feedback.length>1)
-                            SmoothPageIndicator(
-                              controller: _pageController,
-                              count: feedback.length,
-                              effect: WormEffect(
-                                dotHeight: 10,
-                                dotWidth: 10,
-                                activeDotColor: Colors.deepOrange,
-                                dotColor: Colors.orange.shade200,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        "Design Feedback",
+                        style: GoogleFonts.fredoka(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
                         ),
                       ),
-
-                      const SizedBox(height: 20),
-
-                      // Close button
+                      const SizedBox(height: 24),
+                      Image.asset(
+                        feedback.any((f) =>
+                                f["text"]?.contains("Well done") ?? false)
+                            ? 'assets/Animation/grandmahappy.png'
+                            : 'assets/Animation/grandmasad.png',
+                        height: MediaQuery.of(context).size.height * 0.18,
+                      ),
+    
+                        SizedBox(
+                    height:  MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.45, 
+                 
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: feedback.length,
+                          itemBuilder: (context, index) {
+                            final line = feedback[index];
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  if (line["image"] != null)
+                                    !postiveFeedback
+                                        ? Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300),
+                                            ),
+                                            child: Image.asset(
+                                              line["image"]!,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.28,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          )
+                                        : Image.asset(
+                                            line["image"]!,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.25,
+                                            fit: BoxFit.contain,
+                                          ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    line["text"] ?? "Something went wrong.",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.5,
+                                      color: Color(0xFF4E4E4E),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (feedback.length > 1)
+                        SmoothPageIndicator(
+                          controller: _pageController,
+                          count: feedback.length,
+                          effect: WormEffect(
+                            dotHeight: 10,
+                            dotWidth: 10,
+                            activeDotColor: Colors.deepOrange,
+                            dotColor: Colors.orange.shade200,
+                          ),
+                        ),
+                      const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF59C3A6),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                              horizontal: 32, vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Close",
-                          style: GoogleFonts.fredoka(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 12),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           );
         },

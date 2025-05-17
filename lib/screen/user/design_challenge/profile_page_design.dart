@@ -205,7 +205,10 @@ class _ProfileDesignChallengePageState
     }
 
     List<Map<String, String>> feedbackList = [];
-
+    List<UIComponent> checkedComponents = components.where((component) {
+      const allowedTypes = {'Name', 'Bio', 'ContactInfo'};
+      return allowedTypes.contains(component.type);
+    }).toList();
     // Font Size
     int goodFontSize = components.where((c) => c.fontSize > 14.0).length;
     if (goodFontSize != total) {
@@ -217,10 +220,10 @@ class _ProfileDesignChallengePageState
     }
 
     // Font Consistency
-    Set<int> fontSizes = components.map((c) => c.fontSize).toSet();
+    Set<int> fontSizes = checkedComponents.map((c) => c.fontSize).toSet();
 
-    print(components.map((c) => c.fontSize).toList());
-    if (fontSizes.length > 2) {
+    print(checkedComponents.map((c) => c.fontSize).toList());
+    if (fontSizes.length > 1) {
       feedbackList.add({
         'text':
             "Hmm… it looks like quite a few different font sizes are being used. That might make the page feel a bit messy.",
@@ -231,11 +234,12 @@ class _ProfileDesignChallengePageState
     // Contrast
 
     if (components.any((c) => c.color.value == 0xFFEEEEEE)) {
-  feedbackList.add({
-    'text': "⚠️ Some components have very low contrast with white text. Try using a darker color.",
-    'image': 'assets/Game/lowconstrast.png',
-  });
-}
+      feedbackList.add({
+        'text':
+            "⚠️ Some components have very low contrast with white text. Try using a darker color.",
+        'image': 'assets/Game/lowconstrast.png',
+      });
+    }
 
     // Layout boundary
     bool layoutOk = components.every((c) =>
@@ -265,10 +269,7 @@ class _ProfileDesignChallengePageState
     }
 
     // Alignment
-    List<UIComponent> checkedComponents = components.where((component) {
-      const allowedTypes = {'Name', 'Bio', 'ContactInfo'};
-      return allowedTypes.contains(component.type);
-    }).toList();
+
 
     double? commonX =
         checkedComponents.isNotEmpty ? checkedComponents.first.x : null;
@@ -289,11 +290,11 @@ class _ProfileDesignChallengePageState
     // If everything is good
     if (feedbackList.isEmpty) {
       feedbackList.add({
-        'text': "Well done! Your design looks great overall. 🎉",
+        'text': "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
+        'image': 'assets/Game/welldone.png',
       });
     }
 
     onResult(feedbackList);
   }
-
 }
