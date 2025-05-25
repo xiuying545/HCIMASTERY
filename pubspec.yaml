@@ -130,6 +130,10 @@ flutter:
   - assets/Game/empty.png
   - assets/Game/spacing.png
   - assets/Game/consistentspacing.png
+  - assets/Game/searchbar.png
+  - assets/Game/bottomnavbar.png
+  - assets/Game/productcardalign.png
+  # - assets/Game/overlapping.png
 
 
 

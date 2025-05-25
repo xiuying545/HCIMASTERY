@@ -262,6 +262,15 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                   chapterName: chapterName,
                   notes: [],
                 );
+                  if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Chapter added successfully!',
+                      style: AppTheme.snackBarText),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
                 await Provider.of<NoteViewModel>(context, listen: false)
                     .addChapter(chapter);
               }
@@ -279,6 +288,15 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
           initialValue: chapter.chapterName,
           hintText: 'new chapter name',
           onSave: (newChapterName) async {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Chapter edited successfully!',
+                      style: AppTheme.snackBarText),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
             await Provider.of<NoteViewModel>(context, listen: false)
                 .updateChapterName(chapter.chapterID!, newChapterName);
           },

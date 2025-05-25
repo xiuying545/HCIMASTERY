@@ -44,6 +44,7 @@ class _CustomInputField extends State<CustomInputField> {
           obscureText: obscureText,
           style: GoogleFonts.poppins(fontSize: 18, color: Colors.black87),
           decoration: InputDecoration(
+            errorMaxLines: 2,
             labelText: widget.label,
             suffixIcon: widget.isSecure
                 ? IconButton(

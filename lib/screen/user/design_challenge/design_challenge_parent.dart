@@ -126,7 +126,6 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   Widget buildDraggableComponent(int index) {
     final comp = components[index];
 
-
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 200),
       left: comp.x.clamp(0, canvasWidth - comp.width),
@@ -160,66 +159,40 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
     return comp.buildWidget(context);
   }
 
-  void showTutorial(bool hasAdd) {
-    final tutorialCoachMark = TutorialCoachMark(
-      targets: [
-        TargetFocus(identify: "LockButton", keyTarget: lockKey, contents: [
-          _buildTutorialContent("Step 1 of 5", "🔓 Enable/disable dragging.")
-        ]),
-        TargetFocus(
-          identify: "Component",
-          shape: ShapeLightFocus.RRect,
-          targetPosition: TargetPosition(
-            const Size(300, 90),
-            const Offset(40, 280),
-          ),
-          contents: [
-            _buildTutorialContent(
-              "Step 3 of 5",
-              "✏️ Tap on a component to edit its font size and color.",
-            ),
-          ],
-        ),
-        TargetFocus(
-            identify: "CheckButton",
-            keyTarget: checkButtonKey,
-            contents: [
-              _buildTutorialContent("Step 4 of 5", "✅ Evaluate your design.",
-                  contentAlign: ContentAlign.top)
-            ]),
-        if (hasAdd)
-          TargetFocus(
-              identify: "AddButton",
-              keyTarget: addButtonKey,
-              contents: [
-                _buildTutorialContent("Step 5 of 5", "➕ Add new components.")
-              ]),
-      ],
-      skipWidget: Text("SKIP",
-          style: GoogleFonts.comicNeue(
-              color: Colors.white, fontWeight: FontWeight.bold)),
-      onFinish: () => debugPrint("Tutorial Completed"),
-    );
-
-    tutorialCoachMark.show(context: context);
-  }
-
-  TargetContent _buildTutorialContent(String step, String message,
-      {ContentAlign contentAlign = ContentAlign.bottom}) {
-    return TargetContent(
-      align: contentAlign,
+  TargetContent buildTutorialContent(String step, String message,
+    {ContentAlign contentAlign = ContentAlign.bottom}) {
+  return TargetContent(
+    align: contentAlign,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF2A0), 
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(step,
-              style: GoogleFonts.comicNeue(color: Colors.white, fontSize: 20)),
-          const SizedBox(height: 10),
-          Text(message,
-              style:
-                  GoogleFonts.indieFlower(color: Colors.white, fontSize: 18)),
+          Text(
+            step,
+            style: GoogleFonts.comicNeue(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            message,
+            style: GoogleFonts.indieFlower(
+              color: Colors.black,
+              fontSize: 20,
+            ),
+          ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Future<void> editComponent2(int index) async {
     UIComponent comp = components[index];
@@ -285,7 +258,6 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       onChanged: (value) {
                         setState(() {
                           comp.fontSize = value.toInt();
-
                         });
                       },
                     ),

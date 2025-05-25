@@ -3,6 +3,7 @@ import 'package:fyp1/screen/user/design_challenge/components_product.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fyp1/screen/user/design_challenge/components_profile.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProductDesignChallengePage extends StatefulWidget {
   const ProductDesignChallengePage({super.key});
@@ -77,20 +78,21 @@ class _ProductDesignChallengePage
               key: lockKey,
             ),
             _buildNavItem(
-              icon: Icons.send_rounded,
-              label: 'Submit',
-              onTap: handleSubmitDesign,
-              key: checkButtonKey,
-            ),
-            _buildNavItem(
               icon: Icons.auto_awesome_rounded,
               label: 'Help',
-              onTap: () => showTutorial(true),
+              onTap: () => showTutorial(),
             ),
             _buildNavItem(
               icon: showOverlay ? Icons.close : Icons.add,
               label: showOverlay ? 'Close' : 'Add',
               onTap: _toggleOverlay,
+              key: addButtonKey,
+            ),
+            _buildNavItem(
+              icon: Icons.send_rounded,
+              label: 'Submit',
+              onTap: handleSubmitDesign,
+              key: checkButtonKey,
             ),
           ],
         ),
@@ -305,17 +307,18 @@ class _ProductDesignChallengePage
       });
     }
 
-    // Bottom Navigation Placement
-    double bottomThreshold = canvasHeight * 0.75;
+    const double bottomTolerance = 10.0;
     bool navAtBottom = components.any(
-      (c) => c.type == 'BottomNavBar' && (c.y + c.height) >= bottomThreshold,
+      (c) =>
+          c.type == 'BottomNavBar' &&
+          (canvasHeight - (c.y + c.height)).abs() <= bottomTolerance,
     );
 
-    if (!navAtBottom) {
+    if (!navAtBottom & hasNav) {
       feedbackList.add({
         "text":
-            "⚠️ Consider placing the Bottom Navigation at the bottom for better usability.",
-        "image": "assets/Game/layout.png"
+            "⚠️ Consider placing the Bottom Navigation at the bottom and stick at the bottom for better usability.",
+        "image": "assets/Game/bottomnavbar.png"
       });
     }
 
@@ -325,11 +328,11 @@ class _ProductDesignChallengePage
     bool filterAtTop = components
         .any((c) => c.type == 'FilterTabs' && c.y < canvasHeight * 0.4);
 
-    if (!searchAtTop || !filterAtTop) {
+    if ((!searchAtTop && hasSearchBar) || (!filterAtTop && hasFilter)) {
       feedbackList.add({
         "text":
             "⚠️ Place Search Bar and Filters near the top where users expect them.",
-        "image": "assets/Game/topbar_hint.png"
+        "image": "assets/Game/searchbar.png"
       });
     }
 
@@ -337,31 +340,33 @@ class _ProductDesignChallengePage
     final productCards =
         components.where((c) => c.type == 'ProductCard').toList();
 
-    if (!(_isAlignedHorizontally(productCards) ||
-        _isAlignedVertically(productCards))) {
+    if (!(_isAlignedHorizontally(productCards)) ||
+        !(_isAlignedVertically(productCards))) {
       feedbackList.add({
         "text":
             "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
-        "image": "assets/Game/misaligned.png"
+        "image": "assets/Game/productcardalign.png"
       });
     }
 
-    // Even Spacing
-    if (!_hasConsistentSpacing(productCards)) {
-      feedbackList.add({
-        "text":
-            "⚠️ Try to use even spacing between items for a more balanced layout.",
-        "image": "assets/Game/spacing.png"
-      });
-    }
+    // if (_hasOverlap(components)) {
+    //   feedbackList.add({
+    //     "text":
+    //         "⚠️ Some components are overlapping. Please ensure each element has enough spacing and doesn't cover another.",
+    //     "image": "assets/Game/overlapping.png"
+    //   });
+    // }
+
     if (feedbackList.isEmpty) {
       feedbackList.add({
         'text':
             "Well done! Your design looks great overall. HCI reminds us that users don’t read manuals — they rely on design to guide them. Make every element speak for itself. 🎉",
+        'image': 'assets/Game/welldone.png',
       });
     }
     onResult(feedbackList);
   }
+  // Inside submitDesign(), after alignment checks
 
   void printComponentPositions(List<UIComponent> components) {
     for (var c in components) {
@@ -370,18 +375,17 @@ class _ProductDesignChallengePage
   }
 
   bool _isAlignedHorizontally(List<UIComponent> components) {
-    const rowTolerance = 50.0;
     const alignTolerance = 10.0;
-    for (var row in _groupByRow(components, rowTolerance)) {
+    for (var row in _groupByRow(components)) {
       double referenceY = 0;
       print(row.length);
       for (var c in row) {
         if (referenceY == 0) {
           referenceY = c.y;
-          print('referenceY $referenceY');
+          print('referenceY1 $referenceY');
         } else {
           if ((c.y - referenceY).abs() > alignTolerance) return false;
-          print((c.y - referenceY).abs());
+          print('hey ${(c.y - referenceY).abs()}');
         }
       }
     }
@@ -389,9 +393,8 @@ class _ProductDesignChallengePage
   }
 
   bool _isAlignedVertically(List<UIComponent> components) {
-    const columnTolerance = 100.0;
     const alignTolerance = 10.0;
-    for (var col in _groupByColumn(components, columnTolerance)) {
+    for (var col in _groupByColumn(components)) {
       double? referenceX;
       for (var c in col) {
         referenceX ??= c.x;
@@ -401,28 +404,54 @@ class _ProductDesignChallengePage
     return true;
   }
 
-  bool _hasConsistentSpacing(List<UIComponent> components) {
-    const spacingTolerance = 10.0;
-    for (var row in _groupByRow(components, 10.0)) {
-      final sorted = row..sort((a, b) => a.x.compareTo(b.x));
-      final gaps = <double>[];
-      for (int i = 1; i < sorted.length; i++) {
-        gaps.add(sorted[i].x - sorted[i - 1].x);
-      }
-      if (gaps.isEmpty) continue;
-      final avgGap = gaps.reduce((a, b) => a + b) / gaps.length;
-      if (!gaps.every((gap) => (gap - avgGap).abs() <= spacingTolerance)) {
-        return false;
+  bool _hasOverlap(List<UIComponent> components) {
+    for (int i = 0; i < components.length; i++) {
+      final a = components[i];
+      final aLeft = a.x;
+      final aTop = a.y;
+      final aRight = a.x + a.width;
+      final aBottom = a.y + a.height;
+
+      for (int j = i + 1; j < components.length; j++) {
+        final b = components[j];
+        final bLeft = b.x;
+        final bTop = b.y;
+        final bRight = b.x + b.width;
+        final bBottom = b.y + b.height;
+
+        // Check overlap
+        final bool isOverlapping = !(aRight < bLeft ||
+            aLeft > bRight ||
+            aBottom < bTop ||
+            aTop > bBottom);
+
+        if (isOverlapping) return true;
       }
     }
-    return true;
+    return false;
   }
 
-  List<List<UIComponent>> _groupByRow(
-      List<UIComponent> components, double threshold) {
+  // bool _hasConsistentSpacing(List<UIComponent> components) {
+  //   const spacingTolerance = 10.0;
+  //   for (var row in _groupByRow(components)) {
+  //     final sorted = row..sort((a, b) => a.x.compareTo(b.x));
+  //     final gaps = <double>[];
+  //     for (int i = 1; i < sorted.length; i++) {
+  //       gaps.add(sorted[i].x - sorted[i - 1].x);
+  //     }
+  //     if (gaps.isEmpty) continue;
+  //     final avgGap = gaps.reduce((a, b) => a + b) / gaps.length;
+  //     if (!gaps.every((gap) => (gap - avgGap).abs() <= spacingTolerance)) {
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // }
+
+  List<List<UIComponent>> _groupByRow(List<UIComponent> components) {
     components.sort((a, b) => a.y.compareTo(b.y));
     List<List<UIComponent>> rows = [];
-
+    double threshold = 80;
     for (var comp in components) {
       bool added = false;
       for (var row in rows) {
@@ -448,8 +477,8 @@ class _ProductDesignChallengePage
     return rows;
   }
 
-  List<List<UIComponent>> _groupByColumn(
-      List<UIComponent> components, double threshold) {
+  List<List<UIComponent>> _groupByColumn(List<UIComponent> components) {
+    double threshold = 80;
     components.sort((a, b) => a.x.compareTo(b.x));
     List<List<UIComponent>> cols = [];
     for (var comp in components) {
@@ -463,5 +492,52 @@ class _ProductDesignChallengePage
       if (!col.contains(comp)) col.add(comp);
     }
     return cols;
+  }
+
+  void showTutorial() {
+    final tutorialCoachMark = TutorialCoachMark(
+        targets: [
+          TargetFocus(identify: "LockButton", keyTarget: lockKey, contents: [
+            buildTutorialContent("Step 1 of 3", "🔓 Enable/disable dragging.",
+                contentAlign: ContentAlign.top)
+          ]),
+          TargetFocus(
+              identify: "AddButton",
+              keyTarget: addButtonKey,
+              contents: [
+                buildTutorialContent("Step 2 of 3",
+                    "🔓 Add the element, long press the element and move the element to the trash bin to delete",
+                    contentAlign: ContentAlign.top)
+              ]),
+          TargetFocus(
+              identify: "CheckButton",
+              keyTarget: checkButtonKey,
+              contents: [
+                buildTutorialContent("Step 3 of 3", "✅ Evaluate your design.",
+                    contentAlign: ContentAlign.top)
+              ]),
+        ],
+        skipWidget: Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF2A0),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              "SKIP",
+              style: GoogleFonts.indieFlower(
+                // Matches message font
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ));
+
+    tutorialCoachMark.show(context: context);
   }
 }

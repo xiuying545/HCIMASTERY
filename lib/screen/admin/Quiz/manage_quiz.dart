@@ -26,22 +26,21 @@ class ManageQuizPage extends StatefulWidget {
 class _ManageQuizPageState extends State<ManageQuizPage> {
   late String chapterName;
   late QuizViewModel quizViewModel;
-     bool isLoading = true; 
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-    loadQuizData();
-        });
-        
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadQuizData();
+    });
   }
 
   Future<void> loadQuizData() async {
     quizViewModel = Provider.of<QuizViewModel>(context, listen: false);
     await quizViewModel.fetchQuizData(widget.chapterId);
-         setState(() {
-      isLoading = false;  
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -65,7 +64,7 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
         color: Colors.grey.shade100, // Light grey background for the page
         child: Consumer<QuizViewModel>(
           builder: (context, model, child) {
-            if (model.isLoading||isLoading) {
+            if (model.isLoading || isLoading) {
               return const LoadingShimmer();
             }
             final quizzes = model.quizzes;
@@ -74,27 +73,28 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                   await model.fetchQuizData(widget.chapterId, refresh: true);
                 },
                 child: model.quizzes.isEmpty
-                        ? const BlankState(
-                            icon: Icons.quiz,
-                            title: 'No quizzes yet',
-                            subtitle: 'Tap the + button to add a new quizz',
-                          ):Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: quizzes.length,
-                          itemBuilder: (context, index) {
-                            final quiz = quizzes[index];
-                            return _buildQuizCard(quiz);
-                          },
+                    ? const BlankState(
+                        icon: Icons.quiz,
+                        title: 'No quizzes yet',
+                        subtitle: 'Tap the + button to add a new quizz',
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: quizzes.length,
+                                itemBuilder: (context, index) {
+                                  final quiz = quizzes[index];
+                                  return _buildQuizCard(quiz);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ));
+                      ));
           },
         ),
       ),
@@ -281,29 +281,25 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
     showDialog(
         context: context,
         builder: (context) => CustomDialog(
-              title: 'Delete Quiz',
-              content:
-                  'Are you sure you want to delete this quiz? This action cannot be undone.',
-              action: 'Alert',
-              onConfirm: () async {
-                Navigator.of(context).pop();
-
-                await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Quiz deleted successfully!',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                      backgroundColor: Colors.green,
+            title: 'Delete Quiz',
+            content:
+                'Are you sure you want to delete this quiz? This action cannot be undone.',
+            action: 'Alert',
+            onConfirm: () async {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Quiz deleted successfully!',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
-                  );
-                }
-              },
-            ));
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
+            }));
   }
 }

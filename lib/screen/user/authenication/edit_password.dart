@@ -121,9 +121,13 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                           isSecure: true,
                           validators: [
                             (value) {
-                         
                               if (value!.length < 6) {
                                 return 'Password must be at least 6 characters';
+                              }
+                              final passwordPattern = RegExp(
+                                  r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).+$');
+                              if (!passwordPattern.hasMatch(value)) {
+                                return 'Combination of characters, numbers, and special characters.';
                               }
                               return null;
                             },
@@ -131,15 +135,13 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                      // Confirm New Password Field
+                        // Confirm New Password Field
                         CustomInputField(
                           label: "Confirm New Password",
                           controller: _confirmPasswordController,
-                          isSecure:
-                              true, 
+                          isSecure: true,
                           validators: [
                             (value) {
-                             
                               if (value != _newPasswordController.text) {
                                 return 'Passwords do not match';
                               }

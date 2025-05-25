@@ -152,7 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           validators: [
                             (value) {
                               if (value != _passwordController.text) {
-                                return 'Passwords do not match.';
+                                return 'Password and confirm password do not match.';
                               }
                               return null;
                             },

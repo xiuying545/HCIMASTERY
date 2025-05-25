@@ -41,9 +41,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
     });
   }
 
-Future<void> fetchPostDetails({bool forceRefresh = false}) async {
+  Future<void> fetchPostDetails({bool forceRefresh = false}) async {
     try {
-      await forumViewModel.fetchPostById(widget.postID, forceRefresh: forceRefresh);
+      await forumViewModel.fetchPostById(widget.postID,
+          forceRefresh: forceRefresh);
       setState(() {
         post = forumViewModel.post;
       });
@@ -422,39 +423,81 @@ Future<void> fetchPostDetails({bool forceRefresh = false}) async {
                 const SizedBox(height: 10),
                 if (post.images != null && post.images!.isNotEmpty)
                   SizedBox(
-                    height: 80,
+                    height: 150,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: post.images!.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              post.images![index],
-                              height: 80,
-                              fit: BoxFit.cover,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
+                        
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      backgroundColor: Colors.black,
+                                      insetPadding: EdgeInsets.zero,
+                                      child: Stack(
+                                        children: [
+                                          InteractiveViewer(
+                                            child: Center(
+                                              child: Image.network(
+                                                post.images![index],
+                                                fit: BoxFit.contain,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return const Icon(Icons.error,
+                                                      color: Colors.red);
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 40,
+                                            right: 20,
+                                            child: IconButton(
+                                              icon: const Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: 30),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    post.images![index],
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error,
+                                          color: Colors.red);
+                                    },
                                   ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error,
-                                    color: Colors.red);
-                              },
+                                ),
                             ),
-                          ),
                         );
                       },
                     ),
@@ -469,51 +512,150 @@ Future<void> fetchPostDetails({bool forceRefresh = false}) async {
 
   void _showReplyOptionsBottomSheet(Post post, int index) {
     bool isMyReply = post.replies[index].creator == userViewModel.userId;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => CustomOptionsBottomSheet(
-        options: [
-          OptionItem(
-            icon: Icons.share,
-            label: 'Share Reply',
-            color: Colors.blue.shade600,
-            onTap: () async {
-              try {
-                final box = context.findRenderObject() as RenderBox?;
-                String shareText = '${post.title}\n\n${post.replies[index]}';
 
-                shareText += '\n\nCheck out this post in our app: HCI Mastery';
-
-                await Share.share(
-                  shareText,
-                  subject: 'Check out this post: ${post.title}',
-                  sharePositionOrigin:
-                      box!.localToGlobal(Offset.zero) & box.size,
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to share: ${e.toString()}'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
+    if (isMyReply || userViewModel.role == ROLE_ADMIN) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => CustomOptionsBottomSheet(
+          options: [
+            if (isMyReply || userViewModel.role == ROLE_ADMIN)
+              OptionItem(
+                icon: Icons.delete_outline_rounded,
+                label: 'Delete Reply',
+                color: Colors.red.shade600,
+                onTap: () {
+                  confirmDelete(post, index);
+                },
+              ),
+          ],
+        ),
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3F2FD),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-          if (isMyReply || userViewModel.role == ROLE_ADMIN)
-            OptionItem(
-              icon: Icons.delete_outline_rounded,
-              label: 'Delete Reply',
-              color: Colors.red.shade600,
-              onTap: () {
-                confirmDelete(post, index);
-              },
-            ),
-        ],
-      ),
-    );
+          padding: const EdgeInsets.only(top: 8, bottom: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                width: 60,
+                height: 6,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+
+              // Message box
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white, width: 2.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.lock_outline,
+                      size: 50,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Access Denied",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.comicNeue(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF0645AD),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      "You cannot delete reply that are not yours.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.comicNeue(
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // OK button (styled like your cancel button)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD2E7FB),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      )
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Okay',
+                            style: GoogleFonts.comicNeue(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF0645AD),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> confirmDelete(Post post, int index) async {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fyp1/screen/user/design_challenge/components_profile.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProfileDesignChallengePage extends StatefulWidget {
   const ProfileDesignChallengePage({super.key});
@@ -99,8 +100,8 @@ class _ProfileDesignChallengePageState
           ),
           _buildNavItem(
             icon: Icons.auto_awesome_rounded,
-            label: 'Help',
-            onTap: () => showTutorial(true),
+            label: 'Guide',
+            onTap: () => showTutorial(),
           ),
         ],
       ),
@@ -174,22 +175,8 @@ class _ProfileDesignChallengePageState
       ),
     );
   }
-  // Widget _buildBottomBar() {
-  //   return ClipRRect(
-  //     borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
-  //     child: BottomAppBar(
-  //       color: Colors.orange,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //         children: [
-  //      _buildBottomButton('GUIDE', Icons.tips_and_updates, () => showTutorial(true)),
-  //           _buildBottomButton('CHECK', Icons.rate_review, _handleSubmitDesign, key: checkButtonKey),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
+@override
   void submitDesign(
       void Function(List<Map<String, String>> feedbackList) onResult) {
     int total = components.length;
@@ -221,8 +208,6 @@ class _ProfileDesignChallengePageState
 
     // Font Consistency
     Set<int> fontSizes = checkedComponents.map((c) => c.fontSize).toSet();
-
-    print(checkedComponents.map((c) => c.fontSize).toList());
     if (fontSizes.length > 1) {
       feedbackList.add({
         'text':
@@ -232,7 +217,6 @@ class _ProfileDesignChallengePageState
     }
 
     // Contrast
-
     if (components.any((c) => c.color.value == 0xFFEEEEEE)) {
       feedbackList.add({
         'text':
@@ -255,21 +239,21 @@ class _ProfileDesignChallengePageState
       });
     }
 
-    // Button Placement
-    double bottomThreshold = canvasHeight * 0.8;
-    int wellPlacedButtons = components
-        .where((c) => c.type == 'Button' && (c.y + c.height) >= bottomThreshold)
-        .length;
-    if (wellPlacedButtons == 0) {
+    components.sort((a, b) => a.y.compareTo(b.y));
+    for (var comp in components) {
+      print('Component Type: ${comp.type}, X: ${comp.x}, Y: ${comp.y}');
+    }
+
+    if (components.isNotEmpty && components.last.type != "Button") {
       feedbackList.add({
         'text':
             "Hmm... where’s the action button? Try placing it near the bottom – that’s where users usually look.",
         'image': 'assets/Game/layout.jpg',
       });
     }
-
+    
+    
     // Alignment
-
     double? commonX =
         checkedComponents.isNotEmpty ? checkedComponents.first.x : null;
     bool consistentAlignment = false;
@@ -286,15 +270,7 @@ class _ProfileDesignChallengePageState
       });
     }
 
-    // If everything is good
-    if (feedbackList.isEmpty) {
-      feedbackList.add({
-        'text':
-            "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
-        'image': 'assets/Game/welldone.png',
-      });
-    }
-    // Consistent Vertical Spacing
+     // Consistent Vertical Spacing
     if (!hasConsistentVerticalSpacing(checkedComponents)) {
       feedbackList.add({
         'text':
@@ -310,6 +286,16 @@ class _ProfileDesignChallengePageState
         'image': 'assets/Game/spacing.png',
       });
     }
+
+    // If everything is good
+    if (feedbackList.isEmpty) {
+      feedbackList.add({
+        'text':
+            "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
+        'image': 'assets/Game/welldone.png',
+      });
+    }
+   
 
     onResult(feedbackList);
   }
@@ -350,7 +336,59 @@ class _ProfileDesignChallengePageState
 
     double firstGap = gaps[0];
 
-    // 🔍 Compare every gap to the first one
     return gaps.every((gap) => (gap - firstGap).abs() <= tolerance);
+  }
+
+  void showTutorial() {
+    final tutorialCoachMark = TutorialCoachMark(
+        targets: [
+          TargetFocus(identify: "LockButton", keyTarget: lockKey, contents: [
+            buildTutorialContent("Step 1 of 3", "🔓 Enable/disable dragging.",
+                contentAlign: ContentAlign.top)
+          ]),
+          TargetFocus(
+            identify: "Component",
+            shape: ShapeLightFocus.RRect,
+            targetPosition: TargetPosition(
+              const Size(300, 90),
+              const Offset(40, 280),
+            ),
+            contents: [
+              buildTutorialContent(
+                "Step 2 of 3",
+                "✏️ Tap on a component to edit its font size and color.",
+              ),
+            ],
+          ),
+          TargetFocus(
+              identify: "CheckButton",
+              keyTarget: checkButtonKey,
+              contents: [
+                buildTutorialContent("Step 3 of 3", "✅ Evaluate your design.",
+                    contentAlign: ContentAlign.top)
+              ]),
+        ],
+        skipWidget: Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF2A0),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              "SKIP",
+              style: GoogleFonts.indieFlower(
+                // Matches message font
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ));
+
+    tutorialCoachMark.show(context: context);
   }
 }

@@ -69,12 +69,10 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFFDF5
-),
-    
+      backgroundColor: Color(0xFFFFFDF5),
       body: Column(
         children: [
-          SizedBox(height:45),
+          SizedBox(height: 45),
           // Custom Tab Buttons
           Container(
             padding: const EdgeInsets.all(16.0),
@@ -89,11 +87,11 @@ class _ForumPageState extends State<ForumPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        showMyPosts ? Color(0xFFFFF6EE) : Color(0xff6C9FF6) ,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                        showMyPosts ? Color(0xFFFFF6EE) : Color(0xff6C9FF6),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: Text(
@@ -114,10 +112,10 @@ class _ForumPageState extends State<ForumPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         showMyPosts ? Color(0xff6C9FF6) : Color(0xFFFFF6EE),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: Text(
@@ -162,7 +160,9 @@ class _ForumPageState extends State<ForumPage> {
         onPressed: () {
           GoRouter.of(context).push("/student/forum/addPost");
         },
-        shape: const CircleBorder(),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         backgroundColor: Color(0xFF5E9FEF),
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -206,62 +206,163 @@ class _ForumPageState extends State<ForumPage> {
 
   void _showPostOptionsBottomSheet(Post post, bool isMyPost) {
     print("ismypost : $isMyPost");
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => CustomOptionsBottomSheet(
-        options: [
-          if (isMyPost)
-            OptionItem(
-              icon: Icons.edit,
-              label: 'Edit Post',
-              color: Colors.blue.shade800,
-              onTap: () {
-                GoRouter.of(context)
-                    .push("/student/forum/editPost/${post.postID}");
-              },
+    if (!isMyPost && userViewModel.role != ROLE_ADMIN) {
+      if (!isMyPost && userViewModel.role != ROLE_ADMIN) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE3F2FD),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(32)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 12,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
-          if (isMyPost || userViewModel.role == ROLE_ADMIN)
-            OptionItem(
-              icon: Icons.delete_outline_rounded,
-              label: 'Delete Post',
-              color: Colors.red.shade600,
-              onTap: () {
-                confirmDelete(post.postID!);
-              },
-            ),
-          OptionItem(
-            icon: Icons.share,
-            label: 'Share Post',
-            color: Colors
-                .blue.shade600, // Changed from red to blue for consistency
-            onTap: () async {
-              try {
-                final box = context.findRenderObject() as RenderBox?;
-                String shareText = '${post.title}\n\n${post.content}';
-
-                shareText += '\n\nCheck out this post in our app: HCI Mastery';
-
-                await Share.share(
-                  shareText,
-                  subject: 'Check out this post: ${post.title}',
-                  sharePositionOrigin:
-                      box!.localToGlobal(Offset.zero) & box.size,
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to share: ${e.toString()}'),
-                    backgroundColor: Colors.red,
+            padding: const EdgeInsets.only(top: 8, bottom: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Drag handle
+                Container(
+                  width: 60,
+                  height: 6,
+                  margin: const EdgeInsets.only(top: 12, bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(3),
                   ),
-                );
-              }
-            },
+                ),
+
+                // Message box
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white, width: 2.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.lock_outline,
+                        size: 50,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Access Denied",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.comicNeue(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF0645AD),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        "You cannot edit or delete posts that are not yours.",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.comicNeue(
+                          fontSize: 18,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // OK button (styled like your cancel button)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD2E7FB),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        )
+                      ],
+                    ),
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Okay',
+                              style: GoogleFonts.comicNeue(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFF0645AD),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-    );
+        );
+      }
+    } else {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => CustomOptionsBottomSheet(
+          options: [
+            if (isMyPost)
+              OptionItem(
+                icon: Icons.edit,
+                label: 'Edit Post',
+                color: Colors.blue.shade800,
+                onTap: () {
+                  GoRouter.of(context)
+                      .push("/student/forum/editPost/${post.postID}");
+                },
+              ),
+            if (isMyPost || userViewModel.role == ROLE_ADMIN)
+              OptionItem(
+                icon: Icons.delete_outline_rounded,
+                label: 'Delete Post',
+                color: Colors.red.shade600,
+                onTap: () {
+                  confirmDelete(post.postID!);
+                },
+              ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildPostCard(
@@ -308,8 +409,7 @@ class _ForumPageState extends State<ForumPage> {
                       CircleAvatar(
                         radius: 25,
                         backgroundImage: NetworkImage(
-                          forumViewModel
-                                  .userMap[post.creator]?.profileImage ??
+                          forumViewModel.userMap[post.creator]?.profileImage ??
                               "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                         ),
                         backgroundColor: Colors.grey,
@@ -319,8 +419,10 @@ class _ForumPageState extends State<ForumPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            forumViewModel.userMap[post.creator]?.name ??
-                                "unknown",
+                            isMyPost
+                                ? '${forumViewModel.userMap[post.creator]?.name} (You)'
+                                : forumViewModel.userMap[post.creator]?.name ??
+                                    "unknown",
                             style: GoogleFonts.fredoka(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

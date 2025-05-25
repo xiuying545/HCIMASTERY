@@ -58,7 +58,7 @@ class ProfilePicture extends UIComponent {
           text: '',
           color: Colors.orange,
           x: 150,
-          y: 120,
+          y: 50,
           width: 120,
           height: 120,
         );
@@ -158,7 +158,7 @@ class Name extends UIComponent {
           fontSize: 20,
           color: const Color(0xFFF26722),
           x: 40,
-          y: 250,
+          y: 200,
           width: 320,
           isEditable: true,
         );
@@ -185,8 +185,8 @@ class Bio extends UIComponent {
           text: 'A developer',
           fontSize: 10,
           color: const Color(0xFFFABD42),
-          x: 120,
-          y: 330,
+          x: 40,
+          y: 300,
           width: 320,
           isEditable: true,
         );
@@ -214,7 +214,7 @@ class ContactInfo extends UIComponent {
           fontSize: 25,
           color: const Color(0xffEEEEEE),
           x: 40,
-          y: 450,
+          y: 400,
           width: 320,
           isEditable: true,
         );
@@ -242,7 +242,7 @@ class EditProfile extends UIComponent {
           fontSize: 18,
           color: Color(0xFFF26722),
           x: 100,
-          y: 50,
+          y: 550,
           width: 200,
           isEditable: true,
         );

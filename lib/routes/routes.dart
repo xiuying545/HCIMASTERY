@@ -50,8 +50,8 @@ GoRouter router() {
           //   return const Homepage();
           // }
               //  return  SignInScreen();
-          return  DesignChallengesPage();
-          // return  const StudentNavBar(bottomIndex: 1,);
+          // return  FixTheUIGame();
+          return const StudentNavBar(bottomIndex: 1,);
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   CoffeeGame();

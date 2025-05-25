@@ -1,300 +1,286 @@
+// FixTheUIGame - Spot Heuristic Violations (Product Page Scenario - Revised)
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() => runApp(FixTheUIGame());
+void main() => runApp(const FixTheUIGame());
 
 class FixTheUIGame extends StatelessWidget {
+  const FixTheUIGame({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FixUIChallengeScreen(),
+      theme: ThemeData(
+        textTheme: GoogleFonts.fredokaTextTheme(),
+        scaffoldBackgroundColor: const Color(0xFFFFF8F0),
+      ),
+      home: const HeuristicChallengeScreen(),
     );
   }
 }
 
-class FixUIChallengeScreen extends StatefulWidget {
-  @override
-  _FixUIChallengeScreenState createState() => _FixUIChallengeScreenState();
+class HeuristicViolation {
+  final Rect area;
+  final String heuristic;
+  final String explanation;
+
+  HeuristicViolation({
+    required this.area,
+    required this.heuristic,
+    required this.explanation,
+  });
 }
 
-class _FixUIChallengeScreenState extends State<FixUIChallengeScreen> {
+class HeuristicChallengeScreen extends StatefulWidget {
+  const HeuristicChallengeScreen({super.key});
+
+  @override
+  State<HeuristicChallengeScreen> createState() => _HeuristicChallengeScreenState();
+}
+
+class _HeuristicChallengeScreenState extends State<HeuristicChallengeScreen> {
   int score = 0;
-  String feedbackText = '';
-  String userInput = '';
-  int currentLevel = 0;
 
-  final List<String> levels = ['label', 'back', 'feedback'];
-  final Map<String, String> prompts = {
-    'label': "The button says 'Do it'. Suggest a better label.",
-    'back': "The back button says 'Go'. Suggest a clearer label.",
-    'feedback': "There's no confirmation after submission. Suggest a feedback message.",
-  };
+  final List<HeuristicViolation> violations = [
+    HeuristicViolation(
+      area: Rect.fromLTWH(30, 100, 330, 60),
+      heuristic: 'Match between system and real world',
+      explanation: '“Popular” is vague. Use terms like “Bestsellers” that better match user expectations.',
+    ),
+    HeuristicViolation(
+      area: Rect.fromLTWH(30, 180, 330, 60),
+      heuristic: 'Consistency and standards',
+      explanation: 'Search icon looks like a microphone. Use standard magnifying glass icon.',
+    ),
+    HeuristicViolation(
+      area: Rect.fromLTWH(30, 270, 160, 160),
+      heuristic: 'Visibility of system status',
+      explanation: 'There is no visual feedback when adding an item to cart.',
+    ),
+    HeuristicViolation(
+      area: Rect.fromLTWH(200, 270, 160, 160),
+      heuristic: 'Error prevention',
+      explanation: 'Adding item to cart has no undo or confirmation.',
+    ),
+    HeuristicViolation(
+      area: Rect.fromLTWH(0, 480, 390, 60),
+      heuristic: 'Recognition rather than recall',
+      explanation: 'The active page is not indicated in the bottom navigation bar.',
+    ),
+  ];
 
-  final Map<String, String> hints = {
-    'label': 'e.g., Confirm Order',
-    'back': 'e.g., Back to Cart',
-    'feedback': 'e.g., Order placed successfully!'
-  };
+  final List<String> heuristics = [
+    'Visibility of system status',
+    'Match between system and real world',
+    'User control and freedom',
+    'Consistency and standards',
+    'Error prevention',
+    'Recognition rather than recall',
+  ];
 
-  void showFixDialog(String issueType) {
-    userInput = '';
+  final Set<Rect> resolvedAreas = {};
+
+  void handleTap(Offset position) {
+    for (var v in violations) {
+      if (v.area.contains(position) && !resolvedAreas.contains(v.area)) {
+        _showHeuristicDialog(v);
+        return;
+      }
+    }
+  }
+
+  void _showHeuristicDialog(HeuristicViolation violation) {
+    String? selected;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text("🛠 Fix the Issue", style: GoogleFonts.fredoka()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(prompts[issueType] ?? 'Suggest an improvement.',
-                style: GoogleFonts.fredoka()),
-            SizedBox(height: 12),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: hints[issueType] ?? 'Your suggestion',
-              ),
-              onChanged: (value) => userInput = value,
-            ),
-            SizedBox(height: 8),
-            TextButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("💡 Hint: ${hints[issueType]}"),
-                    backgroundColor: Colors.orange[200],
-                  ),
-                );
-              },
-              icon: Icon(Icons.lightbulb_outline),
-              label: Text("Need a hint?", style: GoogleFonts.fredoka()),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              evaluateInput(issueType);
-            },
-            child: Text("Submit", style: GoogleFonts.fredoka()),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text("Which heuristic rule is violated?"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: heuristics.map((rule) {
+              return RadioListTile<String>(
+                title: Text(rule),
+                value: rule,
+                groupValue: selected,
+                onChanged: (value) => setState(() => selected = value),
+              );
+            }).toList(),
           ),
-        ],
-      ),
-    );
-  }
-
-  void evaluateInput(String issueType) {
-    String input = userInput.toLowerCase();
-    String feedback;
-    bool isCorrect = false;
-
-    switch (issueType) {
-      case 'label':
-        isCorrect = input.contains("confirm") || input.contains("submit") || input.contains("place order");
-        break;
-      case 'back':
-        isCorrect = input.contains("back") || input.contains("return") || input.contains("cart");
-        break;
-      case 'feedback':
-        isCorrect = input.contains("success") || input.contains("placed") || input.contains("completed");
-        break;
-    }
-
-    if (input.trim().isEmpty) {
-      feedback = "⚠️ Oops! You didn’t enter anything. Try again! 😊";
-    } else if (isCorrect) {
-      feedback = "🎯 Nailed it! That’s a much better UX choice! 🎉";
-      score++;
-      goToNextLevel();
-    } else {
-      feedback = "🤔 Hmm… maybe try something clearer or more user-friendly? 💡";
-    }
-
-    setState(() => feedbackText = feedback);
-  }
-
-  void goToNextLevel() {
-    if (currentLevel < levels.length - 1) {
-      setState(() {
-        currentLevel++;
-        feedbackText = '';
-      });
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => SummaryScreen(score: score)),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String issue = levels[currentLevel];
-
-    return Scaffold(
-      backgroundColor: Color(0xFFFFF3E0),
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
-        title: Text("🎯 Fix the UI Challenge - Level ${currentLevel + 1}",
-            style: GoogleFonts.fredoka()),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LinearProgressIndicator(
-              value: (currentLevel + 1) / levels.length,
-              backgroundColor: Colors.orange[100],
-              color: Colors.deepOrange,
-            ),
-            SizedBox(height: 24),
-            Text("🛒 Mock Checkout UI:",
-                style: GoogleFonts.fredoka(
-                    fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16),
-            Container(
-              padding: EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                  )
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text("Enter your shipping address",
-                      style: GoogleFonts.fredoka()),
-                  SizedBox(height: 24),
-
-                  if (issue == 'label')
-                    GestureDetector(
-                      onTap: () => showFixDialog('label'),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text("Do it", style: GoogleFonts.fredoka()),
-                      ),
-                    ),
-
-                  if (issue == 'back')
-                    GestureDetector(
-                      onTap: () => showFixDialog('back'),
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text("Go", style: GoogleFonts.fredoka()),
-                      ),
-                    ),
-
-                  if (issue == 'feedback')
-                    GestureDetector(
-                      onTap: () => showFixDialog('feedback'),
-                      child: Container(
-                        height: 40,
-                        color: Colors.orange[100],
-                        alignment: Alignment.center,
-                        child: Text("(Imagine feedback should appear here)",
-                            style: GoogleFonts.fredoka()),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-            Text("💬 Feedback:",
-                style: GoogleFonts.fredoka(
-                    fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.all(12),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.yellow[100],
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 4)
-                ],
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.lightbulb_outline, color: Colors.orange),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      feedbackText.isEmpty
-                          ? "💡 Tap on the highlighted UI element to suggest an improvement."
-                          : feedbackText,
-                      style: GoogleFonts.fredoka(fontSize: 15),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacer(),
-            Center(
-              child: Text("🏆 Score: $score",
-                  style: GoogleFonts.fredoka(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _showResultDialog(selected == violation.heuristic, violation);
+                if (selected == violation.heuristic) {
+                  setState(() {
+                    score++;
+                    resolvedAreas.add(violation.area);
+                  });
+                }
+              },
+              child: const Text("Submit"),
             )
           ],
         ),
       ),
     );
   }
-}
 
-class SummaryScreen extends StatelessWidget {
-  final int score;
-
-  const SummaryScreen({required this.score});
+  void _showResultDialog(bool correct, HeuristicViolation violation) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(correct ? '✅ Correct!' : '❌ Incorrect'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(violation.explanation, style: const TextStyle(height: 1.5)),
+            const SizedBox(height: 12),
+            Text('This violates the heuristic: ${violation.heuristic}',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFFFF3E0),
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
-        title: Text("🎉 Summary", style: GoogleFonts.fredoka()),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onTapDown: (details) => handleTap(details.localPosition),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.deepOrange,
+          title: const Text("Fix the UI: Product Page"),
+        ),
+        body: Stack(
           children: [
-            Icon(Icons.emoji_events, color: Colors.green, size: 80),
-            SizedBox(height: 16),
-            Text("Well done!",
-                style: GoogleFonts.fredoka(
-                    fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 12),
-            Text("You fixed $score out of 3 issues!",
-                style: GoogleFonts.fredoka(fontSize: 18)),
-            SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => FixUIChallengeScreen()),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
+            const Positioned(
+              left: 30,
+              top: 20,
+              child: Text("🛍️ Product Page (Tap what's wrong):",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            // FilterTabs with unclear label
+            Positioned(
+              left: 30,
+              top: 100,
+              child: Container(
+                width: 330,
+                height: 60,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade100,
                   borderRadius: BorderRadius.circular(20),
                 ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text("Popular"),
+                    Text("New"),
+                    Text("All"),
+                  ],
+                ),
               ),
-              child:
-                  Text("Play Again", style: GoogleFonts.fredoka(fontSize: 16)),
+            ),
+            // SearchBar with wrong icon
+            Positioned(
+              left: 30,
+              top: 180,
+              child: Container(
+                width: 330,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: const Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Icon(Icons.mic), // Wrong icon for search
+                    ),
+                    Text("Type here")
+                  ],
+                ),
+              ),
+            ),
+            // Product Card - no feedback
+            Positioned(
+              left: 30,
+              top: 270,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: const Center(child: Text("👕 T-Shirt - \$20")),
+              ),
+            ),
+            // Product Card - no undo
+            Positioned(
+              left: 200,
+              top: 270,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: const Center(child: Text("👟 Shoes - \$40")),
+              ),
+            ),
+            // Bottom Navigation - no highlight
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 60,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black26, blurRadius: 4),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(Icons.home, color: Colors.grey),
+                    Icon(Icons.shopping_cart, color: Colors.grey),
+                    Icon(Icons.person, color: Colors.grey),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 70,
+              left: 20,
+              child: Text("Score: $score/5",
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange)),
             )
           ],
         ),
