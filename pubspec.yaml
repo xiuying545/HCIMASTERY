@@ -133,7 +133,7 @@ flutter:
   - assets/Game/searchbar.png
   - assets/Game/bottomnavbar.png
   - assets/Game/productcardalign.png
-  # - assets/Game/overlapping.png
+  - assets/Game/overlapping.png
 
 
 

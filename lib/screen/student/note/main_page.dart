@@ -27,8 +27,6 @@ class _MainPageState extends State<MainPage> {
     Icons.menu_book,
   ];
 
-
-
   @override
   void initState() {
     noteViewModel = Provider.of<NoteViewModel>(context, listen: false);
@@ -72,7 +70,7 @@ class _MainPageState extends State<MainPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hi, Evelyn 👋',
+            'Good Day 👋',
             style: GoogleFonts.fredoka(
               color: const Color(0xff2c2c2c),
               fontSize: 28,
@@ -129,78 +127,79 @@ class _MainPageState extends State<MainPage> {
                   itemBuilder: (context, index) {
                     Chapter chapter = viewModel.chapters[index];
                     return GestureDetector(
-      onTap: () => GoRouter.of(context).push('/student/notelist/${chapter.chapterID}'),
-      child: Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Color(0xffFDF7FA),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: pastelColors[index % pastelColors.length]
-                                 ,
-                              borderRadius: BorderRadius.circular(12),
+                      onTap: () => GoRouter.of(context)
+                          .push('/student/notelist/${chapter.chapterID}'),
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Color(0xffFDF7FA),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                            child: Icon(
-                              icons[index % icons.length],
-                              color: Colors.white,
-                              size: 28,
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color:
+                                    pastelColors[index % pastelColors.length],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                icons[index % icons.length],
+                                color: Colors.white,
+                                size: 28,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  chapter.chapterName,
-                                  style: GoogleFonts.fredoka(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xff2c2c2c),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                // Text(
-                                //   '${viewModel.noteCount[chapter.chapterID]} lessons',
-                                //   style: GoogleFonts.poppins(
-                                //     fontSize: 14,
-                                //     color: Colors.grey[600],
-                                //   ),
-                                // ),
-                                const SizedBox(height: 6),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: LinearProgressIndicator(
-                                    value: viewModel.progressMap[
-                                            chapter.chapterID] ??
-                                        0,
-                                    backgroundColor: Colors.grey[200],
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      pastelColors[
-                                          index % pastelColors.length],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    chapter.chapterName,
+                                    style: GoogleFonts.fredoka(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xff2c2c2c),
                                     ),
-                                    minHeight: 8,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 4),
+                                  // Text(
+                                  //   '${viewModel.noteCount[chapter.chapterID]} lessons',
+                                  //   style: GoogleFonts.poppins(
+                                  //     fontSize: 14,
+                                  //     color: Colors.grey[600],
+                                  //   ),
+                                  // ),
+                                  const SizedBox(height: 6),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: LinearProgressIndicator(
+                                      value: viewModel
+                                              .progressMap[chapter.chapterID] ??
+                                          0,
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        pastelColors[
+                                            index % pastelColors.length],
+                                      ),
+                                      minHeight: 8,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-      ),
                     );
                   },
                 ),
@@ -212,6 +211,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
 class CustomBanner extends StatelessWidget {
   final String title;
   final String imagePath;

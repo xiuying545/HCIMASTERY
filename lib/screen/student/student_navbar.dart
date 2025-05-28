@@ -30,10 +30,10 @@ class _StudentNavBar extends State<StudentNavBar> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserViewModel>(context, listen: false)
-          .setUserId("7Q1VrD4dMXY03yTY2bUgcq9kNwf1");
+          .setUserId("vw1191mSPVMjTgiYAvNooST9IKv1");
       Provider.of<UserViewModel>(context, listen: false).role = "Student";
       Provider.of<UserViewModel>(context, listen: false)
-          .loadUser("7Q1VrD4dMXY03yTY2bUgcq9kNwf1");
+          .loadUser("vw1191mSPVMjTgiYAvNooST9IKv1");
     });
   }
 

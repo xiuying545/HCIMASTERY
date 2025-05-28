@@ -262,15 +262,15 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                   chapterName: chapterName,
                   notes: [],
                 );
-                  if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Chapter added successfully!',
-                      style: AppTheme.snackBarText),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            }
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Chapter added successfully!',
+                          style: AppTheme.snackBarText),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
                 await Provider.of<NoteViewModel>(context, listen: false)
                     .addChapter(chapter);
               }
@@ -314,11 +314,11 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
             'Are you sure you want to delete this chapter? This action cannot be undone.',
         action: 'Alert',
         onConfirm: () async {
-          await Provider.of<NoteViewModel>(context, listen: false)
-              .deleteChapter(chapter.chapterID!);
           Navigator.of(context).pop();
 
-          if (mounted) {
+          await Provider.of<NoteViewModel>(context, listen: false)
+              .deleteChapter(chapter.chapterID!);
+                        if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Chapter deleted successfully!',
@@ -332,74 +332,4 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
     );
   }
 
-  Widget _buildBanner() {
-    return Container(
-      width: double.infinity,
-      height: 180,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade800, Colors.blue.shade500],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.shade200,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 30,
-            left: 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Manage your notes\nthrough\nHCI Mastery",
-                    style: AppTheme.h3Style.copyWith(
-                      color: Colors.white,
-                      height: 1.3,
-                    )),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 10),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    "Explore",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade900,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: -10,
-            right: -20,
-            child: Image.asset(
-              'assets/Animation/chapter.png',
-              width: 200,
-              height: 200,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

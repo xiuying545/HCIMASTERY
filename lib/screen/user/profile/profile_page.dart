@@ -1,5 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
@@ -30,6 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadProfile() async {
+          StorageHelper.clearAll();
     if (userViewModel.userId != null) {
       await userViewModel.loadUser(userViewModel.userId!);
     } else {
@@ -54,8 +56,9 @@ class _ProfilePageState extends State<ProfilePage> {
         content: 'Are you sure you want to logout?',
         action: 'Alert',
         onConfirm: () {
+           _logout();
           Navigator.of(context).pop();
-          _logout();
+       
         },
       ),
     );

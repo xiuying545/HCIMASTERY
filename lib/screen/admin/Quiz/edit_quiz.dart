@@ -69,7 +69,7 @@ class _EditQuizPageState extends State<EditQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Maximum of 4 options allowed.')),
+        const SnackBar(content: Text('Maximum of 4 options allowed.'), backgroundColor: Colors.red),
       );
     }
   }
@@ -84,7 +84,7 @@ class _EditQuizPageState extends State<EditQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Minimum of 2 options required.')),
+        const SnackBar(content: Text('Minimum of 2 options required.'), backgroundColor: Colors.red),
       );
     }
   }
@@ -159,13 +159,13 @@ class _EditQuizPageState extends State<EditQuizPage> {
           widget.chapterId, widget.quizId, updatedQuiz);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz updated successfully!')),
+        const SnackBar(content: Text('Quiz updated successfully!'), backgroundColor: Colors.green),
       );
       GoRouter.of(context).pop();
     } catch (e) {
       print('Error updating quiz: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update quiz.')),
+        const SnackBar(content: Text('Failed to update quiz.'), backgroundColor: Colors.red,),
       );
     } finally {
       setState(() {

@@ -112,10 +112,10 @@ class _NoteListPageState extends State<NoteListPage> {
                       children: [
                         Positioned(
                           top: 50,
-                          right: 50,
+                          left: MediaQuery.of(context).size.width*0.15,
                           child: Image.asset(
                             'assets/Animation/book.png',
-                            width:  MediaQuery.of(context).size.height * 0.5,
+                            width:  MediaQuery.of(context).size.width * 0.75,
                             height: MediaQuery.of(context).size.height * 0.35,
                           ),
                         ),

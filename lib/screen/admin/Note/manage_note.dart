@@ -22,7 +22,7 @@ class ManageNotePage extends StatefulWidget {
 class _ManageNotePage extends State<ManageNotePage> {
   late String chapterName;
   late NoteViewModel noteViewModel;
-     bool isLoading = true; 
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -31,13 +31,12 @@ class _ManageNotePage extends State<ManageNotePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchNoteData();
     });
-    
   }
 
   Future<void> fetchNoteData() async {
     await noteViewModel.fetchNotesForChapter(widget.chapterId);
-         setState(() {
-      isLoading = false;  
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -61,7 +60,7 @@ class _ManageNotePage extends State<ManageNotePage> {
         title: chapterName,
       ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
-        if (model.isLoading||isLoading) {
+        if (model.isLoading || isLoading) {
           return const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -277,20 +276,20 @@ class _ManageNotePage extends State<ManageNotePage> {
         action: 'Delete',
         onConfirm: () async {
           Navigator.of(context).pop();
-          await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
 
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Note deleted successfully!',
-                    style: AppTheme.snackBarText),
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+
+          await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Note deleted successfully!',
+                  style: AppTheme.snackBarText),
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-            );
-          }
+            ),
+          );
         },
       ),
     );

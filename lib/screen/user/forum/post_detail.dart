@@ -132,18 +132,16 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 const SizedBox(height: 8),
                                 // Scrollable Replies List
                                 SizedBox(
-                                  height: constraints.maxHeight * 0.45,
-                                  child: Expanded(
+                                  height: constraints.maxHeight * 0.5,
+                              child: Expanded(
                                     child: ValueListenableBuilder<List<Reply>>(
                                         valueListenable: repliesNotifier,
                                         builder: (context, replies, _) {
                                           return ListView.builder(
-                                            itemCount: post.replies.length,
+                                            itemCount: replies.length,
                                             itemBuilder: (context, index) {
                                               var reply = replies[index];
-                                              bool isMyReply =
-                                                  post.replies[index].creator ==
-                                                      userViewModel.userId;
+                                           final isMyReply = reply.creator == userViewModel.userId;
                                               return InkWell(
                                                   onLongPress: () =>
                                                       _showReplyOptionsBottomSheet(
@@ -245,7 +243,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                             },
                                           );
                                         }),
-                                  ),
+                                  
+                                )
                                 )
                               ],
                             ),
@@ -667,9 +666,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   'Are you sure you want to delete this reply? This action cannot be undone.',
               action: 'Alert',
               onConfirm: () {
-                Navigator.of(context).pop();
-                repliesNotifier.value = List.from(repliesNotifier.value)
+                            repliesNotifier.value = List.from(repliesNotifier.value)
                   ..removeAt(index);
+                Navigator.of(context).pop();
+    
                 forumViewModel.deleteReply(post.postID!, index);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fyp1/common/common_widget/custom_input_field.dart';
@@ -52,14 +54,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
         userViewModel.saveUser(user);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Successful!')),
+          const SnackBar(
+              content: Text('Registration Successful!'),
+              backgroundColor: Colors.green),
         );
 
         // Navigate to the Sign In screen
-        context.go('/signin');
+         GoRouter.of(context).push('/signin');
+      
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Registration Failed')),
+          SnackBar(
+              content: Text(e.message ?? 'Registration Failed'),
+              backgroundColor: Colors.red),
         );
       } finally {
         setState(() {

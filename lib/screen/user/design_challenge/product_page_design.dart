@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/design_challenge/components_product.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
@@ -16,6 +18,7 @@ class _ProductDesignChallengePage
     extends DesignChallengeUIState<ProductDesignChallengePage> {
   OverlayEntry? overlayEntry;
   bool showOverlay = false;
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +82,7 @@ class _ProductDesignChallengePage
             ),
             _buildNavItem(
               icon: Icons.auto_awesome_rounded,
-              label: 'Help',
+              label: 'Guide',
               onTap: () => showTutorial(),
             ),
             _buildNavItem(
@@ -349,13 +352,21 @@ class _ProductDesignChallengePage
       });
     }
 
-    // if (_hasOverlap(components)) {
-    //   feedbackList.add({
-    //     "text":
-    //         "⚠️ Some components are overlapping. Please ensure each element has enough spacing and doesn't cover another.",
-    //     "image": "assets/Game/overlapping.png"
-    //   });
-    // }
+    if (checkLayoutIssue(components) == LayoutIssue.overlap) {
+      feedbackList.add({
+        "text":
+            "⚠️ Some components are overlapping. Please ensure each element has enough spacing and doesn't cover another.",
+        "image": "assets/Game/overlapping.png"
+      });
+    }
+
+    if (!_hasConsistentSpacing(components)) {
+      feedbackList.add({
+        'text':
+            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+        'image': 'assets/Game/spacing.png',
+      });
+    }
 
     if (feedbackList.isEmpty) {
       feedbackList.add({
@@ -404,49 +415,62 @@ class _ProductDesignChallengePage
     return true;
   }
 
-  bool _hasOverlap(List<UIComponent> components) {
-    for (int i = 0; i < components.length; i++) {
-      final a = components[i];
-      final aLeft = a.x;
-      final aTop = a.y;
-      final aRight = a.x + a.width;
-      final aBottom = a.y + a.height;
 
-      for (int j = i + 1; j < components.length; j++) {
-        final b = components[j];
-        final bLeft = b.x;
-        final bTop = b.y;
-        final bRight = b.x + b.width;
-        final bBottom = b.y + b.height;
+bool _hasConsistentSpacing(List<UIComponent> components) {
+  const spacingTolerance = 10.0;
 
-        // Check overlap
-        final bool isOverlapping = !(aRight < bLeft ||
-            aLeft > bRight ||
-            aBottom < bTop ||
-            aTop > bBottom);
+  // 1) Group your product cards into rows
+  final productCards = components.where((c) => c.type == 'ProductCard').toList();
+  final List<List<UIComponent>> rows = _groupByRow(productCards);
 
-        if (isOverlapping) return true;
-      }
-    }
-    return false;
+  // Debug: print each row’s components
+  for (var i = 0; i < rows.length; i++) {
+    final coords = rows[i]
+        .map((c) => '${c.type}@(${c.x.toStringAsFixed(1)},${c.y.toStringAsFixed(1)})')
+        .join(', ');
+    print('Row $i components: [$coords]');
   }
 
-  // bool _hasConsistentSpacing(List<UIComponent> components) {
-  //   const spacingTolerance = 10.0;
-  //   for (var row in _groupByRow(components)) {
-  //     final sorted = row..sort((a, b) => a.x.compareTo(b.x));
-  //     final gaps = <double>[];
-  //     for (int i = 1; i < sorted.length; i++) {
-  //       gaps.add(sorted[i].x - sorted[i - 1].x);
-  //     }
-  //     if (gaps.isEmpty) continue;
-  //     final avgGap = gaps.reduce((a, b) => a + b) / gaps.length;
-  //     if (!gaps.every((gap) => (gap - avgGap).abs() <= spacingTolerance)) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
+  // 2) Treat each other component instance as its own “row”
+  for (final type in ['SearchBarUI', 'FilterTabs', 'BottomNavBar']) {
+    for (final comp in components.where((c) => c.type == type)) {
+      rows.add([comp]);
+      print('Added standalone row for $type at (${comp.x}, ${comp.y})');
+    }
+  }
+
+  // 3) Compute vertical bounds for each row
+  final List<Map<String, double>> bounds = rows.map((row) {
+    final tops    = row.map((c) => c.y);
+    final bottoms = row.map((c) => c.y + c.height);
+    final top = tops.reduce(min);
+    final bottom = bottoms.reduce(max);
+    return {
+      'top':    top,
+      'bottom': bottom,
+    };
+  }).toList();
+
+  // Debug: print bounds for each row
+  for (var i = 0; i < bounds.length; i++) {
+    print('Bounds $i → top: ${bounds[i]['top']}, bottom: ${bounds[i]['bottom']}');
+  }
+
+  // 4) Check vertical gap between each adjacent pair of rows
+  for (var i = 0; i < bounds.length - 1; i++) {
+    final bottomOfCurrent = bounds[i]['bottom']!;
+    final topOfNext       = bounds[i + 1]['top']!;
+    final gap = topOfNext - bottomOfCurrent;
+    print('Gap between row $i and row ${i + 1}: $gap (tolerance: $spacingTolerance)');
+    if (gap < spacingTolerance) {
+      print('→ Gap of $gap is less than tolerance: returning false');
+      return false;
+    }
+  }
+
+  print('All gaps are ≥ $spacingTolerance: returning true');
+  return true;
+}
 
   List<List<UIComponent>> _groupByRow(List<UIComponent> components) {
     components.sort((a, b) => a.y.compareTo(b.y));
@@ -492,6 +516,53 @@ class _ProductDesignChallengePage
       if (!col.contains(comp)) col.add(comp);
     }
     return cols;
+  }
+
+  LayoutIssue checkLayoutIssue(List<UIComponent> components) {
+    for (int i = 0; i < components.length; i++) {
+      final a = components[i];
+      final aLeft = a.x;
+      final aTop = a.y;
+      final aRight = a.x + a.width;
+      final aBottom = a.y + a.height;
+
+      for (int j = i + 1; j < components.length; j++) {
+        final b = components[j];
+        final bLeft = b.x;
+        final bTop = b.y;
+        final bRight = b.x + b.width;
+        final bBottom = b.y + b.height;
+
+        print('── Comparing A[$i] vs B[$j] ──');
+        print('A[$i] → left:$aLeft, top:$aTop, right:$aRight, bottom:$aBottom');
+        print('A[$i] → width:${a.width}, height:${a.height}');
+        print('B[$j] → left:$bLeft, top:$bTop, right:$bRight, bottom:$bBottom');
+        print('B[$j] → width:${b.width}, height:${b.height}');
+
+        final bool isOverlapping = !(aRight < bLeft ||
+            aLeft > bRight ||
+            aBottom < bTop ||
+            aTop > bBottom);
+
+        final bool overCanvas = a.x >= 0 &&
+            a.y >= 0 &&
+            a.x + a.width <= canvasWidth &&
+            a.y + a.height <= canvasHeight;
+
+        print('Overlap? $isOverlapping\n');
+
+        if (!overCanvas) {
+          return LayoutIssue.overCanvas;
+        }
+
+        if (isOverlapping) {
+          print('>>> Overlap detected between index $i and $j <<<');
+          return LayoutIssue.overlap;
+        }
+      }
+    }
+    print('No overlaps found among ${components.length} components.');
+    return LayoutIssue.none;
   }
 
   void showTutorial() {

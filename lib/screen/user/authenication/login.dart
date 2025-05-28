@@ -105,7 +105,7 @@ class _SignInScreenState extends State<SignInScreen> {
   void _showSnackBar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+          .showSnackBar(SnackBar(content: Text(message),backgroundColor: Colors.red));
     }
   }
 

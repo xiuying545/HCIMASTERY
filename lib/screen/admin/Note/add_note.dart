@@ -115,12 +115,12 @@ class _AddNotePage extends State<AddNotePage> {
       LoadingDialog.hide(context);
       GoRouter.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Note added successfully!')),
+        const SnackBar(content: Text('Note added successfully!'),   backgroundColor: Colors.green),
       );
     } catch (e) {
       print('Error uploading note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add note.')),
+        const SnackBar(content: Text('Failed to add note.'),   backgroundColor: Colors.red),
       );
     }
   }

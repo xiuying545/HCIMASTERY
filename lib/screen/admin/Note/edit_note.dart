@@ -66,7 +66,9 @@ class _EditNotePageState extends State<EditNotePage> {
     } catch (e) {
       print('Error fetching note data: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load note data.')),
+        const SnackBar(
+            content: Text('Failed to load note data.'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -143,14 +145,18 @@ class _EditNotePageState extends State<EditNotePage> {
       await noteViewModel.updateNote(widget.chapterId, updatedNote);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Note updated successfully!')),
+        const SnackBar(
+            content: Text('Note updated successfully!'),
+            backgroundColor: Colors.green),
       );
 
       GoRouter.of(context).pop();
     } catch (e) {
       print('Error updating note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update note.')),
+        const SnackBar(
+            content: Text('Failed to update note.'),
+            backgroundColor: Colors.red),
       );
     }
   }

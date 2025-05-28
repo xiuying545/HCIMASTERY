@@ -14,203 +14,206 @@ class DeleteAccountPage extends StatefulWidget {
 
 class _DeleteAccountPageState extends State<DeleteAccountPage> {
   final TextEditingController _passwordController = TextEditingController();
-void _onDeletePressed() async {
-  if (_passwordController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please enter your password."),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-    return;
-  }
-
-  try {
-    final user = FirebaseAuth.instance.currentUser!;
-    final cred = EmailAuthProvider.credential(
-      email: user.email!,
-      password: _passwordController.text.trim(),
-    );
-
-    // Attempt reauthentication
-    await user.reauthenticateWithCredential(cred);
-
-    // Delete user from database
-    await Provider.of<UserViewModel>(context, listen: false).deleteUser();
-    await user.delete();
-
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        backgroundColor: const Color(0xFFFFF6E6),
-        title: const Center(
-          child: Text(
-            "GoodBye",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2A4F4F),
-            ),
-          ),
-        ),
-        content: const Text(
-          "Your account has been deleted.\nHope to see you next time! 😊",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFF2A4F4F),
-            height: 1.5,
-          ),
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Color(0xFFF16D5D),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            onPressed: () => GoRouter.of(context).go("/signin"),
-            child: const Text(
-              "OK",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  } on FirebaseAuthException catch (e) {
-    print (e.code);
-    if (e.code == 'invalid-credential') {
+  void _onDeletePressed() async {
+    if (_passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Incorrect password. Please try again."),
-          behavior: SnackBarBehavior.floating,
-        ),
+            content: Text("Please enter your password."),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red),
       );
-    } else {
-          print (e.code);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Something went wrong. Please try again."),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      return;
     }
-  } 
-}
+
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final cred = EmailAuthProvider.credential(
+        email: user.email!,
+        password: _passwordController.text.trim(),
+      );
+
+      // Attempt reauthentication
+      await user.reauthenticateWithCredential(cred);
+
+      // Delete user from database
+      await Provider.of<UserViewModel>(context, listen: false).deleteUser();
+      await user.delete();
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: const Color(0xFFFFF6E6),
+          title: const Center(
+            child: Text(
+              "GoodBye",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2A4F4F),
+              ),
+            ),
+          ),
+          content: const Text(
+            "Your account has been deleted.\nHope to see you next time! 😊",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              color: Color(0xFF2A4F4F),
+              height: 1.5,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Color(0xFFF16D5D),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              onPressed: () => GoRouter.of(context).go("/signin"),
+              child: const Text(
+                "OK",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      if (e.code == 'invalid-credential') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Incorrect password. Please try again."),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red),
+        );
+      } else {
+        print(e.code);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Something went wrong. Please try again."),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFDBE72),
-      body:   Stack(
-          children: [
-                Positioned(
-              top: 40,
-              left: 16,
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+      body: Stack(
+        children: [
+          Positioned(
+            top: 40,
+            left: 16,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              decoration: BoxDecoration(
+                color: Color(0xffFFECB3),
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Delete Account",
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF2A4F4F),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Image.asset("assets/Animation/sadBear.png", height: 200),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Sorry to let you go.\nHope to see you next time!",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 17,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    style:
+                        TextStyle(color: Color(0xFF2A4F4F)), // Deep green text
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                      hintStyle: TextStyle(
+                        color: Color(0xFF2A4F4F),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      filled: true,
+                      fillColor:
+                          Color(0xFFFFF6E6), // Soft pastel cream background
+                      prefixIcon:
+                          Icon(Icons.lock_outline, color: Color(0xFF2A4F4F)),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide:
+                            BorderSide(color: Color(0xFF2A4F4F), width: 1.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide:
+                            BorderSide(color: Color(0xFF2A4F4F), width: 2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _onDeletePressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffF16D5D),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text(
+                        "Delete",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-      
-      Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          decoration: BoxDecoration(
-            color: Color(0xffFFECB3),
-            borderRadius: BorderRadius.circular(32),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Delete Account",
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF2A4F4F),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Image.asset("assets/Animation/sadBear.png", height: 200),
-              const SizedBox(height: 16),
-              Text(
-                "Sorry to let you go.\nHope to see you next time!",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 17,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                style: TextStyle(color: Color(0xFF2A4F4F)), // Deep green text
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  hintStyle: TextStyle(
-                    color: Color(0xFF2A4F4F),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  filled: true,
-                  fillColor: Color(0xFFFFF6E6), // Soft pastel cream background
-                  prefixIcon:
-                      Icon(Icons.lock_outline, color: Color(0xFF2A4F4F)),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide:
-                        BorderSide(color: Color(0xFF2A4F4F), width: 1.5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: Color(0xFF2A4F4F), width: 2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _onDeletePressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xffF16D5D),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text(
-                    "Delete",
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
+        ],
       ),
-      ],),
     );
   }
 }

@@ -22,7 +22,6 @@ class _NotePageState extends State<NotePage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,7 @@ class _NotePageState extends State<NotePage> {
       currentNote = noteViewModel.notes
           .firstWhere((note) => note.noteID == widget.noteID);
     });
-    
+
     if (currentNote.videoLink != null && currentNote.videoLink!.isNotEmpty) {
       _youtubeControllers = currentNote.videoLink!.map((link) {
         return YoutubePlayerController(
@@ -60,7 +59,6 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +67,6 @@ class _NotePageState extends State<NotePage> {
         title: currentNote.title,
       ),
       body: _buildNoteContent(),
-    
     );
   }
 
@@ -89,19 +86,19 @@ class _NotePageState extends State<NotePage> {
               decoration: BoxDecoration(
                 color: Color(0xffFDF6EC),
                 borderRadius: BorderRadius.circular(8),
-               
               ),
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Images Section with Carousel
-                  if (currentNote.images != null && currentNote.images!.isNotEmpty)
+                  if (currentNote.images != null &&
+                      currentNote.images!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: 200,
+                          height: 350,
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: [
@@ -109,42 +106,99 @@ class _NotePageState extends State<NotePage> {
                                 controller: _pageController,
                                 itemCount: currentNote.images!.length,
                                 onPageChanged: (index) {
-                                  setState(() {
-                                    _currentPage = index;
-                                  });
+                                  setState(() => _currentPage = index);
                                 },
                                 itemBuilder: (context, index) {
+                                  final imageUrl = currentNote.images![index];
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        currentNote.images![index],
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress.expectedTotalBytes != null
-                                                  ? loadingProgress.cumulativeBytesLoaded /
-                                                      loadingProgress.expectedTotalBytes!
-                                                  : null,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => Dialog(
+                                              backgroundColor: Colors.black,
+                                              insetPadding: EdgeInsets.zero,
+                                              child: Stack(
+                                                children: [
+                                                  InteractiveViewer(
+                                                    panEnabled: true,
+                                                    minScale: 0.5,
+                                                    maxScale: 4.0,
+                                                    child: Center(
+                                                      child: Image.network(
+                                                        imageUrl,
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return const Icon(
+                                                            Icons.error,
+                                                            color: Colors.red,
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 40,
+                                                    right: 20,
+                                                    child: IconButton(
+                                                      icon: const Icon(
+                                                        Icons.close,
+                                                        color: Colors.white,
+                                                        size: 30,
+                                                      ),
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Container(
-                                            color: Colors.grey[200],
-                                            child: const Icon(Icons.broken_image, size: 50),
-                                          );
-                                        },
+                                        child: Image.network(
+                                          imageUrl,
+                                          height: 350,
+                                          fit: BoxFit.contain,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              color: Colors.grey[200],
+                                              child: const Icon(
+                                                Icons.broken_image,
+                                                size: 50,
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
                                   );
                                 },
                               ),
+
                               // Dot indicators
                               if (currentNote.images!.length > 1)
                                 Padding(
@@ -153,13 +207,14 @@ class _NotePageState extends State<NotePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: List.generate(
                                       currentNote.images!.length,
-                                      (index) => Container(
+                                      (i) => Container(
                                         width: 8,
                                         height: 8,
-                                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 4),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: _currentPage == index
+                                          color: _currentPage == i
                                               ? Colors.blue.shade900
                                               : Colors.grey.withOpacity(0.4),
                                         ),
@@ -170,7 +225,6 @@ class _NotePageState extends State<NotePage> {
                             ],
                           ),
                         ),
-                    
                       ],
                     ),
                   const SizedBox(height: 16),
@@ -205,7 +259,7 @@ class _NotePageState extends State<NotePage> {
                           style: GoogleFonts.merriweather(
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
-                             color: Color(0xff4E3C36),
+                            color: Color(0xff4E3C36),
                           ),
                         ),
                         TextSpan(
@@ -213,7 +267,7 @@ class _NotePageState extends State<NotePage> {
                           style: GoogleFonts.merriweather(
                             fontSize: 16,
                             color: Color(0xff4E3C36),
-                            height: 1.6, 
+                            height: 1.6,
                           ),
                         ),
                       ],
@@ -226,7 +280,8 @@ class _NotePageState extends State<NotePage> {
           const SizedBox(height: 24),
 
           // YouTube Video Player Section
-          if (currentNote.videoLink != null && currentNote.videoLink!.isNotEmpty)
+          if (currentNote.videoLink != null &&
+              currentNote.videoLink!.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

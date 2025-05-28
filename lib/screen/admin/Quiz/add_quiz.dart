@@ -45,7 +45,7 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Maximum of 4 options allowed.')),
+        const SnackBar(content: Text('Maximum of 4 options allowed.'), backgroundColor: Colors.red,),
       );
     }
   }
@@ -60,7 +60,7 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Minimum of 2 options required.')),
+        const SnackBar(content: Text('Minimum of 2 options required.'), backgroundColor: Colors.red,),
       );
     }
   }
@@ -142,14 +142,14 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz added successfully!')),
+        const SnackBar(content: Text('Quiz added successfully!'), backgroundColor: Colors.green,),
       );
 
       GoRouter.of(context).pop();
     } catch (e) {
       print('Error uploading quiz: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add quiz.')),
+        const SnackBar(content: Text('Failed to add quiz.'), backgroundColor: Colors.red,),
       );
     } finally {
       setState(() {

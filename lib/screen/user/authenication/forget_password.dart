@@ -24,7 +24,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       await FirebaseAuth.instance.sendPasswordResetEmail(
         email: _emailController.text.trim(),
       );
-      _showSnackBar("Password reset email sent. Check your inbox.");
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Password reset email sent. Check your inbox"),
+            backgroundColor: Colors.green));
+      }
+
       if (mounted) {
         GoRouter.of(context).go('/signIn'); // Navigate back to sign-in page
       }
@@ -49,13 +55,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       default:
         message = 'Failed to send password reset email. Please try again.';
     }
-    _showSnackBar(message);
-  }
-
-  void _showSnackBar(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.red));
     }
   }
 

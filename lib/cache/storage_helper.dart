@@ -18,4 +18,8 @@ class StorageHelper {
   static Future<void> remove(String key) async {
     await _prefs?.remove(key);
   }
+
+   static Future<void> clearAll() async {
+    await _prefs?.clear();
+  }
 }

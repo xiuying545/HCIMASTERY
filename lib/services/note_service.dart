@@ -208,6 +208,16 @@ class ChapterService {
         await doc.reference.delete();
       }
 
+      QuerySnapshot quizSnapshot = await _db
+          .collection('Chapters')
+          .doc(chapterID)
+          .collection('Quizzes')
+          .get();
+
+      for (var doc in quizSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
       // Then delete the chapter itself
       await _db.collection('Chapters').doc(chapterID).delete();
       print('Chapter deleted with ID: $chapterID');

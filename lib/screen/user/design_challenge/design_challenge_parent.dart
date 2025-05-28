@@ -7,6 +7,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'components_profile.dart';
 
+enum LayoutIssue {
+  none,
+  overlap,
+  noGap,
+  overCanvas,
+}
+
 abstract class DesignChallengeUIState<T extends StatefulWidget>
     extends State<T> {
   List<UIComponent> components = [];
@@ -160,39 +167,39 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
   }
 
   TargetContent buildTutorialContent(String step, String message,
-    {ContentAlign contentAlign = ContentAlign.bottom}) {
-  return TargetContent(
-    align: contentAlign,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF2A0), 
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            step,
-            style: GoogleFonts.comicNeue(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+      {ContentAlign contentAlign = ContentAlign.bottom}) {
+    return TargetContent(
+      align: contentAlign,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF2A0),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              step,
+              style: GoogleFonts.comicNeue(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            message,
-            style: GoogleFonts.indieFlower(
-              color: Colors.black,
-              fontSize: 20,
+            const SizedBox(height: 6),
+            Text(
+              message,
+              style: GoogleFonts.indieFlower(
+                color: Colors.black,
+                fontSize: 20,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Future<void> editComponent2(int index) async {
     UIComponent comp = components[index];
@@ -508,4 +515,5 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
       );
     });
   }
+
 }

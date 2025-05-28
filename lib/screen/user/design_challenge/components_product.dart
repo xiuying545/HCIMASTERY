@@ -46,7 +46,6 @@ class _ProductCardWidget extends StatelessWidget {
 
     return Container(
       width: screenWidth * 0.4,
-      margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFFFDEB8),
@@ -105,7 +104,7 @@ class SearchBarUI extends UIComponent {
 
     return wrapWithSizeUpdater(Container(
       width: screenWidth * 0.9,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -160,7 +159,7 @@ class FilterTabs extends UIComponent {
 
   Widget _buildTab(String label, Color color, bool selected) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       decoration: BoxDecoration(
         color: selected ? color : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(20),

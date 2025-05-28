@@ -45,7 +45,9 @@ class UserViewModel extends BaseViewModel {
   Future<void> deleteUser() async {
     await tryFunction(() async {
       await _userService.deleteUser(_userId!);
+      StorageHelper.clearAll();
       _user = null;
+
     });
   }
 
@@ -55,12 +57,8 @@ class UserViewModel extends BaseViewModel {
       _userId = null;
       _user = null;
       role = null;
-      notifyListeners();
+      StorageHelper.clearAll();
     });
-    //redirect to sign in page
-    final currentContext = navigatorKey.currentContext;
-    if (currentContext != null) {
-      Future.microtask(() => GoRouter.of(currentContext).go('/signIn'));
-    }
+  
   }
 }

@@ -40,7 +40,7 @@ import 'package:go_router/go_router.dart';
 GoRouter router() {
   return GoRouter(
     initialLocation: '/',
-     navigatorKey: navigatorKey,
+    navigatorKey: navigatorKey,
     routes: [
       GoRoute(
         path: '/',
@@ -49,40 +49,39 @@ GoRouter router() {
           // if (firebaseUser != null) {
           //   return const Homepage();
           // }
-              //  return  SignInScreen();
+          //  return  SignInScreen();
           // return  FixTheUIGame();
-          return const StudentNavBar(bottomIndex: 1,);
+          return const AdminNavBar(
+            bottomIndex: 0,
+          );
           // return ErrorPage(errorMessage: "hey",);
           // return  DesignChallengesPage();
           // return   CoffeeGame();
-            // return  const ProductDesignChallengePage();
+          // return  const ProductDesignChallengePage();
           // return ProfileDesignChallengePage();
-                      // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
+          // return ManageNotePage(chapterId: "CtGwccnQVc38I9UeX5cb");
         },
         //  builder: (context, state) {
         //     final chapterId = "1tVIMjWSBHWuKDGQLWIA";
-            // return ManageNotesPage(chapterId: "1tVIMjWSBHWuKDGQLWIA");
+        // return ManageNotesPage(chapterId: "1tVIMjWSBHWuKDGQLWIA");
         //   }
       ),
 
-
-       GoRoute(
+      GoRoute(
         path: '/practicalExercise/coffeegame',
         builder: (context, state) => const CoffeeGame(),
       ),
 
-             GoRoute(
+      GoRoute(
         path: '/deleteAccount',
         builder: (context, state) => const DeleteAccountPage(),
       ),
 
-
-                   GoRoute(
+      GoRoute(
         path: '/practicalExercise/productgame',
         builder: (context, state) => const ProductDesignChallengePage(),
       ),
-      
-      
+
       GoRoute(
         path: '/admin/addNote/:chapterId',
         builder: (context, state) {
@@ -90,9 +89,9 @@ GoRouter router() {
           return AddNotePage(chapterId: chapterId);
         },
       ),
-       GoRoute(
+      GoRoute(
         path: '/practicalExercise/profilePage',
-           builder: (context, state) => const ProfileDesignChallengePage(),
+        builder: (context, state) => const ProfileDesignChallengePage(),
       ),
       GoRoute(
         path: '/admin/manageNote/:chapterId',
@@ -173,9 +172,9 @@ GoRouter router() {
         path: '/register',
         builder: (context, state) => const SignUpScreen(),
       ),
-        GoRoute(
+      GoRoute(
         path: '/error',
-        builder: (context, state) =>  const ErrorPage(),
+        builder: (context, state) => const ErrorPage(),
       ),
 
       GoRoute(
