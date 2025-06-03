@@ -330,8 +330,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF3f5fd7),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF3f5fd7),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(Icons.send,
@@ -361,7 +361,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         ),
         child: Material(
           borderRadius: BorderRadius.circular(20),
-          color: Color(0xFFFFFFFFF),
+          color: const Color(0xfffffffff),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

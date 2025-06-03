@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class QuizAnswerService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  
-
   /// ✅ Save or Update Multiple Quiz Answers at Once
-  Future<void> saveMultipleQuizAnswers(String userID, String chapterID, Map<String, dynamic> quizAnswers) async {
+  Future<void> saveMultipleQuizAnswers(
+      String userID, String chapterID, Map<String, dynamic> quizAnswers) async {
     try {
       // // Add timestamp and merge the new answers
       // quizAnswers['updatedAt'] = FieldValue.serverTimestamp();
@@ -17,8 +15,8 @@ class QuizAnswerService {
           .doc(userID)
           .collection('Chapters')
           .doc(chapterID)
-          .set(quizAnswers, SetOptions(merge: true)); 
-print("hey:: $quizAnswers");
+          .set(quizAnswers, SetOptions(merge: true));
+      print("hey:: $quizAnswers");
       print('Multiple quiz answers saved successfully.');
     } catch (e) {
       print('Error saving multiple quiz answers: $e');
@@ -26,7 +24,8 @@ print("hey:: $quizAnswers");
   }
 
   /// ✅ Get a Single Quiz Answer
-  Future<int?> getQuizAnswer(String userID, String chapterID, String quizID) async {
+  Future<int?> getQuizAnswer(
+      String userID, String chapterID, String quizID) async {
     try {
       DocumentSnapshot doc = await _firestore
           .collection('QuizAnswer')
@@ -49,7 +48,8 @@ print("hey:: $quizAnswers");
   }
 
   /// ✅ Get All Answers in a Chapter
-  Future<Map<String, int>> getChapterAnswers(String userID, String chapterID) async {
+  Future<Map<String, int>> getChapterAnswers(
+      String userID, String chapterID) async {
     try {
       DocumentSnapshot doc = await _firestore
           .collection('QuizAnswer')
@@ -72,6 +72,25 @@ print("hey:: $quizAnswers");
     }
   }
 
+  Future<void> deleteAllAnswersForUser(String userID) async {
+    try {
+      final chapterDocs = await _firestore
+          .collection('QuizAnswer')
+          .doc(userID)
+          .collection('Chapters')
+          .get();
+
+      for (var doc in chapterDocs.docs) {
+        await doc.reference.delete();
+      }
+
+      await _firestore.collection('QuizAnswer').doc(userID).delete();
+
+      print('Deleted all quiz answers for user $userID.');
+    } catch (e) {
+      print('Error deleting all quiz answers for user: $e');
+    }
+  }
 
 // Future<double> calculateScore(String chapter, String userId) async {
 //   QuizService quizService = QuizService();
@@ -79,11 +98,11 @@ print("hey:: $quizAnswers");
 //   int correctAnswers = 0;
 
 //   for (int i = 0; i < quizzes.length; i++) {
-  
-//     if (quizzes[i].quizzID != null) { 
+
+//     if (quizzes[i].quizzID != null) {
 //       String quizid = quizzes[i].quizzID!;
-//       int? userAnswer = await getUserAnswer(userId, chapter, quizid); 
-     
+//       int? userAnswer = await getUserAnswer(userId, chapter, quizid);
+
 //       if (userAnswer != null && quizzes[i].answer == userAnswer) {
 //         correctAnswers++;
 
@@ -91,11 +110,6 @@ print("hey:: $quizAnswers");
 //     }
 //   }
 
-//   return (correctAnswers/quizzes.length)*100; 
+//   return (correctAnswers/quizzes.length)*100;
 // }
-
-
-
-
-
 }

@@ -1,7 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/cache/storage_helper.dart';
-import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/common/common_widget/helpers.dart';
@@ -76,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFF9F0),
+      backgroundColor: const Color(0xFFFFF9F0),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -201,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             icon: Icons.logout,
                             label: "Logout",
                             onTap: () => _showLogoutConfirmation(),
-                            color: Color(0xffEA7A84),
+                            color: const Color(0xffEA7A84),
                             context: context),
                         const SizedBox(width: 16),
                         buildRoundedButton(
@@ -211,7 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               GoRouter.of(context).push(
                                   "/editProfile/${userViewModel.userId!}");
                             },
-                            color: Color(0xffF79F3C),
+                            color: const Color(0xffF79F3C),
                             context: context),
                       ],
                     ),

@@ -314,4 +314,254 @@ class ChapterService {
       return null;
     }
   }
+
+  Future<void> addHCIMasteryChaptersContent() async {
+  final ChapterService chapterService = ChapterService();
+
+  // ---------------------- Bab 1 ----------------------
+  Chapter bab1 = Chapter(
+    chapterName: 'Bab 1: Asas Reka Bentuk Interaksi',
+    notes: [
+      Note(
+        title: 'Topik 1.1: Apakah Itu Reka Bentuk Interaksi?',
+        content: '''
+Reka bentuk interaksi ialah proses mencipta pengalaman pengguna yang membolehkan mereka berinteraksi dengan produk seperti aplikasi, laman web atau sistem.
+
+Contoh aplikasi:
+- WhatsApp: Hantar mesej hanya dengan satu klik.
+- Instagram: Mudah untuk menyukai dan berkongsi gambar.
+
+Reka bentuk yang baik membantu pengguna dari pelbagai lapisan umur dan kemahiran teknologi.''',
+        order: 0,
+      ),
+      Note(
+        title: 'Topik 1.2: Lima Prinsip Reka Bentuk Interaksi',
+        content: '''
+1. Konsistensi – Susun atur tidak berubah-ubah.
+2. Pemerhatian – Fungsi mudah dikenali walaupun pertama kali guna.
+3. Boleh Dipelajari – Senang digunakan walaupun sekali guna.
+4. Menjangka – Pengguna tahu apa yang akan berlaku selepas klik.
+5. Maklum Balas – Aplikasi beri respon selepas tindakan pengguna.
+
+Contoh: WhatsApp, Facebook, TikTok.''',
+        order: 1,
+      ),
+      Note(
+        title: 'Topik 1.3: Keperluan Interaksi Manusia dan Komputer',
+        content: '''
+Interaksi penting kerana:
+- Permintaan pasaran yang tinggi
+- Meningkatkan produktiviti
+- Mengurangkan kos pembangunan dan pembaikan
+
+Contoh: Ikon folder digital = folder fizikal di pejabat.''',
+        order: 2,
+      ),
+    ],
+  );
+
+  await chapterService.addChapter(bab1);
+
+  // ---------------------- Bab 2 ----------------------
+  Chapter bab2 = Chapter(
+    chapterName: 'Bab 2: Reka Bentuk Skrin dan Penilaian Produk',
+    notes: [
+      Note(
+        title: 'Topik 2.1: Proses Reka Bentuk Interaksi',
+        content: '''
+Langkah-langkah:
+1. Mengenal pasti keperluan pengguna
+2. Membangun reka bentuk alternatif
+3. Membina prototaip
+4. Menjalankan penilaian
+
+Contoh aplikasi: Program Mengira Dua Nombor untuk murid.''',
+        order: 0,
+      ),
+      Note(
+        title: 'Topik 2.2: Penghasilan Prototaip Paparan Skrin',
+        content: '''
+Prototaip = gambaran awal produk.
+
+Boleh dihasilkan atas kertas atau perisian seperti Java NetBeans. Gunakan warna pastel, butang mesra pengguna dan tajuk jelas.''',
+        order: 1,
+      ),
+      Note(
+        title: 'Topik 2.3: Penilaian Kuantitatif dan Penambahbaikan',
+        content: '''
+Guna soal selidik Ya/Tidak atau Skala Likert.
+
+Contoh: 95.1% pengguna puas hati dengan Program Mengira Dua Nombor.
+
+Penambahbaikan seperti menukar warna dan susun atur disarankan.''',
+        order: 2,
+      ),
+    ],
+  );
+
+  await chapterService.addChapter(bab2);
+}
+
+Future<void> predefinedQuizzes() async {
+  List<Quiz> predefinedQuizList = [
+    // ✅ BAB 1: Asas Reka Bentuk Interaksi (ID: EKQFdEhoLcutidZuRBBX)
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Apakah tujuan utama antara muka pengguna (UI)?',
+      options: [
+        'Untuk melakukan pengiraan',
+        'Untuk mengurus sumber sistem',
+        'Untuk memudahkan interaksi pengguna dengan sistem',
+        'Untuk menyimpan data'
+      ],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Yang manakah contoh antara muka baris arahan?',
+      options: ['Microsoft Word', 'Terminal', 'Adobe Photoshop', 'Pelayar Web'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Apa maksud “maklum balas” dalam HCI?',
+      options: [
+        'Tindak balas pengguna terhadap sistem',
+        'Tindak balas sistem terhadap tindakan pengguna',
+        'Cadangan reka bentuk daripada pengguna',
+        'Hasil ujian pengguna'
+      ],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Prinsip manakah menekankan kepelbagaian keperluan pengguna?',
+      options: ['Kebolehgunaan', 'Kebolehcapaian', 'Pengalaman pengguna', 'Faktor manusia'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Apa itu wireframe dalam reka bentuk UI?',
+      options: [
+        'Gambaran visual penuh antara muka',
+        'Pelan awal antara muka secara ringkas',
+        'Reka bentuk akhir aplikasi',
+        'Prototaip yang digunakan untuk ujian pengguna'
+      ],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Jenis ujian manakah melibatkan pemerhatian terhadap pengguna sebenar?',
+      options: ['Ujian unit', 'Ujian integrasi', 'Ujian kebolehgunaan', 'Ujian sistem'],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Apakah maksud “beban kognitif”?',
+      options: [
+        'Jumlah maklumat yang boleh diproses oleh pengguna',
+        'Usaha fizikal untuk menggunakan sistem',
+        'Kesukaran belajar antara muka baharu',
+        'Masa yang diambil untuk melengkapkan tugas'
+      ],
+      answer: 0,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Apa itu “model mental” dalam HCI?',
+      options: [
+        'Gambaran pengguna tentang bagaimana sistem berfungsi',
+        'Reka bentuk fizikal sistem',
+        'Struktur dalaman sistem',
+        'Dokumentasi sistem perisian'
+      ],
+      answer: 0,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Prinsip manakah memastikan fungsi penting mudah dicapai?',
+      options: ['Hierarki', 'Kebolehlihatan', 'Afodans', 'Konsistensi'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "EKQFdEhoLcutidZuRBBX",
+      question: 'Cara biasa untuk meningkatkan pengalaman pengguna ialah?',
+      options: [
+        'Menambah kerumitan sistem',
+        'Kurangkan maklum balas pengguna',
+        'Permudahkan navigasi',
+        'Hadkan pilihan pengguna'
+      ],
+      answer: 2,
+    ),
+
+    // ✅ BAB 2: Reka Bentuk Skrin dan Penilaian Produk (Tukar ID sebenar di bawah!)
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Apakah langkah pertama dalam proses reka bentuk interaksi?',
+      options: ['Bina prototaip', 'Bangunkan elemen UI', 'Ujian pengguna', 'Kenal pasti keperluan pengguna'],
+      answer: 3,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Kaedah manakah digunakan untuk mendapatkan maklum balas awal pengguna?',
+      options: ['Debugging', 'Tinjauan atau temu bual', 'Ujian unit', 'Pengekodan'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Apakah tujuan lakaran reka bentuk alternatif?',
+      options: ['Untuk mengelirukan pengguna', 'Untuk tambah masa pembangunan', 'Untuk teroka pelbagai idea reka bentuk', 'Untuk finalkan UI'],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Contoh prototaip berketepatan rendah ialah...',
+      options: ['Laman web interaktif', 'Aplikasi siap kod', 'Lakaran atas kertas', 'Animasi 3D'],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Apakah yang perlu ada dalam prototaip kalkulator?',
+      options: ['Skema pangkalan data', 'Butang Reset dan Keluar', 'Sistem log masuk', 'Tetapan firewall'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Apakah yang diukur dalam penilaian kuantitatif?',
+      options: ['Suka pengguna', 'Warna UI', 'Metrik statistik kebolehgunaan', 'Animasi UI'],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Mengapa maklum balas pengguna penting selepas ujian prototaip?',
+      options: ['Untuk lancar awal', 'Untuk baiki isu reka bentuk', 'Untuk kecilkan saiz aplikasi', 'Untuk tambah ciri tidak berkaitan'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Yang manakah BUKAN komponen paparan UI?',
+      options: ['Medan input', 'Butang keluar', 'Suis elektrik', 'Menu operasi'],
+      answer: 2,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Platform manakah digunakan untuk hasilkan UI dalam Java?',
+      options: ['Flutter', 'NetBeans', 'Visual Basic', 'Python IDLE'],
+      answer: 1,
+    ),
+    Quiz(
+      chapter: "UYTe8nJ8BKVv6Rq2D3Yu",
+      question: 'Berapa orang pengguna yang menilai “Program Mengira Dua Nombor”?',
+      options: ['5', '15', '20', '25'],
+      answer: 3,
+    ),
+  ];
+
+  for (Quiz quiz in predefinedQuizList) {
+    await addQuizToChapter(quiz.chapter, quiz);
+  }
+}
+
 }

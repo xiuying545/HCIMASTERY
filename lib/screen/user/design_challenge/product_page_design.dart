@@ -38,7 +38,7 @@ class _ProductDesignChallengePage
             top: 40,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
               onPressed: () {
                 if (showOverlay) {
                   _toggleOverlay();
@@ -589,7 +589,7 @@ bool _hasConsistentSpacing(List<UIComponent> components) {
               ]),
         ],
         skipWidget: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
+          padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(

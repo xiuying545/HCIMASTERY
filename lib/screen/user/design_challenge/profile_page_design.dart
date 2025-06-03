@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
@@ -53,7 +52,7 @@ class _ProfileDesignChallengePageState
             top: 40,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -70,8 +69,8 @@ class _ProfileDesignChallengePageState
     return Container(
       height: 90,
       decoration: BoxDecoration(
-        color: Color(0xFFF48C8C), // Soft coral pink
-        borderRadius: BorderRadius.only(
+        color: const Color(0xFFF48C8C), // Soft coral pink
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(40),
           topRight: Radius.circular(40),
         ),
@@ -79,7 +78,7 @@ class _ProfileDesignChallengePageState
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
             blurRadius: 10,
-            offset: Offset(0, -4),
+            offset: const Offset(0, -4),
           ),
         ],
       ),
@@ -117,10 +116,10 @@ class _ProfileDesignChallengePageState
           color: Colors.white,
           size: 30,
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -144,7 +143,7 @@ class _ProfileDesignChallengePageState
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         decoration: BoxDecoration(
-          color: isActive ? Color(0xFFA2D2FF) : Colors.transparent,
+          color: isActive ? const Color(0xFFA2D2FF) : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
           border: isActive
               ? Border.all(
@@ -164,7 +163,7 @@ class _ProfileDesignChallengePageState
             const SizedBox(height: 6),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -369,7 +368,7 @@ class _ProfileDesignChallengePageState
               ]),
         ],
         skipWidget: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
+          padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(

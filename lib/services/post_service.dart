@@ -105,7 +105,6 @@ class PostService {
 
 
 Future<String> addPost(Post post) async {
-
   final DocumentReference docRef = await _firestore.collection('Forum').add({
     'title': post.title,
     'content': post.content,

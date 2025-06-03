@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -69,10 +68,10 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFFDF5),
+      backgroundColor: const Color(0xFFFFFDF5),
       body: Column(
         children: [
-          SizedBox(height: 45),
+          const SizedBox(height: 45),
           // Custom Tab Buttons
           Container(
             padding: const EdgeInsets.all(16.0),
@@ -87,7 +86,7 @@ class _ForumPageState extends State<ForumPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        showMyPosts ? Color(0xFFFFF6EE) : Color(0xff6C9FF6),
+                        showMyPosts ? const Color(0xFFFFF6EE) : const Color(0xff6C9FF6),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -99,7 +98,7 @@ class _ForumPageState extends State<ForumPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? Color(0xff475569) : Colors.white,
+                      color: showMyPosts ? const Color(0xff475569) : Colors.white,
                     ),
                   ),
                 ),
@@ -111,7 +110,7 @@ class _ForumPageState extends State<ForumPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        showMyPosts ? Color(0xff6C9FF6) : Color(0xFFFFF6EE),
+                        showMyPosts ? const Color(0xff6C9FF6) : const Color(0xFFFFF6EE),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -123,7 +122,7 @@ class _ForumPageState extends State<ForumPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? Colors.white : Color(0xff475569),
+                      color: showMyPosts ? Colors.white : const Color(0xff475569),
                     ),
                   ),
                 ),
@@ -163,7 +162,7 @@ class _ForumPageState extends State<ForumPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        backgroundColor: Color(0xFF5E9FEF),
+        backgroundColor: const Color(0xFF5E9FEF),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -381,7 +380,7 @@ class _ForumPageState extends State<ForumPage> {
         ),
         child: Material(
           borderRadius: BorderRadius.circular(20),
-          color: Color(0xFFF7F9FC),
+          color: const Color(0xFFF7F9FC),
           child: InkWell(
             onTap: () {
               if (post.postID != null) {
@@ -503,7 +502,7 @@ class _ForumPageState extends State<ForumPage> {
                         icon: Icon(
                           isLiked ? Icons.favorite : Icons.favorite_border,
                           color: isLiked
-                              ? Color(0xffFF6B6B)
+                              ? const Color(0xffFF6B6B)
                               : const Color(0xFF757575),
                         ),
                         onPressed: () async {

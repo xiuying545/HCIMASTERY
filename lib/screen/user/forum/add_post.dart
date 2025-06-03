@@ -111,7 +111,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       });
       LoadingDialog.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post created successfully!')),
+        const SnackBar(content: Text('Post created successfully!'),backgroundColor: Colors.green),
       );
 
       GoRouter.of(context).pop();
@@ -119,7 +119,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       print('Error uploading post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Failed to create post. Please try again.')),
+            content: Text('Failed to create post. Please try again.'),backgroundColor: Colors.red),
       );
     }
   }
@@ -132,17 +132,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
         appBar: const AppBarWithBackBtn(
           title: 'Create Post',
         ),
-        backgroundColor: Color(0xffDDF4FF),
+        backgroundColor: const Color(0xffDDF4FF),
         body: Padding(
           padding: const EdgeInsets.all(22.0),
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Color(0xFFFFF9F1),
+                color: const Color(0xFFFFF9F1),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: Color(0xFFB5E5F4),
+                  color: const Color(0xFFB5E5F4),
                   width: 2.5,
                 ),
               ),
@@ -155,7 +155,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff2D7D84),
+                      color: const Color(0xff2D7D84),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -167,23 +167,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       border: InputBorder.none,
                       hintText: "Enter post title",
                       hintStyle: GoogleFonts.poppins(
-                        color: Color(0xFF7C6F64),
+                        color: const Color(0xFF7C6F64),
                         fontSize: 16,
                       ),
                       filled: true,
-                      fillColor: Color(0xFFFFF9F1),
+                      fillColor: const Color(0xFFFFF9F1),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFECE7D9),
                           width: 1.5,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFD9CFC2),
                           width: 2,
                         ),
@@ -207,7 +207,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff2D7D84),
+                      color: const Color(0xff2D7D84),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -221,10 +221,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           border:
-                              Border.all(color: Color(0xff2D7D84), width: 2),
+                              Border.all(color: const Color(0xff2D7D84), width: 2),
                         ),
                         child: Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: Image.asset("assets/Animation/upload.png")),
                       ),
                     ),
@@ -273,7 +273,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff2D7D84),
+                      color: const Color(0xff2D7D84),
                     ),
                   ),
 
@@ -286,23 +286,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       border: InputBorder.none,
                       hintText: "Enter post content",
                       hintStyle: GoogleFonts.poppins(
-                        color: Color(0xFF7C6F64),
+                        color: const Color(0xFF7C6F64),
                         fontSize: 16,
                       ),
                       filled: true,
-                      fillColor: Color(0xFFFFF9F1),
+                      fillColor: const Color(0xFFFFF9F1),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFECE7D9),
                           width: 1.5,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFD9CFC2),
                           width: 2,
                         ),
@@ -325,7 +325,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     child: ElevatedButton(
                       onPressed: _uploadPost,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFF58C6C),
+                        backgroundColor: const Color(0xFFF58C6C),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 14),
                         shape: RoundedRectangleBorder(

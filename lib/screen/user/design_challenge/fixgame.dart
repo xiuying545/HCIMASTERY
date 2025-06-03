@@ -44,27 +44,27 @@ class _HeuristicChallengeScreenState extends State<HeuristicChallengeScreen> {
 
   final List<HeuristicViolation> violations = [
     HeuristicViolation(
-      area: Rect.fromLTWH(30, 100, 330, 60),
+      area: const Rect.fromLTWH(30, 100, 330, 60),
       heuristic: 'Match between system and real world',
       explanation: '“Popular” is vague. Use terms like “Bestsellers” that better match user expectations.',
     ),
     HeuristicViolation(
-      area: Rect.fromLTWH(30, 180, 330, 60),
+      area: const Rect.fromLTWH(30, 180, 330, 60),
       heuristic: 'Consistency and standards',
       explanation: 'Search icon looks like a microphone. Use standard magnifying glass icon.',
     ),
     HeuristicViolation(
-      area: Rect.fromLTWH(30, 270, 160, 160),
+      area: const Rect.fromLTWH(30, 270, 160, 160),
       heuristic: 'Visibility of system status',
       explanation: 'There is no visual feedback when adding an item to cart.',
     ),
     HeuristicViolation(
-      area: Rect.fromLTWH(200, 270, 160, 160),
+      area: const Rect.fromLTWH(200, 270, 160, 160),
       heuristic: 'Error prevention',
       explanation: 'Adding item to cart has no undo or confirmation.',
     ),
     HeuristicViolation(
-      area: Rect.fromLTWH(0, 480, 390, 60),
+      area: const Rect.fromLTWH(0, 480, 390, 60),
       heuristic: 'Recognition rather than recall',
       explanation: 'The active page is not indicated in the bottom navigation bar.',
     ),

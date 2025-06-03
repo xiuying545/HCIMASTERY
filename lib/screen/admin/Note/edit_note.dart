@@ -27,7 +27,7 @@ class _EditNotePageState extends State<EditNotePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   List<TextEditingController> _videoControllers = [TextEditingController()];
-  List<File> _images = [];
+  final List<File> _images = [];
   List<String> _existingImageUrls = [];
   final _picker = ImagePicker();
   late NoteViewModel noteViewModel;
@@ -270,8 +270,9 @@ class _EditNotePageState extends State<EditNotePage> {
                                           fit: BoxFit.cover,
                                           loadingBuilder: (context, child,
                                               loadingProgress) {
-                                            if (loadingProgress == null)
+                                            if (loadingProgress == null) {
                                               return child;
+                                            }
                                             return Center(
                                               child: CircularProgressIndicator(
                                                 value: loadingProgress

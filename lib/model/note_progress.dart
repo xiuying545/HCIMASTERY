@@ -12,19 +12,20 @@ class NoteProgress {
   });
 
 
- factory NoteProgress.fromJson(String progressID, Map<String, dynamic> json) {
-  return NoteProgress(
-    progressID: progressID,  
-    studentID: json['studentID'],
-    chapterID: json['chapterID'],
-    progress: Map<String, String>.from(json['progress']),
-  );
-}
+ factory NoteProgress.fromJson({
+    required String studentID,
+    required String chapterID,
+    required Map<String, dynamic> json,
+  }) {
+    return NoteProgress(
+      studentID: studentID,
+      chapterID: chapterID,
+      progress: Map<String, String>.from(json['progress'] ?? {}),
+    );
+  }
+  
   Map<String, dynamic> toJson() {
     return {
-    
-      'studentID': studentID,
-      'chapterID': chapterID,
       'progress': progress,
     };
   }

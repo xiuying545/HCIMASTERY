@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/cache/storage_helper.dart';
-import 'package:fyp1/screen/user/design_challenge/coffee_game/feedback_screen.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_A.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_B.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +9,7 @@ class CoffeeGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F4E8),
+      backgroundColor: const Color(0xFFF9F4E8),
 body: Stack(
   children: [
     // Background + content
@@ -34,16 +32,16 @@ body: Stack(
                 style: GoogleFonts.fredoka(
                   fontSize: 42,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF5A3410),
+                  color: const Color(0xFF5A3410),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Image.asset(
                 "assets/Animation/coffee.png",
                 height: 200,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Text(
                 'Try two cute coffee ordering flows and tell us which is better! ☕',
                 textAlign: TextAlign.center,
@@ -76,7 +74,7 @@ body: Stack(
                   );
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
                 ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink[200],
@@ -110,7 +108,7 @@ body: Stack(
           top: 40,
           left: 16,
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+            icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
             onPressed: () {
               Navigator.pop(context);
             },

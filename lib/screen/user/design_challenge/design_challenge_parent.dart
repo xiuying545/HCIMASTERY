@@ -1,7 +1,6 @@
 // design_challenge_ui_base.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -229,13 +228,13 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       style: GoogleFonts.fredoka(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF7C94), // Coral Pink
+                        color: const Color(0xFFFF7C94), // Coral Pink
                       ),
                     ),
                     const SizedBox(height: 24),
 
                     // Font Size Label
-                    Text(
+                    const Text(
                       'Font Size',
                       style: TextStyle(
                         fontSize: 18,
@@ -248,7 +247,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                     // Current Font Size Value
                     Text(
                       '${comp.fontSize.toInt()} pt',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         color: Color(0xFF4E4E4E),
                       ),
@@ -260,8 +259,8 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                       value: comp.fontSize.toDouble(),
                       min: 10,
                       max: 28,
-                      activeColor: Color(0xFF45C1A1), // Teal Green
-                      thumbColor: Color(0xFFFF9641), // Warm Orange
+                      activeColor: const Color(0xFF45C1A1), // Teal Green
+                      thumbColor: const Color(0xFFFF9641), // Warm Orange
                       onChanged: (value) {
                         setState(() {
                           comp.fontSize = value.toInt();
@@ -286,12 +285,12 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                     Wrap(
                       spacing: 10,
                       children: [
-                        Color(0xFFF76707),
-                        Color(0xFFF4B400),
-                        Color(0xFFA0C94F),
-                        Color(0xFF40BEB0),
-                        Color(0xFFEEEEEE),
-                        Color(0xFFA564E9),
+                        const Color(0xFFF76707),
+                        const Color(0xFFF4B400),
+                        const Color(0xFFA0C94F),
+                        const Color(0xFF40BEB0),
+                        const Color(0xFFEEEEEE),
+                        const Color(0xFFA564E9),
                       ].map((color) {
                         return GestureDetector(
                           onTap: () {
@@ -327,7 +326,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                         ElevatedButton(
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF59C3A6), // Mint Green
+                            backgroundColor: const Color(0xFF59C3A6), // Mint Green
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -348,7 +347,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF62B6FF), // Soft Blue
+                            backgroundColor: const Color(0xFF62B6FF), // Soft Blue
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(

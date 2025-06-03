@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
@@ -6,7 +5,6 @@ import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class QuizResultPage extends StatefulWidget {
@@ -98,7 +96,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF54A2E3),
         borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(image: AssetImage("assets/Animation/congratulation.png"),fit:BoxFit.contain)
+        image: const DecorationImage(image: AssetImage("assets/Animation/congratulation.png"),fit:BoxFit.contain)
       ),
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
       child: Container(
@@ -168,7 +166,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
 
      
                 context.push(
-                  '/student/quizAnswer?quizzID=${quizzID}',
+                  '/student/quizAnswer?quizzID=$quizzID',
                 );
             
             },
@@ -178,11 +176,11 @@ class _QuizResultPageState extends State<QuizResultPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 )
               ],
             ),

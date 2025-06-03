@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> {
           const SizedBox(height: 20),
           _buildHeader(),
           CustomBanner(
-            title: "Explore, Learn,\nand Master HCI",
+            title: "Explore, Learn,\nand Master HCI\nby using\nHCI Mastery",
             imagePath: 'assets/Animation/child.png',
             onPressed: () {
               // Handle banner tap
@@ -133,7 +133,7 @@ class _MainPageState extends State<MainPage> {
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Color(0xffFDF7FA),
+                          color: const Color(0xffFDF7FA),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
@@ -259,26 +259,26 @@ class CustomBanner extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: onPressed,
-                  child: Text(
-                    "Explore",
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1565C0),
-                    ),
-                  ),
-                ),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     elevation: 0,
+                //     padding:
+                //         const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                //     backgroundColor: Colors.white,
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(20),
+                //     ),
+                //   ),
+                //   onPressed: onPressed,
+                //   child: Text(
+                //     "Explore",
+                //     style: GoogleFonts.poppins(
+                //       fontSize: 15,
+                //       fontWeight: FontWeight.w600,
+                //       color: const Color(0xFF1565C0),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

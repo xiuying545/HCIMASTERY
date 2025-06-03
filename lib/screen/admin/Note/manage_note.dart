@@ -55,7 +55,7 @@ class _ManageNotePage extends State<ManageNotePage> {
         .chapterName;
 
     return Scaffold(
-      backgroundColor: Color(0xffFDF3FA),
+      backgroundColor: const Color(0xffFDF3FA),
       appBar: AppBarWithBackBtn(
         title: chapterName,
       ),

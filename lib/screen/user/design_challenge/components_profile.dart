@@ -240,7 +240,7 @@ class EditProfile extends UIComponent {
           type: 'Button',
           text: 'Edit Profile',
           fontSize: 18,
-          color: Color(0xFFF26722),
+          color: const Color(0xFFF26722),
           x: 100,
           y: 550,
           width: 200,

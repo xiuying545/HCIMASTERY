@@ -42,7 +42,7 @@ class _QuizPageState extends State<QuizPage> {
     final choices = ['A', 'B', 'C', 'D'];
 
     return Scaffold(
-      backgroundColor: Color(0xffFFF1F7),
+      backgroundColor: const Color(0xffFFF1F7),
       appBar: AppBar(
         backgroundColor: const Color(0xffFEFEFE),
         leading: IconButton(
@@ -121,7 +121,7 @@ class _QuizPageState extends State<QuizPage> {
                       style: GoogleFonts.poppins(
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xff2D2E33),
+                        color: const Color(0xff2D2E33),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -136,9 +136,9 @@ class _QuizPageState extends State<QuizPage> {
                         final isSelected =
                             quizViewModel.cachedAnswers[quizId] == index;
                         final backgroundColor =
-                            isSelected ? Color(0xffD9EBFF) : Colors.white;
+                            isSelected ? const Color(0xffD9EBFF) : Colors.white;
                         final borderColor =
-                            isSelected ? Color(0xff6EA5FF) : Colors.white;
+                            isSelected ? const Color(0xff6EA5FF) : Colors.white;
 
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(20, 5, 5, 15),
@@ -155,10 +155,10 @@ class _QuizPageState extends State<QuizPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                                 color: isSelected
-                                    ? Color(0xffD9EBFF)
+                                    ? const Color(0xffD9EBFF)
                                     : Colors.white,
                                 border: Border.all(
-                                  color: Color(0xff9DC9FF),
+                                  color: const Color(0xff9DC9FF),
                                   width: 2,
                                 ),
                                 boxShadow: [
@@ -179,7 +179,7 @@ class _QuizPageState extends State<QuizPage> {
                                      shape: BoxShape.circle, 
                                         border: Border.all(
                                           color: isSelected
-                                              ? Color(0xffD9EBFF)
+                                              ? const Color(0xffD9EBFF)
                                               : Colors.white,
                                         ),
                                         color: borderColor,
@@ -194,7 +194,7 @@ class _QuizPageState extends State<QuizPage> {
                                             fontWeight: FontWeight.bold,
                                             color: isSelected
                                            ? Colors.white
-                                                :Color(0xff1F1F1F)
+                                                :const Color(0xff1F1F1F)
                                               
                                           ),
                                         ),
@@ -209,7 +209,7 @@ class _QuizPageState extends State<QuizPage> {
                                           style: GoogleFonts.poppins(
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.w500,
-                                            color: Color(0xff1F1F1F),
+                                            color: const Color(0xff1F1F1F),
                                           ),
                                           minFontSize: 10,
                                           maxLines: 2,
@@ -241,7 +241,7 @@ class _QuizPageState extends State<QuizPage> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    Color(0xff80BFFF),
+                                    const Color(0xff80BFFF),
                                 elevation: 4,
                                 shape: const CircleBorder(),
                                 padding: const EdgeInsets.all(15),
@@ -255,7 +255,7 @@ class _QuizPageState extends State<QuizPage> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  Color(0xff80BFFF),
+                                  const Color(0xff80BFFF),
                               elevation: 4,
                               shape: const CircleBorder(),
                               padding: const EdgeInsets.all(15),

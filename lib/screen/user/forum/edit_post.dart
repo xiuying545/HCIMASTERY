@@ -27,7 +27,7 @@ class _EditPostPageState extends State<EditPostPage> {
   late UserViewModel userViewModel;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  List<File> _images = [];
+  final List<File> _images = [];
   List<String> _existingImageUrls = [];
   final _picker = ImagePicker();
   bool _isTitleEmpty = false;
@@ -54,7 +54,7 @@ class _EditPostPageState extends State<EditPostPage> {
     } catch (e) {
       print('Error loading post: $e');
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to load post.')));
+          .showSnackBar(const SnackBar(content: Text('Failed to load post.'),backgroundColor: Colors.red));
     }
   }
 
@@ -124,14 +124,14 @@ class _EditPostPageState extends State<EditPostPage> {
 
       LoadingDialog.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post updated successfully!')),
+        const SnackBar(content: Text('Post updated successfully!'),backgroundColor: Colors.green),
       );
       GoRouter.of(context).pop();
     } catch (e) {
       LoadingDialog.hide(context);
       print('Error updating post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update post.')),
+        const SnackBar(content: Text('Failed to update post.'),backgroundColor: Colors.red),
       );
     }
   }

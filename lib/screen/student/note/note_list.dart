@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
-import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/note_progress.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -104,7 +103,7 @@ class _NoteListPageState extends State<NoteListPage> {
               // Top Section (Gradient Background with Back Button)
               Stack(
                 children: [
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.35,
                     width: double.infinity,
                  
@@ -141,7 +140,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 35),
+                padding: const EdgeInsets.symmetric(horizontal: 35),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
@@ -165,7 +164,7 @@ class _NoteListPageState extends State<NoteListPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
 
                           const SizedBox(height: 10),
                           // Step Indicator for Notes

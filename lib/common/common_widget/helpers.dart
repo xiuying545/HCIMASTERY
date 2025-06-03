@@ -1,13 +1,13 @@
 
-  import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color getBubbleColor(IconData icon) {
     if (icon == Icons.person) return const Color(0xFFD8EAF7); // Name
-    if (icon == Icons.person_outline)
+    if (icon == Icons.person_outline) {
       return const Color(0xFFDDEBFB); // Username
+    }
     if (icon == Icons.phone) return const Color(0xFFE3F2DB); // Phone
     if (icon == Icons.email) return const Color(0xFFFADADA); // Email
     return const Color(0xFFF3F3F3);
@@ -15,8 +15,9 @@ Color getBubbleColor(IconData icon) {
 
   Color getIconColor(IconData icon) {
     if (icon == Icons.person) return const Color(0xFF4D7FA9); // Name
-    if (icon == Icons.person_outline)
+    if (icon == Icons.person_outline) {
       return const Color(0xFF4C6A92); // Username
+    }
     if (icon == Icons.phone) return const Color(0xFF5B8B57); // Phone
     if (icon == Icons.email) return const Color(0xFFB85667); // Email
     return Colors.black54;

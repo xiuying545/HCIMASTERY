@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/constant.dart';
-import 'package:fyp1/main.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/services/user_service.dart';
 import 'package:fyp1/view_model/base_view_model.dart';
-import 'package:go_router/go_router.dart';
 
 class UserViewModel extends BaseViewModel {
   final UserService _userService = UserService();

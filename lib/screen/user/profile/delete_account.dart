@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/view_model/note_view_model.dart';
+import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,6 +38,10 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       await user.reauthenticateWithCredential(cred);
 
       // Delete user from database
+      Provider.of<NoteViewModel>(context, listen: false)
+          .deleteNoteProgress(user.uid);
+                Provider.of<QuizViewModel>(context, listen: false)
+          .deleteQuizAnswer(user.uid);
       await Provider.of<UserViewModel>(context, listen: false).deleteUser();
       await user.delete();
 
@@ -68,7 +74,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
           actions: [
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Color(0xFFF16D5D),
+                backgroundColor: const Color(0xFFF16D5D),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -100,7 +106,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       } else {
         print(e.code);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text("Something went wrong. Please try again."),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.red),
@@ -119,7 +125,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             top: 40,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -130,7 +136,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               decoration: BoxDecoration(
-                color: Color(0xffFFECB3),
+                color: const Color(0xffFFECB3),
                 borderRadius: BorderRadius.circular(32),
               ),
               child: Column(
@@ -159,30 +165,30 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    style:
-                        TextStyle(color: Color(0xFF2A4F4F)), // Deep green text
+                    style: const TextStyle(
+                        color: Color(0xFF2A4F4F)), // Deep green text
                     decoration: InputDecoration(
                       hintText: "Password",
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         color: Color(0xFF2A4F4F),
                         fontWeight: FontWeight.w500,
                       ),
                       filled: true,
-                      fillColor:
-                          Color(0xFFFFF6E6), // Soft pastel cream background
-                      prefixIcon:
-                          Icon(Icons.lock_outline, color: Color(0xFF2A4F4F)),
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                      fillColor: const Color(
+                          0xFFFFF6E6), // Soft pastel cream background
+                      prefixIcon: const Icon(Icons.lock_outline,
+                          color: Color(0xFF2A4F4F)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 18, horizontal: 16),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide:
-                            BorderSide(color: Color(0xFF2A4F4F), width: 1.5),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF2A4F4F), width: 1.5),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide:
-                            BorderSide(color: Color(0xFF2A4F4F), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF2A4F4F), width: 2),
                       ),
                     ),
                   ),
@@ -192,7 +198,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                     child: ElevatedButton(
                       onPressed: _onDeletePressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xffF16D5D),
+                        backgroundColor: const Color(0xffF16D5D),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

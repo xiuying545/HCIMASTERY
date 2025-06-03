@@ -63,7 +63,7 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
           ),
           // Banner Section
           CustomBanner(
-            title: "Manage your notes\nthrough\nHCI Mastery",
+            title: "Manage your notes\nand quizzes\nthrough\nHCI Mastery",
             imagePath: 'assets/Animation/chapter.png',
             onPressed: () {
               // Handle the button press
@@ -315,17 +315,17 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
         action: 'Alert',
         onConfirm: () async {
           Navigator.of(context).pop();
-
-          await Provider.of<NoteViewModel>(context, listen: false)
-              .deleteChapter(chapter.chapterID!);
-                        if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Chapter deleted successfully!',
                     style: AppTheme.snackBarText),
                 backgroundColor: Colors.green,
               ),
             );
+          await Provider.of<NoteViewModel>(context, listen: false)
+              .deleteChapter(chapter.chapterID!);
+                        if (mounted) {
+          
           }
         },
       ),

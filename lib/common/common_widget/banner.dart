@@ -40,7 +40,7 @@ class CustomBanner extends StatelessWidget {
             top: 30,
             left: 20,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   title,
@@ -52,25 +52,25 @@ class CustomBanner extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: onPressed,
-                  child: Text(
-                    "Explore",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade900,
-                    ),
-                  ),
-                ),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     padding:
+                //         const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                //     backgroundColor: Colors.white,
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //   ),
+                //   onPressed: onPressed,
+                //   child: Text(
+                //     "Explore",
+                //     style: GoogleFonts.poppins(
+                //       fontSize: 14,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.blue.shade900,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

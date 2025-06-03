@@ -98,6 +98,7 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchChapters() async {
     setLoading(true);
+    // await _noteService.addHCIMasteryChaptersContent();
     _chapters = await _noteService.getChapters();
     setLoading(false);
   }
@@ -214,6 +215,12 @@ class NoteViewModel extends BaseViewModel {
     await tryFunction(() async {
       await _noteService.deleteNote(chapterID, noteID);
       await fetchNotesForChapter(chapterID, refresh: true);
+    });
+  }
+
+  Future<void> deleteNoteProgress(String userID) async {
+    await tryFunction(() async {
+      await _noteProgressService.deleteAllProgressForStudent(userID);
     });
   }
 }

@@ -36,6 +36,7 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> loadData(String chapterId) async {
+    // await _quizService.predefinedQuizzes();
     _chapterId = chapterId;
     tryFunction(() async {
       if (StorageHelper.get(USER_ID) != null) {
@@ -146,5 +147,13 @@ class QuizViewModel extends BaseViewModel {
       await fetchQuizData(chapterId, refresh: true);
     });
     notifyListeners();
+  }
+
+  
+  Future<void> deleteQuizAnswer(String userID) async {
+    await tryFunction(() async {
+      await _quizAnswerService.deleteAllAnswersForUser(userID);
+    });
+
   }
 }

@@ -41,7 +41,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFFFDF5),
+      backgroundColor: const Color(0xffFFFDF5),
       appBar: const AppBarWithBackBtn(
         title: "Question List",
       ),

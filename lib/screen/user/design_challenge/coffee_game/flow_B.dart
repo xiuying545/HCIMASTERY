@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/cache/storage_helper.dart';
-import 'package:fyp1/screen/user/design_challenge/coffee_game/explanation_page.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/feedback_screen.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_A.dart';
 
@@ -9,6 +7,7 @@ class FlowBScreen extends StatefulWidget {
 
   const FlowBScreen({super.key, this.fromFlowA = false});
 
+  @override
   _FlowBScreenState createState() => _FlowBScreenState();
 }
 
@@ -31,7 +30,7 @@ class _FlowBScreenState extends State<FlowBScreen> {
         leading: const BackButton(color: Colors.brown),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 45.0),
+        padding: const EdgeInsets.symmetric(horizontal: 45.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +126,7 @@ class _FlowBScreenState extends State<FlowBScreen> {
                           ? 'Give Feedback 💌'
                           : "Next: Flow A 🌈",
                     style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             )
           ],

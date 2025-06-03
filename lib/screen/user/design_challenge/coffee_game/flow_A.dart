@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/feedback_screen.dart';
 import 'package:fyp1/screen/user/design_challenge/coffee_game/flow_B.dart';
 
@@ -76,7 +75,7 @@ class _FlowAScreenState extends State<FlowAScreen> {
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Color(0xFFFFD6E0),
+      fillColor: const Color(0xFFFFD6E0),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),

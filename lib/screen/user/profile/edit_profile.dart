@@ -1,13 +1,8 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
-import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
-import 'package:fyp1/common/common_widget/custom_dialog.dart';
-import 'package:fyp1/common/common_widget/custom_input_field.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -254,14 +249,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               label: "Password",
                               onTap: () =>
                                   GoRouter.of(context).push("/editPassword"),
-                              color: Color(0xffEA7A84),
+                              color: const Color(0xffEA7A84),
                               context: context),
                           const SizedBox(width: 16),
                           buildRoundedButton(
                               icon: Icons.save,
                               label: "Save",
                               onTap: _saveProfile,
-                              color: Color(0xffF79F3C),
+                              color: const Color(0xffF79F3C),
                               context: context),
                         ],
                       ),
@@ -271,7 +266,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         child: ElevatedButton.icon(
                           onPressed: () =>
                               GoRouter.of(context).push("/deleteAccount"),
-                          icon: Icon(Icons.delete_forever_outlined,
+                          icon: const Icon(Icons.delete_forever_outlined,
                               color: Colors.white, size: 18),
                           label: Text(
                             "Delete Account",
@@ -281,7 +276,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 243, 102, 114),
+                            backgroundColor: const Color.fromARGB(255, 243, 102, 114),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -301,7 +296,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             top: 40,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.brown, size: 28),
+              icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -319,7 +314,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Color(0xFFFDFB),
+        color: const Color(0x00fffdfb),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [

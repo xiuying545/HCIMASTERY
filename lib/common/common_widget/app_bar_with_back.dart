@@ -27,13 +27,13 @@ class AppBarWithBackBtn extends StatelessWidget implements PreferredSizeWidget {
         child: Text(
           title,
           
-          style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color:Color(0xff2E3A46)),
+          style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(color:const Color(0xff2E3A46)),
         ),
       ),
       actions: actions,
       elevation: 2,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
 color:Color(0xffFEFEFE),
         ),
       ),

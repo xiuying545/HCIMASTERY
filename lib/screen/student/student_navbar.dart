@@ -30,10 +30,10 @@ class _StudentNavBar extends State<StudentNavBar> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserViewModel>(context, listen: false)
-          .setUserId("vw1191mSPVMjTgiYAvNooST9IKv1");
+          .setUserId("gYTqHFfLezgI5IXe7pJHjBG1EcM2");
       Provider.of<UserViewModel>(context, listen: false).role = "Student";
       Provider.of<UserViewModel>(context, listen: false)
-          .loadUser("vw1191mSPVMjTgiYAvNooST9IKv1");
+          .loadUser("gYTqHFfLezgI5IXe7pJHjBG1EcM2");
     });
   }
 
@@ -68,7 +68,7 @@ class _StudentNavBar extends State<StudentNavBar> {
             ),
           ],
         ),
-        padding: EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(vertical: 5),
           child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           child: BottomNavigationBar(
@@ -78,8 +78,8 @@ class _StudentNavBar extends State<StudentNavBar> {
             selectedFontSize: 14,
             unselectedFontSize: 12,
             iconSize: 28,
-            selectedItemColor: Color(0xFF2773C8), // 明亮蓝色
-            unselectedItemColor: Color(0xFF9CA3AF), // 柔和灰蓝
+            selectedItemColor: const Color(0xFF2773C8), // 明亮蓝色
+            unselectedItemColor: const Color(0xFF9CA3AF), // 柔和灰蓝
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             items: const [

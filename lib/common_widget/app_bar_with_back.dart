@@ -32,7 +32,7 @@ class AppBarWithBackBtn extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       elevation: 2,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
   color:Color(0xffFEFEFE),
         ),
       ),
