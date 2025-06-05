@@ -41,7 +41,7 @@ class Note {
 
 class Chapter {
   String? chapterID;
-  final String chapterName;
+   String chapterName;
   List<Note>? notes;
   List<Quiz>? quizzes;
 

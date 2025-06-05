@@ -22,6 +22,7 @@ class ChapterDetailsPage extends StatefulWidget {
 class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   late NoteViewModel noteViewModel;
   bool isLoading = true;
+  bool isActionLoading = false;
 
   @override
   void initState() {
@@ -252,16 +253,27 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   void _showAddChapterDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return InputDialog(
-            title: 'Add Chapter',
-            hintText: 'chapter name',
-            onSave: (chapterName) async {
-              if (chapterName.isNotEmpty) {
-                final chapter = Chapter(
-                  chapterName: chapterName,
-                  notes: [],
-                );
+          title: 'Add Chapter',
+          hintText: 'chapter name',
+          onSave: (chapterName) async {
+              Navigator.of(dialogContext).pop();
+            if (chapterName.isNotEmpty) {
+                 setState(() => isActionLoading = true);
+
+            showLoadingDialog(context);
+             
+
+              final chapter = Chapter(
+                chapterName: chapterName,
+                notes: [],
+              );
+
+              try {
+                await Provider.of<NoteViewModel>(context, listen: false)
+                    .addChapter(chapter);
+
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -271,10 +283,27 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                     ),
                   );
                 }
-                await Provider.of<NoteViewModel>(context, listen: false)
-                    .addChapter(chapter);
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to add chapter.',
+                          style: AppTheme.snackBarText),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              } finally {
+                if (mounted) {
+                    if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+                  setState(() => isActionLoading = false);
+                }
               }
-            });
+            }
+          },
+        );
       },
     );
   }
@@ -282,23 +311,47 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
   void _showEditChapterDialog(BuildContext context, Chapter chapter) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return InputDialog(
           title: 'Edit Chapter',
           initialValue: chapter.chapterName,
           hintText: 'new chapter name',
           onSave: (newChapterName) async {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Chapter edited successfully!',
-                      style: AppTheme.snackBarText),
-                  backgroundColor: Colors.green,
-                ),
-              );
+            Navigator.of(dialogContext).pop();
+            setState(() => isActionLoading = true);
+
+            showLoadingDialog(context);
+            try {
+              await Provider.of<NoteViewModel>(context, listen: false)
+                  .updateChapterName(chapter.chapterID!, newChapterName);
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Chapter edited successfully!',
+                        style: AppTheme.snackBarText),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to edit chapter.',
+                        style: AppTheme.snackBarText),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            } finally {
+              if (mounted) {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+                setState(() => isActionLoading = false);
+              }
             }
-            await Provider.of<NoteViewModel>(context, listen: false)
-                .updateChapterName(chapter.chapterID!, newChapterName);
           },
         );
       },
@@ -313,23 +366,67 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
         content:
             'Are you sure you want to delete this chapter? This action cannot be undone.',
         action: 'Alert',
-        onConfirm: () async {
-          Navigator.of(context).pop();
-  ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Chapter deleted successfully!',
-                    style: AppTheme.snackBarText),
-                backgroundColor: Colors.green,
-              ),
-            );
-          await Provider.of<NoteViewModel>(context, listen: false)
-              .deleteChapter(chapter.chapterID!);
-                        if (mounted) {
-          
-          }
+        onConfirm: () {
+          Navigator.of(context).pop(); // Close dialog first
+          _handleDeleteChapter(chapter);
         },
       ),
     );
   }
 
+  void _handleDeleteChapter(Chapter chapter) async {
+    setState(() {
+      isActionLoading = true;
+    });
+    showLoadingDialog(context);
+    try {
+      await Provider.of<NoteViewModel>(context, listen: false)
+          .deleteChapter(chapter.chapterID!);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Chapter deleted successfully',
+              style: AppTheme.snackBarText,
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to delete chapter.',
+              style: AppTheme.snackBarText,
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (context.mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        setState(() {
+          isActionLoading = false;
+        });
+      }
+    }
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+    );
+  }
 }

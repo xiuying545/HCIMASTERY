@@ -119,7 +119,7 @@ class _InputDialogState extends State<InputDialog> {
                       });
                     } else {
                       widget.onSave(newValue);
-                      Navigator.of(context).pop();
+                  
                     }
                   },
                   style: ElevatedButton.styleFrom(

@@ -3,6 +3,7 @@ import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/common/common_widget/options_bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ class ManageNotePage extends StatefulWidget {
 class _ManageNotePage extends State<ManageNotePage> {
   late String chapterName;
   late NoteViewModel noteViewModel;
-  bool isLoading = true;
+  // bool isLoading = true;
 
   @override
   void initState() {
@@ -35,9 +36,9 @@ class _ManageNotePage extends State<ManageNotePage> {
 
   Future<void> fetchNoteData() async {
     await noteViewModel.fetchNotesForChapter(widget.chapterId);
-    setState(() {
-      isLoading = false;
-    });
+    // setState(() {
+    //   isLoading = false;
+    // });
   }
 
   @override
@@ -60,12 +61,8 @@ class _ManageNotePage extends State<ManageNotePage> {
         title: chapterName,
       ),
       body: Consumer<NoteViewModel>(builder: (context, model, child) {
-        if (model.isLoading || isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-            ),
-          );
+        if (model.isLoading) {
+          return const LoadingShimmer();
         }
 
         return RefreshIndicator(
@@ -275,22 +272,57 @@ class _ManageNotePage extends State<ManageNotePage> {
             'Are you sure you want to delete "${note.title}"? This action cannot be undone.',
         action: 'Delete',
         onConfirm: () async {
-          Navigator.of(context).pop();
-
-
-          await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Note deleted successfully!',
-                  style: AppTheme.snackBarText),
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
+          Navigator.of(context).pop(); // Close dialog first
+          _handleDeleteNote(note);
         },
+      ),
+    );
+  }
+
+  void _handleDeleteNote(Note note) async {
+    showLoadingDialog(context);
+
+    try {
+      await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Note deleted successfully!',
+                style: AppTheme.snackBarText),
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Dismiss loading dialog even on error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Failed to delete note.', style: AppTheme.snackBarText),
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }

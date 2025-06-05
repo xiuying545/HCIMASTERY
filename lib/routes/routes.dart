@@ -36,7 +36,7 @@ import 'package:fyp1/screen/student/student_navbar.dart';
 import 'package:go_router/go_router.dart';
 GoRouter router() {
   return GoRouter(
-    initialLocation: '/signin',
+    initialLocation: '/adminNav',
     navigatorKey: navigatorKey,
     routes: [
 

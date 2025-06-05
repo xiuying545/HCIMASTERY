@@ -279,27 +279,64 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
 
   void _showDeleteConfirmationDialog(Quiz quiz) {
     showDialog(
-        context: context,
-        builder: (context) => CustomDialog(
-            title: 'Delete Quiz',
-            content:
-                'Are you sure you want to delete this quiz? This action cannot be undone.',
-            action: 'Alert',
-            onConfirm: () async {
-              Navigator.of(context).pop();
+      context: context,
+      builder: (buildContext) => CustomDialog(
+        title: 'Delete Quiz',
+        content:
+            'Are you sure you want to delete this quiz? This action cannot be undone.',
+        action: 'Delete',
+        onConfirm: () async {
+          Navigator.of(buildContext).pop();
+
+          showLoadingDialog(context);
+
+          try {
+            await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
+
+            if (mounted) {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
                     'Quiz deleted successfully!',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
+                    style:
+                        GoogleFonts.poppins(fontSize: 16, color: Colors.white),
                   ),
                   backgroundColor: Colors.green,
                 ),
               );
-              await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
-            }));
+            }
+          } catch (e) {
+            if (mounted) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Failed to delete quiz.',
+                    style:
+                        GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+    );
   }
 }

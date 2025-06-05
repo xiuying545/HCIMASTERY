@@ -98,7 +98,7 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchChapters() async {
     setLoading(true);
-    // await _noteService.addHCIMasteryChaptersContent();
+    //  await _noteService.addHCIMasteryChaptersContent();
     _chapters = await _noteService.getChapters();
     setLoading(false);
   }
@@ -180,14 +180,16 @@ class NoteViewModel extends BaseViewModel {
   Future<void> addChapter(Chapter chapter) async {
     await tryFunction(() async {
       await _noteService.addChapter(chapter);
-      await fetchChapters();
+      _chapters.add(chapter);
+      notifyListeners();
     });
   }
 
   Future<void> deleteChapter(String chapterID) async {
     await tryFunction(() async {
       await _noteService.deleteChapter(chapterID);
-      await fetchChapters();
+      _chapters.removeWhere((c) => c.chapterID == chapterID);
+      notifyListeners();
     });
   }
 
@@ -195,7 +197,13 @@ class NoteViewModel extends BaseViewModel {
       String chapterID, String newChapterName) async {
     await tryFunction(() async {
       await _noteService.updateChapterName(chapterID, newChapterName);
+      int index = _chapters.indexWhere((c) => c.chapterID == chapterID);
+      if (index != -1) {
+        _chapters[index].chapterName = newChapterName;
+        notifyListeners();
+      }
       await fetchChapters();
+        await Future.delayed(const Duration(seconds: 3));
     });
   }
 

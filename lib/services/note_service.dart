@@ -320,84 +320,214 @@ class ChapterService {
 
   // ---------------------- Bab 1 ----------------------
   Chapter bab1 = Chapter(
-    chapterName: 'Bab 1: Asas Reka Bentuk Interaksi',
-    notes: [
-      Note(
-        title: 'Topik 1.1: Apakah Itu Reka Bentuk Interaksi?',
-        content: '''
-Reka bentuk interaksi ialah proses mencipta pengalaman pengguna yang membolehkan mereka berinteraksi dengan produk seperti aplikasi, laman web atau sistem.
+  chapterName: 'Bab 1: Asas Reka Bentuk Interaksi',
+  notes: [
+    Note(
+      title: 'Topik 1.1: Pengenalan kepada Reka Bentuk Interaksi',
+      content: '''
+Reka bentuk interaksi ialah proses merancang antara muka dan pengalaman pengguna supaya manusia dapat berinteraksi dengan sistem seperti aplikasi, laman web atau mesin dengan mudah, efisien dan menyeronokkan.
 
-Contoh aplikasi:
-- WhatsApp: Hantar mesej hanya dengan satu klik.
-- Instagram: Mudah untuk menyukai dan berkongsi gambar.
+Reka bentuk = Susun atur elemen (teks, gambar, butang).  
+Interaksi = Tindakan pengguna semasa menggunakan sistem.
 
-Reka bentuk yang baik membantu pengguna dari pelbagai lapisan umur dan kemahiran teknologi.''',
-        order: 0,
-      ),
-      Note(
-        title: 'Topik 1.2: Lima Prinsip Reka Bentuk Interaksi',
-        content: '''
-1. Konsistensi – Susun atur tidak berubah-ubah.
-2. Pemerhatian – Fungsi mudah dikenali walaupun pertama kali guna.
-3. Boleh Dipelajari – Senang digunakan walaupun sekali guna.
-4. Menjangka – Pengguna tahu apa yang akan berlaku selepas klik.
-5. Maklum Balas – Aplikasi beri respon selepas tindakan pengguna.
+Mengapa penting?
+- Menarik perhatian pengguna
+- Memberi keselesaan dan kepuasan
+- Mempengaruhi keputusan untuk terus menggunakan sistem
 
-Contoh: WhatsApp, Facebook, TikTok.''',
-        order: 1,
-      ),
-      Note(
-        title: 'Topik 1.3: Keperluan Interaksi Manusia dan Komputer',
-        content: '''
-Interaksi penting kerana:
-- Permintaan pasaran yang tinggi
-- Meningkatkan produktiviti
-- Mengurangkan kos pembangunan dan pembaikan
+Contoh aplikasi mesra interaksi:
+- WhatsApp: Chat mudah dan cepat
+- Instagram: Paparan menarik, menu jelas
+- Tiket MAS: Sistem tempahan mudah difahami
 
-Contoh: Ikon folder digital = folder fizikal di pejabat.''',
-        order: 2,
-      ),
-    ],
-  );
+Contoh dunia sebenar:
+- Kiosk pesanan McDonald's membolehkan pesanan pantas tanpa bantuan staf''',
+      order: 0,
+    ),
+    Note(
+      title: 'Topik 1.2: Lima Prinsip Reka Bentuk Interaksi',
+      content: '''
+Reka bentuk interaksi berkualiti mematuhi lima prinsip utama:
+
+1. Konsistensi
+   - Elemen UI perlu kekal pada tempat sama.
+   - Contoh: Butang "Close" di penjuru kanan atas di Windows.
+
+2. Kebolehan membuat pemerhatian
+   - Pengguna mesti boleh kenal pasti butang dan fungsi dengan mudah.
+   - Contoh: Butang Like di Facebook.
+
+3. Boleh dipelajari
+   - Aplikasi mudah difahami walaupun hanya digunakan sekali.
+   - Contoh: WhatsApp – sekali guna, terus tahu fungsi utama.
+
+4. Kebolehan menjangka
+   - Pengguna boleh jangka apa akan berlaku sebelum klik.
+   - Contoh: Ikon emoji di WhatsApp buka senarai emoji.
+
+5. Maklum balas
+   - Sistem perlu beri respon kepada tindakan pengguna.
+   - Contoh: Facebook paparkan pilihan selepas klik butang ‘Post’.
+
+Kelima-lima prinsip ini bertindak bersama untuk menjadikan sistem mudah, efisien dan menyeronokkan.
+
+Contoh dunia sebenar:
+- Grab menunjukkan maklumat pemandu dan ETA selepas buat tempahan''',
+      order: 1,
+    ),
+    Note(
+      title: 'Topik 1.3: Keperluan Interaksi Manusia dan Komputer',
+      content: '''
+Dulu hanya pakar guna komputer, kini semua orang boleh. Oleh itu, interaksi perlu:
+- Mudah
+- Intuitif
+- Semula jadi
+
+Mengapa penting?
+
+1. Permintaan pasaran tinggi
+   - Produk perlu selamat, mesra pengguna dan tahan lama.
+
+2. Meningkatkan produktiviti
+   - Sistem mudah digunakan → hasil kerja lebih cepat.
+
+3. Mengurangkan kos selepas jualan
+   - Kurang keperluan bantuan pengguna → jimat kos.
+
+4. Mengurangkan kos pembangunan
+   - Elakkan ciri tidak perlu yang membazir sumber.
+
+5. Mengembangkan aktiviti & pengalaman pengguna
+   - Contoh: E-wallet membantu rekod kewangan secara digital.
+
+6. Pengkomputeran sosial
+   - Interaksi dengan manusia lain melalui sistem (contoh: TikTok, WeChat).
+
+Contoh dunia sebenar:
+- Ikon folder di komputer: mudah difahami seperti folder sebenar.
+- ATM tanpa maklum balas boleh mengelirukan pengguna.
+
+Penilaian produk:
+- Guna soal selidik (Skala Likert / Guttman)
+- Contoh: Facebook dinilai dari segi maklum balas, kebolehan belajar dan lain-lain.
+
+Soal selidik membantu kenal pasti aspek perlu ditambah baik untuk tingkatkan pengalaman pengguna.''',
+      order: 2,
+    ),
+  ],
+);
+
 
   await chapterService.addChapter(bab1);
 
   // ---------------------- Bab 2 ----------------------
   Chapter bab2 = Chapter(
-    chapterName: 'Bab 2: Reka Bentuk Skrin dan Penilaian Produk',
-    notes: [
-      Note(
-        title: 'Topik 2.1: Proses Reka Bentuk Interaksi',
-        content: '''
-Langkah-langkah:
+  chapterName: 'Bab 2: Reka Bentuk Skrin dan Penilaian Produk',
+  notes: [
+    Note(
+      title: 'Topik 2.1: Proses Reka Bentuk Interaksi',
+      content: '''
+Dalam dunia moden, aplikasi dan perisian digunakan oleh semua orang. Oleh itu, reka bentuk skrin mestilah mesra pengguna, menarik dan mudah digunakan.
+
+📌 Empat langkah utama dalam proses reka bentuk interaksi:
+
 1. Mengenal pasti keperluan pengguna
-2. Membangun reka bentuk alternatif
-3. Membina prototaip
-4. Menjalankan penilaian
+- Siapa pengguna?
+- Masalah apa yang ingin diselesaikan?
+- Fungsi apa yang mereka mahu?
+- Kaedah: soal selidik, temu bual, kajian tindakan, maklum balas
 
-Contoh aplikasi: Program Mengira Dua Nombor untuk murid.''',
-        order: 0,
-      ),
-      Note(
-        title: 'Topik 2.2: Penghasilan Prototaip Paparan Skrin',
-        content: '''
-Prototaip = gambaran awal produk.
+2. Membangunkan reka bentuk alternatif
+- Lakaran beberapa pilihan reka bentuk
+- Contoh: storyboard, lakaran atas kertas, inspirasi dari produk sedia ada
+- Diterangkan dari segi konsep (fungsi) dan fizikal (warna, ikon, susunan)
 
-Boleh dihasilkan atas kertas atau perisian seperti Java NetBeans. Gunakan warna pastel, butang mesra pengguna dan tajuk jelas.''',
-        order: 1,
-      ),
-      Note(
-        title: 'Topik 2.3: Penilaian Kuantitatif dan Penambahbaikan',
-        content: '''
-Guna soal selidik Ya/Tidak atau Skala Likert.
+3. Membina prototaip interaksi
+- Gambaran awal sistem
+- Boleh dilukis tangan atau bina dengan perisian (NetBeans, Figma)
+- Diuji oleh pengguna untuk maklum balas
 
-Contoh: 95.1% pengguna puas hati dengan Program Mengira Dua Nombor.
+4. Membuat penilaian terhadap reka bentuk
+- Ukur keberkesanan sistem berdasarkan tingkah laku pengguna
+- Guna penilaian kuantitatif (data) atau heuristik (pengalaman)
+- Contoh: navigasi jelas, warna sesuai, respon cepat
 
-Penambahbaikan seperti menukar warna dan susun atur disarankan.''',
-        order: 2,
-      ),
-    ],
-  );
+🧠 *Kesimpulan:* Reka bentuk interaksi bukan satu proses sekali buat — ia perlu melalui proses berulang sehingga capai hasil terbaik.
+
+Contoh aplikasi: sistem “Program Mengira Dua Nombor” digunakan untuk demonstrasi langkah-langkah ini.
+''',
+      order: 0,
+    ),
+    Note(
+      title: 'Topik 2.2: Penghasilan Prototaip Paparan Skrin',
+      content: '''
+Prototaip ialah gambaran awal paparan skrin sebelum produk sebenar dibina. Ia membolehkan pengguna memahami aliran sistem dan memberi maklum balas awal.
+
+📌 Ciri-ciri prototaip:
+- Jelas, mudah difahami
+- Menunjukkan fungsi sebenar
+- Boleh diuji dengan pengguna
+- Boleh dibuat atas kertas atau dengan perisian
+
+🎨 Contoh alat: Java NetBeans, PowerPoint, Figma
+
+📋 Langkah membina prototaip dalam NetBeans:
+1. Gunakan jForm dan tambah jLabel untuk tajuk dan label input
+2. Tambah jTextField untuk data input/output
+3. Tambah jButton untuk operasi matematik (+, –, ×, ÷), Reset dan Keluar
+4. Sesuaikan warna latar dan teks, guna warna pastel yang sesuai
+
+📊 Contoh:
+Program Mengira Dua Nombor
+- Dua reka bentuk dilukis, pengguna pilih yang terbaik
+- Reka bentuk alternatif dinilai oleh 20 pengguna (guru + murid)
+- Maklum balas digunakan untuk penambahbaikan reka bentuk
+
+💬 Komen pengguna:
+- Warna kuning terlalu terang → tukar ke kelabu gelap
+- Butang “Reset” dan “Keluar” perlu diasingkan
+- Tajuk perlu di tengah atas dan teks warna hitam
+
+Prototaip akhir dipilih berdasarkan dapatan penilaian dan ditambah baik sesuai dengan maklum balas.
+''',
+      order: 1,
+    ),
+    Note(
+      title: 'Topik 2.3: Penilaian Kuantitatif dan Penambahbaikan',
+      content: '''
+Penilaian kuantitatif ialah proses mengumpul data dari pengguna untuk menilai keberkesanan reka bentuk dari segi angka dan peratusan.
+
+📊 Instrumen penilaian dibina berdasarkan:
+- Reka bentuk skrin (warna, susun atur, ikon)
+- Navigasi dan interaktiviti
+- Kesalahan ejaan, kefahaman bahasa
+- Fungsi butang (Reset, Keluar, Operasi)
+
+📋 Contoh skala:
+- Skala Likert: 5 (Amat Setuju) hingga 1 (Sangat Tidak Setuju)
+- Jawapan Ya / Tidak
+
+🧪 Kajian kes:
+Program Mengira Dua Nombor
+- Soal selidik diberi kepada 25 pengguna (guru & murid)
+- 95.1% pengguna puas hati dengan reka bentuk akhir
+
+💡 Cadangan penambahbaikan:
+1. Tambah operasi baru seperti kuasa dua, punca kuasa dua
+2. Tukar butang kepada dropdown / radio button
+3. Kombinasi warna pastel untuk visual lebih mesra
+4. Tambah tutorial ringkas atau ikon bantuan
+
+📈 Penilaian berterusan penting untuk memastikan sistem terus relevan dan memenuhi keperluan pengguna masa kini.
+
+Contoh dunia sebenar:
+- Shopee dan Netflix menggunakan penilaian A/B untuk pilih reka bentuk terbaik.
+''',
+      order: 2,
+    ),
+  ],
+);
+
 
   await chapterService.addChapter(bab2);
 }
