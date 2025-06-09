@@ -6,6 +6,7 @@ import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/input_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
+import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -258,12 +259,11 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
           title: 'Add Chapter',
           hintText: 'chapter name',
           onSave: (chapterName) async {
-              Navigator.of(dialogContext).pop();
+            Navigator.of(dialogContext).pop();
             if (chapterName.isNotEmpty) {
-                 setState(() => isActionLoading = true);
+              setState(() => isActionLoading = true);
 
-            showLoadingDialog(context);
-             
+              showLoadingDialog(context);
 
               final chapter = Chapter(
                 chapterName: chapterName,
@@ -295,9 +295,9 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
                 }
               } finally {
                 if (mounted) {
-                    if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
                   setState(() => isActionLoading = false);
                 }
               }
@@ -382,7 +382,10 @@ class _ChapterDetailsPageState extends State<ChapterDetailsPage> {
     try {
       await Provider.of<NoteViewModel>(context, listen: false)
           .deleteChapter(chapter.chapterID!);
-
+      Provider.of<NoteViewModel>(context, listen: false)
+          .deleteAllNoteProgressForChapter(chapter.chapterID!);
+            Provider.of<QuizViewModel>(context, listen: false)
+          .deleteAllQuizAnswersForChapter(chapter.chapterID!);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

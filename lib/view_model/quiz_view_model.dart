@@ -149,11 +149,22 @@ class QuizViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  
-  Future<void> deleteQuizAnswer(String userID) async {
+  Future<void> deleteQuizAnswerForUser(String userID) async {
     await tryFunction(() async {
       await _quizAnswerService.deleteAllAnswersForUser(userID);
     });
+  }
 
+  Future<void> deleteAllQuizAnswersForChapter(String chapterID) async {
+    await tryFunction(() async {
+      await _quizAnswerService.deleteQuizAnswersForChapter(chapterID);
+    });
+  }
+
+  Future<void> deleteQuizAnswerForSpecificQuiz(
+      String chapterID, String quizID) async {
+    await tryFunction(() async {
+      await _quizAnswerService.deleteQuizAnswerForQuiz(chapterID, quizID);
+    });
   }
 }

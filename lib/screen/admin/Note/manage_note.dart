@@ -272,7 +272,7 @@ class _ManageNotePage extends State<ManageNotePage> {
             'Are you sure you want to delete "${note.title}"? This action cannot be undone.',
         action: 'Delete',
         onConfirm: () async {
-          Navigator.of(context).pop(); // Close dialog first
+          Navigator.of(context).pop();
           _handleDeleteNote(note);
         },
       ),
@@ -284,7 +284,8 @@ class _ManageNotePage extends State<ManageNotePage> {
 
     try {
       await noteViewModel.deleteNote(widget.chapterId, note.noteID!);
-
+      noteViewModel.deleteNoteProgressForSpecificNote(
+          widget.chapterId, note.noteID!);
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(

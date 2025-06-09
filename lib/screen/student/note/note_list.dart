@@ -66,33 +66,8 @@ class _NoteListPageState extends State<NoteListPage> {
 
         var notes = model.notes;
 
-        if (notes.isEmpty) {
-          return Stack(children: [
-            const BlankState(
-              icon: Icons.sticky_note_2_outlined,
-              title: 'No notes yet',
-              subtitle: 'Please check back later for available notes.',
-            ),
-            Positioned(
-              top: 40,
-              left: 10,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                  size: 30,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ]);
-        }
-
         return Container(
           decoration: const BoxDecoration(
-        
             image: DecorationImage(
               image: AssetImage("assets/Animation/notelistbackground.png"),
               fit: BoxFit.cover,
@@ -106,19 +81,17 @@ class _NoteListPageState extends State<NoteListPage> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.35,
                     width: double.infinity,
-                 
                     child: Stack(
                       children: [
                         Positioned(
                           top: 50,
-                          left: MediaQuery.of(context).size.width*0.15,
+                          left: MediaQuery.of(context).size.width * 0.15,
                           child: Image.asset(
                             'assets/Animation/book.png',
-                            width:  MediaQuery.of(context).size.width * 0.75,
+                            width: MediaQuery.of(context).size.width * 0.75,
                             height: MediaQuery.of(context).size.height * 0.35,
                           ),
                         ),
-                      
                       ],
                     ),
                   ),
@@ -168,14 +141,54 @@ class _NoteListPageState extends State<NoteListPage> {
 
                           const SizedBox(height: 10),
                           // Step Indicator for Notes
-                          ...List.generate(
-                            notes.length,
-                            (index) => _buildNoteProgress(
-                              note: notes[index],
-                              index: index,
-                              totalNotes: notes.length,
+                          if (notes.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 8),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.red.shade100, // Very light beige
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(14),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          "Tiada Nota Untuk Bab Ini",
+                                          textAlign: TextAlign.center,
+                                          style: AppTheme.h4Style.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF3B3B3B),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          else
+                            ...List.generate(
+                              notes.length,
+                              (index) => _buildNoteProgress(
+                                note: notes[index],
+                                index: index,
+                                totalNotes: notes.length,
+                              ),
                             ),
-                          ),
+
                           _buildQuizProgress(),
                         ],
                       ),
@@ -229,8 +242,11 @@ class _NoteListPageState extends State<NoteListPage> {
                 onTap: () {
                   if (note.noteID != null) {
                     GoRouter.of(context).push('/student/note/${note.noteID}');
-                    noteProgress.progress[note.noteID!] = "Completed";
-                    noteViewModel.updateNoteProgress(noteProgress);
+
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      noteProgress.progress[note.noteID!] = "Completed";
+                      noteViewModel.updateNoteProgress(noteProgress);
+                    });
                   }
                 },
                 child: Text(
@@ -293,28 +309,31 @@ class _NoteListPageState extends State<NoteListPage> {
     );
   }
 
-Widget _getStepIcon(String? status) {
-  switch (status) {
-    case "Completed":
-      return const Icon(Icons.check_circle_rounded, color: Colors.white, size: 28);
-    case "In Progress":
-      return const Icon(Icons.hourglass_bottom_rounded, color: Colors.white, size: 26);
+  Widget _getStepIcon(String? status) {
+    switch (status) {
+      case "Completed":
+        return const Icon(Icons.check_circle_rounded,
+            color: Colors.white, size: 28);
+      case "In Progress":
+        return const Icon(Icons.hourglass_bottom_rounded,
+            color: Colors.white, size: 26);
 
-    default:
-        return const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28);
+      default:
+        return const Icon(Icons.play_arrow_rounded,
+            color: Colors.white, size: 28);
+    }
+  }
 
+  Color _getStepColor(String? status) {
+    switch (status) {
+      case "Completed":
+        return const Color(0xFFB7E4C7); // Soft mint green
+      case "In Progress":
+        return const Color(0xFFFFE7A0); // Soft pastel yellow
+      default:
+        return const Color(0xFFD7D7D7); // fallback neutral pastel grey
+    }
   }
-}
- Color _getStepColor(String? status) {
-  switch (status) {
-    case "Completed":
-      return const Color(0xFFB7E4C7); // Soft mint green
-    case "In Progress":
-      return const Color(0xFFFFE7A0); // Soft pastel yellow
-    default:
-      return const Color(0xFFD7D7D7); // fallback neutral pastel grey
-  }
-}
 }
 
 // Color Constants

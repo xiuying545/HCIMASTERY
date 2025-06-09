@@ -16,7 +16,9 @@ class QuizAnswerService {
           .collection('Chapters')
           .doc(chapterID)
           .set(quizAnswers, SetOptions(merge: true));
-      print("hey:: $quizAnswers");
+      await _firestore.collection('QuizAnswer').doc(userID).set(
+          {'lastUpdated': FieldValue.serverTimestamp()},
+          SetOptions(merge: true));
       print('Multiple quiz answers saved successfully.');
     } catch (e) {
       print('Error saving multiple quiz answers: $e');
@@ -92,24 +94,57 @@ class QuizAnswerService {
     }
   }
 
-// Future<double> calculateScore(String chapter, String userId) async {
-//   QuizService quizService = QuizService();
-//   List<Quiz> quizzes = await quizService.getQuizzesByChapter(chapter);
-//   int correctAnswers = 0;
+  Future<void> deleteQuizAnswerForQuiz(String chapterID, String quizID) async {
+    try {
+      final usersSnapshot = await _firestore.collection('QuizAnswer').get();
+      print("Total students found: ${usersSnapshot.docs.length}");
+      for (var userDoc in usersSnapshot.docs) {
+        final chapterRef = _firestore
+            .collection('QuizAnswer')
+            .doc(userDoc.id)
+            .collection('Chapters')
+            .doc(chapterID);
 
-//   for (int i = 0; i < quizzes.length; i++) {
+        final chapterDoc = await chapterRef.get();
 
-//     if (quizzes[i].quizzID != null) {
-//       String quizid = quizzes[i].quizzID!;
-//       int? userAnswer = await getUserAnswer(userId, chapter, quizid);
+        if (chapterDoc.exists) {
+          final data = chapterDoc.data() as Map<String, dynamic>;
 
-//       if (userAnswer != null && quizzes[i].answer == userAnswer) {
-//         correctAnswers++;
+          if (data.containsKey(quizID)) {
+            await chapterRef.update({
+              quizID: FieldValue.delete(),
+            });
+          }
+        }
+      }
 
-//       }
-//     }
-//   }
+      print(
+          'Deleted quiz answer $quizID from chapter $chapterID for all users.');
+    } catch (e) {
+      print('Error deleting quiz answer for quiz: $e');
+    }
+  }
 
-//   return (correctAnswers/quizzes.length)*100;
-// }
+  Future<void> deleteQuizAnswersForChapter(String chapterID) async {
+    try {
+      final usersSnapshot = await _firestore.collection('QuizAnswer').get();
+
+      for (var userDoc in usersSnapshot.docs) {
+        final chapterRef = _firestore
+            .collection('QuizAnswer')
+            .doc(userDoc.id)
+            .collection('Chapters')
+            .doc(chapterID);
+
+        final chapterDoc = await chapterRef.get();
+        if (chapterDoc.exists) {
+          await chapterRef.delete();
+        }
+      }
+
+      print('Deleted quiz answers for chapter $chapterID across all users.');
+    } catch (e) {
+      print('Error deleting quiz answers for chapter: $e');
+    }
+  }
 }

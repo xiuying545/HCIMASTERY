@@ -421,7 +421,7 @@ class _ForumPageState extends State<ForumPage> {
                             isMyPost
                                 ? '${forumViewModel.userMap[post.creator]?.name} (You)'
                                 : forumViewModel.userMap[post.creator]?.name ??
-                                    "unknown",
+                                    "Deleted User",
                             style: GoogleFonts.fredoka(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

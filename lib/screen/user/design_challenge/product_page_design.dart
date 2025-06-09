@@ -310,7 +310,7 @@ class _ProductDesignChallengePage
       });
     }
 
-    const double bottomTolerance = 10.0;
+    const double bottomTolerance = 20.0;
     bool navAtBottom = components.any(
       (c) =>
           c.type == 'BottomNavBar' &&
@@ -343,29 +343,29 @@ class _ProductDesignChallengePage
     final productCards =
         components.where((c) => c.type == 'ProductCard').toList();
 
-    if (!(_isAlignedHorizontally(productCards)) ||
-        !(_isAlignedVertically(productCards))) {
-      feedbackList.add({
-        "text":
-            "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
-        "image": "assets/Game/productcardalign.png"
-      });
-    }
-
     if (checkLayoutIssue(components) == LayoutIssue.overlap) {
       feedbackList.add({
         "text":
             "⚠️ Some components are overlapping. Please ensure each element has enough spacing and doesn't cover another.",
         "image": "assets/Game/overlapping.png"
       });
-    }
-
-    if (!_hasConsistentSpacing(components)) {
-      feedbackList.add({
-        'text':
-            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
-        'image': 'assets/Game/spacing.png',
-      });
+    } else {
+      if (!(_isAlignedHorizontally(productCards)) ||
+          !(_isAlignedVertically(productCards))) {
+        feedbackList.add({
+          "text":
+              "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
+          "image": "assets/Game/productcardalign.png"
+        });
+      } else {
+        if (!_hasConsistentSpacing(components)) {
+          feedbackList.add({
+            'text':
+                "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+            'image': 'assets/Game/spacing.png',
+          });
+        }
+      }
     }
 
     if (feedbackList.isEmpty) {
@@ -415,62 +415,65 @@ class _ProductDesignChallengePage
     return true;
   }
 
+  bool _hasConsistentSpacing(List<UIComponent> components) {
+    const spacingTolerance = 10.0;
 
-bool _hasConsistentSpacing(List<UIComponent> components) {
-  const spacingTolerance = 10.0;
+    // 1) Group your product cards into rows
+    final productCards =
+        components.where((c) => c.type == 'ProductCard').toList();
+    final List<List<UIComponent>> rows = _groupByRow(productCards);
 
-  // 1) Group your product cards into rows
-  final productCards = components.where((c) => c.type == 'ProductCard').toList();
-  final List<List<UIComponent>> rows = _groupByRow(productCards);
-
-  // Debug: print each row’s components
-  for (var i = 0; i < rows.length; i++) {
-    final coords = rows[i]
-        .map((c) => '${c.type}@(${c.x.toStringAsFixed(1)},${c.y.toStringAsFixed(1)})')
-        .join(', ');
-    print('Row $i components: [$coords]');
-  }
-
-  // 2) Treat each other component instance as its own “row”
-  for (final type in ['SearchBarUI', 'FilterTabs', 'BottomNavBar']) {
-    for (final comp in components.where((c) => c.type == type)) {
-      rows.add([comp]);
-      print('Added standalone row for $type at (${comp.x}, ${comp.y})');
+    // Debug: print each row’s components
+    for (var i = 0; i < rows.length; i++) {
+      final coords = rows[i]
+          .map((c) =>
+              '${c.type}@(${c.x.toStringAsFixed(1)},${c.y.toStringAsFixed(1)})')
+          .join(', ');
+      print('Row $i components: [$coords]');
     }
-  }
 
-  // 3) Compute vertical bounds for each row
-  final List<Map<String, double>> bounds = rows.map((row) {
-    final tops    = row.map((c) => c.y);
-    final bottoms = row.map((c) => c.y + c.height);
-    final top = tops.reduce(min);
-    final bottom = bottoms.reduce(max);
-    return {
-      'top':    top,
-      'bottom': bottom,
-    };
-  }).toList();
-
-  // Debug: print bounds for each row
-  for (var i = 0; i < bounds.length; i++) {
-    print('Bounds $i → top: ${bounds[i]['top']}, bottom: ${bounds[i]['bottom']}');
-  }
-
-  // 4) Check vertical gap between each adjacent pair of rows
-  for (var i = 0; i < bounds.length - 1; i++) {
-    final bottomOfCurrent = bounds[i]['bottom']!;
-    final topOfNext       = bounds[i + 1]['top']!;
-    final gap = topOfNext - bottomOfCurrent;
-    print('Gap between row $i and row ${i + 1}: $gap (tolerance: $spacingTolerance)');
-    if (gap < spacingTolerance) {
-      print('→ Gap of $gap is less than tolerance: returning false');
-      return false;
+    // 2) Treat each other component instance as its own “row”
+    for (final type in ['SearchBarUI', 'FilterTabs', 'BottomNavBar']) {
+      for (final comp in components.where((c) => c.type == type)) {
+        rows.add([comp]);
+        print('Added standalone row for $type at (${comp.x}, ${comp.y})');
+      }
     }
-  }
 
-  print('All gaps are ≥ $spacingTolerance: returning true');
-  return true;
-}
+    // 3) Compute vertical bounds for each row
+    final List<Map<String, double>> bounds = rows.map((row) {
+      final tops = row.map((c) => c.y);
+      final bottoms = row.map((c) => c.y + c.height);
+      final top = tops.reduce(min);
+      final bottom = bottoms.reduce(max);
+      return {
+        'top': top,
+        'bottom': bottom,
+      };
+    }).toList();
+
+    // Debug: print bounds for each row
+    for (var i = 0; i < bounds.length; i++) {
+      print(
+          'Bounds $i → top: ${bounds[i]['top']}, bottom: ${bounds[i]['bottom']}');
+    }
+
+    // 4) Check vertical gap between each adjacent pair of rows
+    for (var i = 0; i < bounds.length - 1; i++) {
+      final bottomOfCurrent = bounds[i]['bottom']!;
+      final topOfNext = bounds[i + 1]['top']!;
+      final gap = topOfNext - bottomOfCurrent;
+      print(
+          'Gap between row $i and row ${i + 1}: $gap (tolerance: $spacingTolerance)');
+      if (gap < spacingTolerance) {
+        print('→ Gap of $gap is less than tolerance: returning false');
+        return false;
+      }
+    }
+
+    print('All gaps are ≥ $spacingTolerance: returning true');
+    return true;
+  }
 
   List<List<UIComponent>> _groupByRow(List<UIComponent> components) {
     components.sort((a, b) => a.y.compareTo(b.y));

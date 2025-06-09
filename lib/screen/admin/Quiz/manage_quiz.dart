@@ -292,7 +292,8 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
 
           try {
             await quizViewModel.deleteQuiz(widget.chapterId, quiz.quizzID!);
-
+            quizViewModel.deleteQuizAnswerForSpecificQuiz(
+                widget.chapterId, quiz.quizzID!);
             if (mounted) {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);

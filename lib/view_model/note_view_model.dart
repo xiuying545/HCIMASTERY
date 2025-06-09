@@ -98,7 +98,7 @@ class NoteViewModel extends BaseViewModel {
 
   Future<void> fetchChapters() async {
     setLoading(true);
-    //  await _noteService.addHCIMasteryChaptersContent();
+    // await _noteService.addHCIMasteryChaptersContent();
     _chapters = await _noteService.getChapters();
     setLoading(false);
   }
@@ -166,6 +166,32 @@ class NoteViewModel extends BaseViewModel {
     } else {
       _studentProgress.add(noteProgress);
     }
+    await _recalculateSingleChapterProgress(noteProgress.chapterID);
+  }
+
+  Future<void> _recalculateSingleChapterProgress(String chapterID) async {
+    try {
+      final noteCount = _noteCount[chapterID] ?? 0;
+
+      final progress = _studentProgress.firstWhere(
+        (p) => p.chapterID == chapterID,
+        orElse: () => NoteProgress(
+            studentID: _userId, chapterID: chapterID, progress: {}),
+      );
+
+      final completedCount = progress.progress.values
+          .where((status) => status == "Completed")
+          .length;
+
+      final completionRate =
+          (noteCount > 0) ? (completedCount / noteCount) : 0.0;
+
+      _progressMap[chapterID] = completionRate;
+
+      notifyListeners();
+    } catch (e) {
+      print('Error recalculating single chapter progress: $e');
+    }
   }
 
   Future<Note?> getNoteById(String chapterID, String noteID) async {
@@ -180,7 +206,7 @@ class NoteViewModel extends BaseViewModel {
   Future<void> addChapter(Chapter chapter) async {
     await tryFunction(() async {
       await _noteService.addChapter(chapter);
-      _chapters.add(chapter);
+      await fetchChapters();
       notifyListeners();
     });
   }
@@ -188,7 +214,7 @@ class NoteViewModel extends BaseViewModel {
   Future<void> deleteChapter(String chapterID) async {
     await tryFunction(() async {
       await _noteService.deleteChapter(chapterID);
-      _chapters.removeWhere((c) => c.chapterID == chapterID);
+      await fetchChapters();
       notifyListeners();
     });
   }
@@ -197,13 +223,9 @@ class NoteViewModel extends BaseViewModel {
       String chapterID, String newChapterName) async {
     await tryFunction(() async {
       await _noteService.updateChapterName(chapterID, newChapterName);
-      int index = _chapters.indexWhere((c) => c.chapterID == chapterID);
-      if (index != -1) {
-        _chapters[index].chapterName = newChapterName;
-        notifyListeners();
-      }
+
       await fetchChapters();
-        await Future.delayed(const Duration(seconds: 3));
+      notifyListeners();
     });
   }
 
@@ -226,9 +248,23 @@ class NoteViewModel extends BaseViewModel {
     });
   }
 
-  Future<void> deleteNoteProgress(String userID) async {
+  Future<void> deleteNoteProgressForUser(String userID) async {
     await tryFunction(() async {
       await _noteProgressService.deleteAllProgressForStudent(userID);
+    });
+  }
+
+  Future<void> deleteAllNoteProgressForChapter(String chapterID) async {
+    await tryFunction(() async {
+      await _noteProgressService.deleteProgressForChapter(chapterID);
+    });
+  }
+
+  Future<void> deleteNoteProgressForSpecificNote(
+      String chapterID, String noteID) async {
+    await tryFunction(() async {
+      await _noteProgressService.deleteProgressForChapterNote(
+          chapterID, noteID);
     });
   }
 }

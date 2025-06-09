@@ -188,11 +188,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                               children: [
                                                                 Text(
                                                                   isMyReply
-                                                                      ? "${forumViewModel.userMap[reply.creator]?.name ?? "unknown"} (You)"
+                                                                      ? "${forumViewModel.userMap[reply.creator]?.name ?? "Deleted User"} (You)"
                                                                       : forumViewModel
                                                                               .userMap[reply.creator]
                                                                               ?.name ??
-                                                                          "unknown",
+                                                                          "Deleted User",
                                                                   style: GoogleFonts
                                                                       .fredoka(
                                                                     fontWeight:
@@ -392,7 +392,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       children: [
                         Text(
                           forumViewModel.userMap[post.creator]?.name ??
-                              "unknown",
+                              "Deleted User",
                           style: GoogleFonts.fredoka(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

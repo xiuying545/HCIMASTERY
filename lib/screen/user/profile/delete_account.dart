@@ -39,9 +39,9 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
 
       // Delete user from database
       Provider.of<NoteViewModel>(context, listen: false)
-          .deleteNoteProgress(user.uid);
+          .deleteNoteProgressForUser(user.uid);
                 Provider.of<QuizViewModel>(context, listen: false)
-          .deleteQuizAnswer(user.uid);
+          .deleteQuizAnswerForUser(user.uid);
       await Provider.of<UserViewModel>(context, listen: false).deleteUser();
       await user.delete();
 
