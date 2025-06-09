@@ -216,8 +216,23 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                           width: double.infinity,
                           height: 150,
                           color: Colors.grey.shade200,
-                          child: const Icon(Icons.broken_image,
-                              color: Colors.grey),
+                          child: const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.broken_image,
+                                    color: Colors.red, size: 40),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Image failed to load",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     ),

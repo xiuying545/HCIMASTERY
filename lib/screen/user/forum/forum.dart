@@ -85,8 +85,9 @@ class _ForumPageState extends State<ForumPage> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        showMyPosts ? const Color(0xFFFFF6EE) : const Color(0xff6C9FF6),
+                    backgroundColor: showMyPosts
+                        ? const Color(0xFFFFF6EE)
+                        : const Color(0xff6C9FF6),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -98,7 +99,8 @@ class _ForumPageState extends State<ForumPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? const Color(0xff475569) : Colors.white,
+                      color:
+                          showMyPosts ? const Color(0xff475569) : Colors.white,
                     ),
                   ),
                 ),
@@ -109,8 +111,9 @@ class _ForumPageState extends State<ForumPage> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        showMyPosts ? const Color(0xff6C9FF6) : const Color(0xFFFFF6EE),
+                    backgroundColor: showMyPosts
+                        ? const Color(0xff6C9FF6)
+                        : const Color(0xFFFFF6EE),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -122,7 +125,8 @@ class _ForumPageState extends State<ForumPage> {
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: showMyPosts ? Colors.white : const Color(0xff475569),
+                      color:
+                          showMyPosts ? Colors.white : const Color(0xff475569),
                     ),
                   ),
                 ),
@@ -484,8 +488,23 @@ class _ForumPageState extends State<ForumPage> {
                                   );
                                 },
                                 errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.error,
-                                      color: Colors.red);
+                                  return const Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.broken_image,
+                                            color: Colors.red, size: 40),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Image failed to load",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
                                 },
                               ),
                             ),

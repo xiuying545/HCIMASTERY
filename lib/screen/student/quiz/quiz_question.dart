@@ -56,7 +56,6 @@ class _QuizPageState extends State<QuizPage> {
           },
         ),
         elevation: 0,
-     
         title: Text(
           '${currentQuestionIndex + 1} Of ${widget.quizzes.length} Question',
           style: GoogleFonts.poppins(
@@ -98,20 +97,37 @@ class _QuizPageState extends State<QuizPage> {
                             quiz.imageUrl!,
                             width: 400,
                             height: 200,
-                                                 loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress.expectedTotalBytes != null
-                                                  ? loadingProgress.cumulativeBytesLoaded /
-                                                      loadingProgress.expectedTotalBytes!
-                                                  : null,
-                                            ),
-                                          );
-                                        },
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return const Icon(Icons.error, color: Colors.red);
-                                        },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.broken_image,
+                                        color: Colors.red, size: 40),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      "Image failed to load",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           )
                         : const SizedBox.shrink(),
                     const SizedBox(height: 20),
@@ -176,7 +192,7 @@ class _QuizPageState extends State<QuizPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                     shape: BoxShape.circle, 
+                                        shape: BoxShape.circle,
                                         border: Border.all(
                                           color: isSelected
                                               ? const Color(0xffD9EBFF)
@@ -190,13 +206,11 @@ class _QuizPageState extends State<QuizPage> {
                                         child: Text(
                                           choices[index],
                                           style: GoogleFonts.poppins(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: isSelected
-                                           ? Colors.white
-                                                :const Color(0xff1F1F1F)
-                                              
-                                          ),
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: isSelected
+                                                  ? Colors.white
+                                                  : const Color(0xff1F1F1F)),
                                         ),
                                       ),
                                     ),
@@ -240,8 +254,7 @@ class _QuizPageState extends State<QuizPage> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color(0xff80BFFF),
+                                backgroundColor: const Color(0xff80BFFF),
                                 elevation: 4,
                                 shape: const CircleBorder(),
                                 padding: const EdgeInsets.all(15),
@@ -254,8 +267,7 @@ class _QuizPageState extends State<QuizPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xff80BFFF),
+                              backgroundColor: const Color(0xff80BFFF),
                               elevation: 4,
                               shape: const CircleBorder(),
                               padding: const EdgeInsets.all(15),

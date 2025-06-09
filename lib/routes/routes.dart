@@ -34,23 +34,31 @@ import 'package:fyp1/screen/user/profile/profile_page.dart';
 import 'package:fyp1/screen/admin/admin_navbar.dart';
 import 'package:fyp1/screen/student/student_navbar.dart';
 import 'package:go_router/go_router.dart';
+
 GoRouter router() {
   return GoRouter(
     // initialLocation: '/adminNav',
-      //  initialLocation: '/studentNav',
-     initialLocation: '/adminNav',
+    //  initialLocation: '/studentNav',
+    initialLocation: '/adminNav',
     navigatorKey: navigatorKey,
     routes: [
-
       // ====================
       // ✅ AUTHENTICATION
       // ====================
       GoRoute(path: '/', builder: (context, state) => const SignInScreen()),
-      GoRoute(path: '/signin', builder: (context, state) => const SignInScreen()),
-      GoRoute(path: '/register', builder: (context, state) => const SignUpScreen()),
-      GoRoute(path: '/forgotPassword', builder: (context, state) => const ForgotPasswordScreen()),
-      GoRoute(path: '/editPassword', builder: (context, state) => const EditPasswordScreen()),
-      GoRoute(path: '/deleteAccount', builder: (context, state) => const DeleteAccountPage()),
+      GoRoute(
+          path: '/signin', builder: (context, state) => const SignInScreen()),
+      GoRoute(
+          path: '/register', builder: (context, state) => const SignUpScreen()),
+      GoRoute(
+          path: '/forgotPassword',
+          builder: (context, state) => const ForgotPasswordScreen()),
+      GoRoute(
+          path: '/editPassword',
+          builder: (context, state) => const EditPasswordScreen()),
+      GoRoute(
+          path: '/deleteAccount',
+          builder: (context, state) => const DeleteAccountPage()),
 
       // ====================
       // ✅ STUDENT NAVIGATION
@@ -67,13 +75,16 @@ GoRouter router() {
       // ====================
       // ✅ ADMIN NAVIGATION
       // ====================
-      GoRoute(path: '/adminNav', builder: (context, state) => const AdminNavBar()),
-      GoRoute(path: '/admin/main', builder: (context, state) => const MainPage()),
+      GoRoute(
+          path: '/adminNav', builder: (context, state) => const AdminNavBar()),
+      GoRoute(
+          path: '/admin/main', builder: (context, state) => const MainPage()),
 
       // ====================
       // ✅ PROFILE
       // ====================
-      GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
+      GoRoute(
+          path: '/profile', builder: (context, state) => const ProfilePage()),
       GoRoute(
         path: '/editProfile/:userId',
         builder: (context, state) {
@@ -143,7 +154,8 @@ GoRouter router() {
 
           final index = int.tryParse(indexString) ?? 0;
           List<dynamic> quizList = jsonDecode(quizListJson);
-          List<Quiz> quizzes = quizList.map((quizJson) => Quiz.fromJson(quizJson)).toList();
+          List<Quiz> quizzes =
+              quizList.map((quizJson) => Quiz.fromJson(quizJson)).toList();
 
           return QuizPage(quizzes: quizzes, questionIndex: index);
         },
@@ -204,8 +216,12 @@ GoRouter router() {
       // ====================
       // ✅ FORUM (STUDENT)
       // ====================
-      GoRoute(path: '/student/forum', builder: (context, state) => const ForumPage()),
-      GoRoute(path: '/student/forum/addPost', builder: (context, state) => const CreatePostPage()),
+      GoRoute(
+          path: '/student/forum',
+          builder: (context, state) => const ForumPage()),
+      GoRoute(
+          path: '/student/forum/addPost',
+          builder: (context, state) => const CreatePostPage()),
       GoRoute(
         path: '/student/forum/editPost/:postId',
         builder: (context, state) {

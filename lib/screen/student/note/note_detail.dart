@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/model/note.dart';
 import 'package:fyp1/view_model/note_view_model.dart';
@@ -255,16 +256,16 @@ class _NotePageState extends State<NotePage> {
                   RichText(
                     text: TextSpan(
                       children: [
+                        // TextSpan(
+                        //   text: currentNote.content[0],
+                        //   style: GoogleFonts.merriweather(
+                        //     fontSize: 48,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: const Color(0xff4E3C36),
+                        //   ),
+                        // ),
                         TextSpan(
-                          text: currentNote.content[0],
-                          style: GoogleFonts.merriweather(
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xff4E3C36),
-                          ),
-                        ),
-                        TextSpan(
-                          text: currentNote.content.substring(1),
+                          text: currentNote.content,
                           style: GoogleFonts.merriweather(
                             fontSize: 16,
                             color: const Color(0xff4E3C36),
@@ -295,37 +296,80 @@ class _NotePageState extends State<NotePage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _youtubeControllers.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: YoutubePlayer(
-                            controller: _youtubeControllers[index],
-                            showVideoProgressIndicator: true,
-                            progressIndicatorColor: Colors.blue.shade900,
-                            progressColors: const ProgressBarColors(
-                              playedColor: Colors.blue,
-                              handleColor: Colors.blueAccent,
-                            ),
-                            onReady: () {
-                              _youtubeControllers[index].addListener(() {});
-                            },
-                          ),
-                        ),
-                      ),
+              ListView.builder(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: _youtubeControllers.length,
+  itemBuilder: (context, index) {
+    final videoUrl = currentNote.videoLink![index];
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Show Copyable Video Link
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xffF6F1E9),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.brown.shade200),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    videoUrl,
+                    style: GoogleFonts.merriweather(
+                      fontSize: 14,
+                      color: const Color(0xff4E3C36),
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.copy, size: 20),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: videoUrl));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Link copied!")),
                     );
                   },
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Show Video Player
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: YoutubePlayer(
+                controller: _youtubeControllers[index],
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.blue.shade700,
+                progressColors: const ProgressBarColors(
+                  playedColor: Colors.teal,
+                  handleColor: Colors.tealAccent,
                 ),
+                onReady: () {
+                  _youtubeControllers[index].addListener(() {});
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+)
+
               ],
             ),
         ],

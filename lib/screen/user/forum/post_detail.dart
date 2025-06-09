@@ -132,120 +132,122 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 const SizedBox(height: 8),
                                 // Scrollable Replies List
                                 SizedBox(
-                                  height: constraints.maxHeight * 0.5,
-                              child: Expanded(
-                                    child: ValueListenableBuilder<List<Reply>>(
-                                        valueListenable: repliesNotifier,
-                                        builder: (context, replies, _) {
-                                          return ListView.builder(
-                                            itemCount: replies.length,
-                                            itemBuilder: (context, index) {
-                                              var reply = replies[index];
-                                           final isMyReply = reply.creator == userViewModel.userId;
-                                              return InkWell(
-                                                  onLongPress: () =>
-                                                      _showReplyOptionsBottomSheet(
-                                                          post, index),
-                                                  child: Card(
-                                                    elevation: 2,
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            bottom: 8.0),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              16),
-                                                    ),
-                                                    color: Colors.white,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      child: Row(
-                                                        children: [
-                                                          CircleAvatar(
-                                                            radius: 20,
-                                                            backgroundImage:
-                                                                NetworkImage(
-                                                              forumViewModel
-                                                                      .userMap[reply
-                                                                          .creator]
-                                                                      ?.profileImage ??
-                                                                  "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
-                                                            ),
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .grey[300],
+                                    height: constraints.maxHeight * 0.5,
+                                    child: Expanded(
+                                      child:
+                                          ValueListenableBuilder<List<Reply>>(
+                                              valueListenable: repliesNotifier,
+                                              builder: (context, replies, _) {
+                                                return ListView.builder(
+                                                  itemCount: replies.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    var reply = replies[index];
+                                                    final isMyReply = reply
+                                                            .creator ==
+                                                        userViewModel.userId;
+                                                    return InkWell(
+                                                        onLongPress: () =>
+                                                            _showReplyOptionsBottomSheet(
+                                                                post, index),
+                                                        child: Card(
+                                                          elevation: 2,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 8.0),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16),
                                                           ),
-                                                          const SizedBox(
-                                                              width: 12),
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
+                                                          color: Colors.white,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16.0),
+                                                            child: Row(
                                                               children: [
-                                                                Text(
-                                                                  isMyReply
-                                                                      ? "${forumViewModel.userMap[reply.creator]?.name ?? "Deleted User"} (You)"
-                                                                      : forumViewModel
-                                                                              .userMap[reply.creator]
-                                                                              ?.name ??
-                                                                          "Deleted User",
-                                                                  style: GoogleFonts
-                                                                      .fredoka(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16,
+                                                                CircleAvatar(
+                                                                  radius: 20,
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                    forumViewModel
+                                                                            .userMap[reply.creator]
+                                                                            ?.profileImage ??
+                                                                        "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                                                                   ),
-                                                                ),
-                                                                Text(
-                                                                  "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
-                                                                  style: GoogleFonts
-                                                                      .fredoka(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
+                                                                  backgroundColor:
+                                                                      Colors.grey[
+                                                                          300],
                                                                 ),
                                                                 const SizedBox(
-                                                                    height: 8),
-                                                                Text(
-                                                                  reply.content,
-                                                                  style: GoogleFonts
-                                                                      .fredoka(
+                                                                    width: 12),
+                                                                Expanded(
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                        isMyReply
+                                                                            ? "${forumViewModel.userMap[reply.creator]?.name ?? "Deleted User"} (You)"
+                                                                            : forumViewModel.userMap[reply.creator]?.name ??
+                                                                                "Deleted User",
+                                                                        style: GoogleFonts
+                                                                            .fredoka(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
                                                                           fontSize:
-                                                                              14),
+                                                                              16,
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
+                                                                        style: GoogleFonts
+                                                                            .fredoka(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.grey,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              8),
+                                                                      Text(
+                                                                        reply
+                                                                            .content,
+                                                                        style: GoogleFonts.fredoka(
+                                                                            fontSize:
+                                                                                14),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
+                                                                if (userViewModel
+                                                                        .role ==
+                                                                    "admin")
+                                                                  IconButton(
+                                                                    icon: const Icon(
+                                                                        Icons
+                                                                            .delete),
+                                                                    color: const Color(
+                                                                        0xFF757575),
+                                                                    onPressed: () =>
+                                                                        confirmDeleteReply(
+                                                                            index),
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),
-                                                          if (userViewModel
-                                                                  .role ==
-                                                              "admin")
-                                                            IconButton(
-                                                              icon: const Icon(
-                                                                  Icons.delete),
-                                                              color: const Color(
-                                                                  0xFF757575),
-                                                              onPressed: () =>
-                                                                  confirmDeleteReply(
-                                                                      index),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ));
-                                            },
-                                          );
-                                        }),
-                                  
-                                )
-                                )
+                                                        ));
+                                                  },
+                                                );
+                                              }),
+                                    ))
                               ],
                             ),
                           ),
@@ -429,74 +431,105 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                        
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => Dialog(
-                                      backgroundColor: Colors.black,
-                                      insetPadding: EdgeInsets.zero,
-                                      child: Stack(
-                                        children: [
-                                          InteractiveViewer(
-                                            child: Center(
-                                              child: Image.network(
-                                                post.images![index],
-                                                fit: BoxFit.contain,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return const Icon(Icons.error,
-                                                      color: Colors.red);
-                                                },
-                                              ),
-                                            ),
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => Dialog(
+                                  backgroundColor: Colors.black,
+                                  insetPadding: EdgeInsets.zero,
+                                  child: Stack(
+                                    children: [
+                                      InteractiveViewer(
+                                        child: Center(
+                                          child: Image.network(
+                                            post.images![index],
+                                            fit: BoxFit.contain,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Center(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(Icons.broken_image,
+                                                        color: Colors.red,
+                                                        size: 40),
+                                                    SizedBox(height: 4),
+                                                    Text(
+                                                      "Image failed to load",
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           ),
-                                          Positioned(
-                                            top: 40,
-                                            right: 20,
-                                            child: IconButton(
-                                              icon: const Icon(Icons.close,
-                                                  color: Colors.white,
-                                                  size: 30),
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    post.images![index],
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
+                                      Positioned(
+                                        top: 40,
+                                        right: 20,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.close,
+                                              color: Colors.white, size: 30),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                post.images![index],
+                                height: 80,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
                                                   null
                                               ? loadingProgress
                                                       .cumulativeBytesLoaded /
                                                   loadingProgress
                                                       .expectedTotalBytes!
                                               : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.broken_image,
+                                            color: Colors.red, size: 40),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Image failed to load",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.error,
-                                          color: Colors.red);
-                                    },
-                                  ),
-                                ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
+                          ),
                         );
                       },
                     ),
@@ -666,10 +699,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   'Are you sure you want to delete this reply? This action cannot be undone.',
               action: 'Alert',
               onConfirm: () {
-                            repliesNotifier.value = List.from(repliesNotifier.value)
+                repliesNotifier.value = List.from(repliesNotifier.value)
                   ..removeAt(index);
                 Navigator.of(context).pop();
-    
+
                 forumViewModel.deleteReply(post.postID!, index);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

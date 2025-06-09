@@ -85,7 +85,9 @@ class _AddQuizPageState extends State<AddQuizPage> {
     try {
       String fileName =
           '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
-      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+                  Reference storageRef =
+            FirebaseStorage.instance.ref().child('quizz/$fileName');
+
       UploadTask uploadTask = storageRef.putFile(_image!);
       TaskSnapshot taskSnapshot = await uploadTask;
 
