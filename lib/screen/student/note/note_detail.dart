@@ -30,11 +30,25 @@ class _NotePageState extends State<NotePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
   void dispose() {
     for (var controller in _youtubeControllers) {
       controller.dispose();
     }
     _pageController.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     super.dispose();
   }
 
@@ -54,6 +68,11 @@ class _NotePageState extends State<NotePage> {
             autoPlay: false,
             mute: false,
             enableCaption: true,
+            forceHD: true,
+            isLive: false,
+            controlsVisibleAtStart: true,
+            hideControls: false,
+            disableDragSeek: false,
           ),
         );
       }).toList();
@@ -233,7 +252,8 @@ class _NotePageState extends State<NotePage> {
                   // Header with Book Icon
                   Row(
                     children: [
-                      const Icon(Icons.menu_book, color: Color(0xff368173), size: 28),
+                      const Icon(Icons.menu_book,
+                          color: Color(0xff368173), size: 28),
                       const SizedBox(width: 10),
                       Text(
                         'Note Content',
@@ -296,84 +316,88 @@ class _NotePageState extends State<NotePage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-              ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: _youtubeControllers.length,
-  itemBuilder: (context, index) {
-    final videoUrl = currentNote.videoLink![index];
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _youtubeControllers.length,
+                  itemBuilder: (context, index) {
+                    final videoUrl = currentNote.videoLink![index];
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Show Copyable Video Link
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xffF6F1E9),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.brown.shade200),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    videoUrl,
-                    style: GoogleFonts.merriweather(
-                      fontSize: 14,
-                      color: const Color(0xff4E3C36),
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.copy, size: 20),
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: videoUrl));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Link copied!")),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Show Copyable Video Link
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffF6F1E9),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.brown.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    videoUrl,
+                                    style: GoogleFonts.merriweather(
+                                      fontSize: 14,
+                                      color: const Color(0xff4E3C36),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.copy, size: 20),
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: videoUrl));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Link copied!")),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          buildYoutubePlayer(_youtubeControllers[index]),
+                        ],
+                      ),
                     );
                   },
                 )
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Show Video Player
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: YoutubePlayer(
-                controller: _youtubeControllers[index],
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Colors.blue.shade700,
-                progressColors: const ProgressBarColors(
-                  playedColor: Colors.teal,
-                  handleColor: Colors.tealAccent,
-                ),
-                onReady: () {
-                  _youtubeControllers[index].addListener(() {});
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  },
-)
-
               ],
             ),
         ],
       ),
     );
   }
+
+
+  Widget buildYoutubePlayer(YoutubePlayerController controller) {
+  return YoutubePlayerBuilder(
+    player: YoutubePlayer(
+      controller: controller,
+      showVideoProgressIndicator: true,
+      progressIndicatorColor: Colors.blue.shade700,
+      progressColors: const ProgressBarColors(
+        playedColor: Colors.teal,
+        handleColor: Colors.tealAccent,
+      ),
+      onReady: () {
+        controller.addListener(() {});
+      },
+    ),
+    builder: (context, player) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: player,
+      );
+    },
+  );
+}
 }

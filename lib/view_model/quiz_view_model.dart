@@ -36,7 +36,7 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> loadData(String chapterId) async {
-    // await _quizService.predefinedQuizzes();
+   
     _chapterId = chapterId;
     tryFunction(() async {
       if (StorageHelper.get(USER_ID) != null) {
@@ -61,6 +61,7 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> fetchQuizData(String chapterId, {bool refresh = false}) async {
+    //  await _quizService.predefinedQuizzes();
     if (!refresh && _quizzesByChapter.containsKey(chapterId)) {
       _quizzes = _quizzesByChapter[chapterId]!;
       notifyListeners();

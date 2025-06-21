@@ -53,8 +53,8 @@ class _EditPostPageState extends State<EditPostPage> {
       print('Error loading post: $_existingImageUrls');
     } catch (e) {
       print('Error loading post: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to load post.'),backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Failed to load post.'), backgroundColor: Colors.red));
     }
   }
 
@@ -124,14 +124,18 @@ class _EditPostPageState extends State<EditPostPage> {
 
       LoadingDialog.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Post updated successfully!'),backgroundColor: Colors.green),
+        const SnackBar(
+            content: Text('Post updated successfully!'),
+            backgroundColor: Colors.green),
       );
       GoRouter.of(context).pop();
     } catch (e) {
       LoadingDialog.hide(context);
       print('Error updating post: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update post.'),backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text('Failed to update post.'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -256,8 +260,23 @@ class _EditPostPageState extends State<EditPostPage> {
                                       );
                                     },
                                     errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.error,
-                                          color: Colors.red);
+                                      return const Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.broken_image,
+                                                color: Colors.red, size: 40),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              "Image failed to load",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),

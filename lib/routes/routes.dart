@@ -39,7 +39,7 @@ GoRouter router() {
   return GoRouter(
     // initialLocation: '/adminNav',
     //  initialLocation: '/studentNav',
-    initialLocation: '/adminNav',
+    initialLocation: '/signin',
     navigatorKey: navigatorKey,
     routes: [
       // ====================

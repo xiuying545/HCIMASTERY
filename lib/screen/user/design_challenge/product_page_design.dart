@@ -357,15 +357,15 @@ class _ProductDesignChallengePage
               "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
           "image": "assets/Game/productcardalign.png"
         });
-      } else {
-        if (!_hasConsistentSpacing(components)) {
-          feedbackList.add({
-            'text':
-                "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
-            'image': 'assets/Game/spacing.png',
-          });
-        }
       }
+    }
+
+    if (!_hasConsistentSpacing(components)) {
+      feedbackList.add({
+        'text':
+            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+        'image': 'assets/Game/spacing.png',
+      });
     }
 
     if (feedbackList.isEmpty) {
@@ -376,7 +376,7 @@ class _ProductDesignChallengePage
       });
     }
     onResult(feedbackList);
-  }
+  }                                                                                                                                                                
   // Inside submitDesign(), after alignment checks
 
   void printComponentPositions(List<UIComponent> components) {
@@ -457,6 +457,8 @@ class _ProductDesignChallengePage
       print(
           'Bounds $i → top: ${bounds[i]['top']}, bottom: ${bounds[i]['bottom']}');
     }
+
+    bounds.sort((a, b) => a['top']!.compareTo(b['top']!));
 
     // 4) Check vertical gap between each adjacent pair of rows
     for (var i = 0; i < bounds.length - 1; i++) {

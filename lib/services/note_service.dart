@@ -95,7 +95,7 @@ class ChapterService {
 
         chapterList.add(Chapter(
           chapterID: chapterID,
-          chapterName: chapterData['chapterName']??"Something went wrong",
+          chapterName: chapterData['chapterName'] ?? "Something went wrong",
           notes: [],
         ));
       }
@@ -320,10 +320,10 @@ class ChapterService {
 
     // ---------------------- Bab 1 ----------------------
     Chapter bab1 = Chapter(
-      chapterName: 'Bab 1: Asas Reka Bentuk Interaksi',
+      chapterName: 'Asas Reka Bentuk Interaksi',
       notes: [
         Note(
-          title: 'Topik 1.1: Pengenalan kepada Reka Bentuk Interaksi',
+          title: 'Pengenalan kepada Reka Bentuk Interaksi',
           content: '''
 🖥️ Reka bentuk interaksi ialah proses merancang antara muka pengguna (UI) supaya penggunaan sistem menjadi mudah, efisien dan menyeronokkan.
 
@@ -348,7 +348,8 @@ class ChapterService {
           order: 0,
         ),
         Note(
-          title: 'Topik 1.2: Lima Prinsip Reka Bentuk Interaksi',
+          
+          title: 'Lima Prinsip Reka Bentuk Interaksi',
           content: '''
 ✅ 5 prinsip utama dalam reka bentuk interaksi berkualiti:
 
@@ -377,7 +378,7 @@ class ChapterService {
           order: 1,
         ),
         Note(
-          title: 'Topik 1.3: Keperluan Interaksi Manusia dan Komputer',
+          title: 'Keperluan Interaksi Manusia dan Komputer',
           content: '''
 👨‍💻 Dahulu hanya pakar boleh guna komputer. Sekarang, semua lapisan masyarakat menggunakan komputer, maka reka bentuk sistem mesti mesra pengguna.
 
@@ -404,10 +405,10 @@ class ChapterService {
 
     // ---------------------- Bab 2 ----------------------
     Chapter bab2 = Chapter(
-      chapterName: 'Bab 2: Reka Bentuk Skrin dan Penilaian Produk',
+      chapterName: 'Reka Bentuk Skrin dan Penilaian Produk',
       notes: [
         Note(
-          title: 'Topik 2.1: Proses Reka Bentuk Interaksi',
+          title: 'Proses Reka Bentuk Interaksi',
           content: '''
 📲 Reka bentuk interaksi membolehkan aplikasi lebih mudah digunakan dan berkesan.
 
@@ -437,7 +438,7 @@ class ChapterService {
           order: 0,
         ),
         Note(
-          title: 'Topik 2.2: Penghasilan Prototaip Paparan Skrin',
+          title: 'Penghasilan Prototaip Paparan Skrin',
           content: '''
 🎯 Prototaip ialah model awal reka bentuk paparan skrin yang digunakan untuk tunjuk aliran sistem dan mendapatkan maklum balas awal.
 
@@ -469,7 +470,7 @@ class ChapterService {
           order: 1,
         ),
         Note(
-          title: 'Topik 2.3: Penilaian Kuantitatif dan Penambahbaikan',
+          title: 'Penilaian Kuantitatif dan Penambahbaikan',
           content: '''
 📊 Penilaian kuantitatif menggunakan data dan statistik untuk menilai keberkesanan sesuatu reka bentuk sistem.
 
@@ -505,17 +506,11 @@ class ChapterService {
     await chapterService.addChapter(bab2);
   }
 
-
-
-
-
-  
-
   Future<void> predefinedQuizzes() async {
     List<Quiz> predefinedQuizList = [
-      // ✅ BAB 1: Asas Reka Bentuk Interaksi (ID: MallTDKwTdGQ3SNCA6tk)
+      // ✅ BAB 1: Asas Reka Bentuk Interaksi (ID: uclPBPs29jlu69ghUziE)
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Apakah tujuan utama antara muka pengguna (UI)?',
         options: [
           'Untuk melakukan pengiraan',
@@ -526,7 +521,7 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Yang manakah contoh antara muka baris arahan?',
         options: [
           'Microsoft Word',
@@ -537,7 +532,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Apa maksud “maklum balas” dalam HCI?',
         options: [
           'Tindak balas pengguna terhadap sistem',
@@ -548,7 +543,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Prinsip manakah menekankan kepelbagaian keperluan pengguna?',
         options: [
           'Kebolehgunaan',
@@ -559,7 +554,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Apa itu wireframe dalam reka bentuk UI?',
         options: [
           'Gambaran visual penuh antara muka',
@@ -570,7 +565,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question:
             'Jenis ujian manakah melibatkan pemerhatian terhadap pengguna sebenar?',
         options: [
@@ -582,7 +577,7 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Apakah maksud “beban kognitif”?',
         options: [
           'Jumlah maklumat yang boleh diproses oleh pengguna',
@@ -593,7 +588,7 @@ class ChapterService {
         answer: 0,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Apa itu “model mental” dalam HCI?',
         options: [
           'Gambaran pengguna tentang bagaimana sistem berfungsi',
@@ -604,13 +599,13 @@ class ChapterService {
         answer: 0,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Prinsip manakah memastikan fungsi penting mudah dicapai?',
         options: ['Hierarki', 'Kebolehlihatan', 'Afodans', 'Konsistensi'],
         answer: 1,
       ),
       Quiz(
-        chapter: "MallTDKwTdGQ3SNCA6tk",
+        chapter: "uclPBPs29jlu69ghUziE",
         question: 'Cara biasa untuk meningkatkan pengalaman pengguna ialah?',
         options: [
           'Menambah kerumitan sistem',
@@ -623,7 +618,7 @@ class ChapterService {
 
       // ✅ BAB 2: Reka Bentuk Skrin dan Penilaian Produk (Tukar ID sebenar di bawah!)
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Apakah langkah pertama dalam proses reka bentuk interaksi?',
         options: [
           'Bina prototaip',
@@ -634,7 +629,7 @@ class ChapterService {
         answer: 3,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question:
             'Kaedah manakah digunakan untuk mendapatkan maklum balas awal pengguna?',
         options: [
@@ -646,7 +641,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Apakah tujuan lakaran reka bentuk alternatif?',
         options: [
           'Untuk mengelirukan pengguna',
@@ -657,7 +652,7 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Contoh prototaip berketepatan rendah ialah...',
         options: [
           'Laman web interaktif',
@@ -668,7 +663,7 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Apakah yang perlu ada dalam prototaip kalkulator?',
         options: [
           'Skema pangkalan data',
@@ -679,7 +674,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Apakah yang diukur dalam penilaian kuantitatif?',
         options: [
           'Suka pengguna',
@@ -690,7 +685,7 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question:
             'Mengapa maklum balas pengguna penting selepas ujian prototaip?',
         options: [
@@ -702,7 +697,7 @@ class ChapterService {
         answer: 1,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Yang manakah BUKAN komponen paparan UI?',
         options: [
           'Medan input',
@@ -713,13 +708,13 @@ class ChapterService {
         answer: 2,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question: 'Platform manakah digunakan untuk hasilkan UI dalam Java?',
         options: ['Flutter', 'NetBeans', 'Visual Basic', 'Python IDLE'],
         answer: 1,
       ),
       Quiz(
-        chapter: "SN6lJds1WTEQemYU2PF6",
+        chapter: "opjtGlgnqBU4GaxqdOSG",
         question:
             'Berapa orang pengguna yang menilai “Program Mengira Dua Nombor”?',
         options: ['5', '15', '20', '25'],
