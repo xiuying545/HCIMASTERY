@@ -193,7 +193,6 @@ class _ManageQuizPageState extends State<ManageQuizPage> {
                     child: Image.network(
                       quiz.imageUrl!,
                       width: double.infinity,
-                      height: 150,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;

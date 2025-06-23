@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
@@ -11,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:fyp1/view_model/forum_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class PostDetailPage extends StatefulWidget {
   final String postID;
@@ -133,8 +133,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 // Scrollable Replies List
                                 SizedBox(
                                     height: constraints.maxHeight * 0.5,
-                                    child: Expanded(
-                                      child:
+                                    child: 
                                           ValueListenableBuilder<List<Reply>>(
                                               valueListenable: repliesNotifier,
                                               builder: (context, replies, _) {
@@ -247,7 +246,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                   },
                                                 );
                                               }),
-                                    ))
+                                    )
                               ],
                             ),
                           ),
@@ -544,15 +543,17 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   void _showReplyOptionsBottomSheet(Post post, int index) {
     bool isMyReply = post.replies[index].creator == userViewModel.userId;
+    final role = StorageHelper.get(ROLE)?.trim().toLowerCase();
+    final isAdmin = role == ROLE_ADMIN.toLowerCase();
 
-    if (isMyReply || userViewModel.role == ROLE_ADMIN) {
+    if (isMyReply || isAdmin) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (context) => CustomOptionsBottomSheet(
           options: [
-            if (isMyReply || userViewModel.role == ROLE_ADMIN)
+            if (isMyReply || isAdmin)
               OptionItem(
                 icon: Icons.delete_outline_rounded,
                 label: 'Delete Reply',

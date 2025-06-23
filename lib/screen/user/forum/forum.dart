@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/app_theme.dart';
 import 'package:fyp1/common/common_widget/blank_page.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
@@ -189,153 +190,150 @@ class _ForumPageState extends State<ForumPage> {
         .toList();
 
     if (myPosts.isEmpty) {
-      return const Expanded(
-          child: BlankState(
+      return BlankState(
         icon: Icons.post_add,
         title: 'No posts added by you',
         subtitle: 'Tap the + button to add a new post',
-      ));
+      );
+    } else {
+      return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: myPosts.length,
+        itemBuilder: (context, index) {
+          var post = myPosts[index];
+          return _buildPostCard(post, forumViewModel);
+        },
+      );
     }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: myPosts.length,
-      itemBuilder: (context, index) {
-        var post = myPosts[index];
-        return _buildPostCard(post, forumViewModel);
-      },
-    );
   }
 
   void _showPostOptionsBottomSheet(Post post, bool isMyPost) {
-    print("ismypost : $isMyPost");
-    if (!isMyPost && userViewModel.role != ROLE_ADMIN) {
-      if (!isMyPost && userViewModel.role != ROLE_ADMIN) {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(32)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 12,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.only(top: 8, bottom: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Drag handle
-                Container(
-                  width: 60,
-                  height: 6,
-                  margin: const EdgeInsets.only(top: 12, bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
+    final role = StorageHelper.get(ROLE)?.trim().toLowerCase();
+    final isAdmin = role == ROLE_ADMIN.toLowerCase();
 
-                // Message box
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    if (!isMyPost && !isAdmin) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3F2FD),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.only(top: 8, bottom: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                width: 60,
+                height: 6,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+
+              // Message box
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white, width: 2.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.lock_outline,
+                      size: 50,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Access Denied",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.comicNeue(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF0645AD),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      "You cannot edit or delete posts that are not yours.",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.comicNeue(
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // OK button (styled like your cancel button)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white, width: 2.5),
+                    color: const Color(0xFFD2E7FB),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      )
                     ],
                   ),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.lock_outline,
-                        size: 50,
-                        color: Color(0xFF9CA3AF),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Access Denied",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.comicNeue(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0645AD),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        "You cannot edit or delete posts that are not yours.",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.comicNeue(
-                          fontSize: 18,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // OK button (styled like your cancel button)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD2E7FB),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        )
-                      ],
-                    ),
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Okay',
-                              style: GoogleFonts.comicNeue(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: const Color(0xFF0645AD),
-                              ),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Okay',
+                            style: GoogleFonts.comicNeue(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF0645AD),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }
+        ),
+      );
     } else {
       showModalBottomSheet(
         context: context,
@@ -353,7 +351,7 @@ class _ForumPageState extends State<ForumPage> {
                       .push("/student/forum/editPost/${post.postID}");
                 },
               ),
-            if (isMyPost || userViewModel.role == ROLE_ADMIN)
+            if (isMyPost || isAdmin)
               OptionItem(
                 icon: Icons.delete_outline_rounded,
                 label: 'Delete Post',

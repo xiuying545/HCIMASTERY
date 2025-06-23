@@ -19,17 +19,29 @@ class UserViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> loadUser(String userID) async {
-    
+  Future<void> rememberUser(String userID) async {
     await tryFunction(() async {
+      _userId = userID;
       _user = await _userService.getUserById(userID);
       notifyListeners();
-  
     });
-      await StorageHelper.set(USER_ID, userID);
+
+    await StorageHelper.set(USER_ID, userID);
     await StorageHelper.set(ROLE, _user!.role);
     await StorageHelper.set(STATUS, STATUS_LOGIN);
+    await StorageHelper.set(EMAIL, _user!.email);
+  }
 
+  Future<void> loadUser(String userID) async {
+    await tryFunction(() async {
+      _userId = userID;
+      _user = await _userService.getUserById(userID);
+      notifyListeners();
+    });
+
+    await StorageHelper.set(USER_ID, userID);
+    await StorageHelper.set(ROLE, _user!.role);
+    await StorageHelper.set(STATUS, STATUS_LOGIN);
   }
 
   Future<void> saveUser(Profile user) async {
@@ -45,7 +57,6 @@ class UserViewModel extends BaseViewModel {
       await _userService.deleteUser(_userId!);
       StorageHelper.clearAll();
       _user = null;
-
     });
   }
 
@@ -57,6 +68,5 @@ class UserViewModel extends BaseViewModel {
       role = null;
       StorageHelper.clearAll();
     });
-  
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/student/note/main_page.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_list.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class StudentNavBar extends StatefulWidget {
@@ -28,13 +31,15 @@ class _StudentNavBar extends State<StudentNavBar> {
     super.initState();
     _selectedIndex = widget.bottomIndex;
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Provider.of<UserViewModel>(context, listen: false)
-    //       .setUserId("s6JpBLQdVzMeMrLQY9ehcVw3P553");
-    //   Provider.of<UserViewModel>(context, listen: false).role = "Student";
-    //   Provider.of<UserViewModel>(context, listen: false)
-    //       .loadUser("s6JpBLQdVzMeMrLQY9ehcVw3P553");
-    // });
+    final userid = StorageHelper.get(USER_ID);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (userid == null) {
+        GoRouter.of(context).go("/login");
+      } else {
+        Provider.of<UserViewModel>(context, listen: false).loadUser(userid);
+      }
+    });
   }
 
   @override
@@ -69,7 +74,7 @@ class _StudentNavBar extends State<StudentNavBar> {
           ],
         ),
         padding: const EdgeInsets.symmetric(vertical: 5),
-          child: ClipRRect(
+        child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,

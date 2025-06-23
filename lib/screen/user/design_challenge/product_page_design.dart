@@ -368,6 +368,30 @@ class _ProductDesignChallengePage
       });
     }
 
+    if (components.where((c) => c.type == 'SearchBarUI').length > 1) {
+      feedbackList.add({
+        "text":
+            "⚠️ Only one Search Bar should be used. Multiple search bars can confuse users.",
+        "image": "assets/Game/userconfuse.png"
+      });
+    }
+
+    if (components.where((c) => c.type == 'FilterTabs').length > 1) {
+      feedbackList.add({
+        "text":
+            "⚠️ You’ve added multiple Filter Tabs. Consider using only one for clarity.",
+        "image": "assets/Game/userconfuse.png"
+      });
+    }
+
+    if (components.where((c) => c.type == 'BottomNavBar').length > 1) {
+      feedbackList.add({
+        "text":
+            "⚠️ Only one Bottom Navigation Bar is expected. Multiple nav bars may confuse users.",
+        "image": "assets/Game/userconfuse.png"
+      });
+    }
+
     if (feedbackList.isEmpty) {
       feedbackList.add({
         'text':
@@ -376,7 +400,7 @@ class _ProductDesignChallengePage
       });
     }
     onResult(feedbackList);
-  }                                                                                                                                                                
+  }
   // Inside submitDesign(), after alignment checks
 
   void printComponentPositions(List<UIComponent> components) {

@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
       "image": "assets/SplashScreen2.png"
     },
     {
-      "text": "Test your skills with quizzes and learn collaboratively in our forum.",
+      "text":
+          "Test your skills with quizzes and learn collaboratively in our forum.",
       "image": "assets/SplashScreen3.png"
     },
   ];
@@ -73,14 +77,17 @@ class _SplashScreenState extends State<SplashScreen> {
               // Get Started Button
               ElevatedButton(
                 onPressed: () {
-                  context.go("/signin");
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    checkLoginStatus();
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
                   elevation: 5,
                   shadowColor: themeColor.withOpacity(0.3),
                 ),
@@ -99,6 +106,24 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> checkLoginStatus() async {
+    final loginStatus = StorageHelper.get(STATUS);
+    final role = StorageHelper.get(ROLE);
+
+    if (loginStatus == STATUS_LOGIN) {
+      if (role == ROLE_STUDENT) {
+        GoRouter.of(context).go("/studentNav");
+      } else if (role == ROLE_ADMIN) {
+        GoRouter.of(context).go("/adminNav");
+      } else {
+        GoRouter.of(context).go("/signin");
+      }
+    } else {
+      // Not logged in
+      GoRouter.of(context).go("/signin");
+    }
   }
 
   AnimatedContainer buildDot({required int index, required Color themeColor}) {
@@ -160,13 +185,15 @@ class SplashContent extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Center( // Center the image
+            child: Center(
+              // Center the image
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: image != null
                     ? Image.asset(
                         image!,
-                        fit: BoxFit.contain, // Use BoxFit.contain to ensure the image fits within the container
+                        fit: BoxFit
+                            .contain, // Use BoxFit.contain to ensure the image fits within the container
                       )
                     : const SizedBox(),
               ),

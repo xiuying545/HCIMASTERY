@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fyp1/cache/storage_helper.dart';
+import 'package:fyp1/common/constant.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:fyp1/screen/admin/manage_chapter.dart';
 import 'package:fyp1/screen/user/forum/forum.dart';
 import 'package:fyp1/screen/student/note/main_page.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_list.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AdminNavBar extends StatefulWidget {
@@ -28,13 +31,15 @@ class _AdminNavBar extends State<AdminNavBar> {
     super.initState();
     _selectedIndex = widget.bottomIndex;
 
-    //todo
+    final userid = StorageHelper.get(USER_ID);
 
-    Provider.of<UserViewModel>(context, listen: false)
-        .setUserId("0ZSgmWUYGOOzncPO3oiitqaekTM2");
-    Provider.of<UserViewModel>(context, listen: false)
-        .loadUser("0ZSgmWUYGOOzncPO3oiitqaekTM2");
-    Provider.of<UserViewModel>(context, listen: false).role = "Admin";
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (userid == null) {
+        GoRouter.of(context).go("/login");
+      } else {
+        Provider.of<UserViewModel>(context, listen: false).loadUser(userid);
+      }
+    });
   }
 
   @override

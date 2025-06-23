@@ -148,9 +148,14 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
           });
         },
         onTap: () {
+          if (components[index] is ProfilePicture) {
+        
+            return;
+          }
           setState(() {
             selectedIndex = index;
           });
+
           editComponent2(index);
         },
         child: Transform.scale(
@@ -326,7 +331,8 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                         ElevatedButton(
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF59C3A6), // Mint Green
+                            backgroundColor:
+                                const Color(0xFF59C3A6), // Mint Green
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -347,7 +353,8 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF62B6FF), // Soft Blue
+                            backgroundColor:
+                                const Color(0xFF62B6FF), // Soft Blue
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -514,5 +521,4 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
       );
     });
   }
-
 }

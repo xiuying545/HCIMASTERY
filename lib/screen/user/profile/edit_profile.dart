@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/app_theme.dart';
+import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/model/user.dart';
 import 'package:fyp1/common/common_widget/helpers.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
@@ -26,7 +27,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
+  bool isLoading = false;
   late String? _profileImage =
       "https://cdn-icons-png.flaticon.com/512/9368/9368192.png";
 
@@ -71,6 +72,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _loadUserData() async {
+    setState(() {
+      isLoading = true;
+    });
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     await userViewModel.loadUser(widget.userId);
     final user = userViewModel.user;
@@ -84,6 +88,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _usernameController.text = user.username ?? "";
       });
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> _saveProfile() async {
@@ -134,7 +142,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: const Color(0xFFFDF6F1),
       body: Stack(
         children: [
-          SafeArea(
+          isLoading
+                    ? LoadingShimmer()
+                    :  SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: ConstrainedBox(
@@ -143,152 +153,160 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       MediaQuery.of(context).viewPadding.top -
                       MediaQuery.of(context).viewPadding.bottom,
                 ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CircleAvatar(
-                            radius: MediaQuery.of(context).size.width * 0.15,
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: _profileImage != null
-                                  ? Image.network(
-                                      _profileImage!,
-                                      width: 110,
-                                      height: 110,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (_, child, progress) {
-                                        if (progress == null) return child;
-                                        return CircularProgressIndicator(
-                                          color: AppTheme.primaryColor,
-                                        );
-                                      },
-                                      errorBuilder: (_, __, ___) => Icon(
-                                          Icons.person,
-                                          size: 60,
-                                          color: AppTheme.primaryColor),
-                                    )
-                                  : Icon(Icons.person,
-                                      size: 60, color: AppTheme.primaryColor),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.blue,
-                              radius: 20,
-                              child: IconButton(
-                                icon: const Icon(Icons.camera_alt,
-                                    size: 18, color: Colors.white),
-                                onPressed: _pickImage,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      Text(
-                        "⭐ Edit your personal details ⭐",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Form(
-                        key: _formKey,
+                child:IntrinsicHeight(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // all your widgets including:
-                            _buildInputCard(
-                              Icons.person,
-                              "Name",
-                              _nameController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Name is required';
-                                }
-                                if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                                  return 'Name can only contain alphabets';
-                                }
-                                return null;
-                              },
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                CircleAvatar(
+                                  radius:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  backgroundColor: Colors.white,
+                                  child: ClipOval(
+                                    child: _profileImage != null
+                                        ? Image.network(
+                                            _profileImage!,
+                                            width: 110,
+                                            height: 110,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder:
+                                                (_, child, progress) {
+                                              if (progress == null)
+                                                return child;
+                                              return CircularProgressIndicator(
+                                                color: AppTheme.primaryColor,
+                                              );
+                                            },
+                                            errorBuilder: (_, __, ___) => Icon(
+                                                Icons.person,
+                                                size: 60,
+                                                color: AppTheme.primaryColor),
+                                          )
+                                        : Icon(Icons.person,
+                                            size: 60,
+                                            color: AppTheme.primaryColor),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.blue,
+                                    radius: 20,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.camera_alt,
+                                          size: 18, color: Colors.white),
+                                      onPressed: _pickImage,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            _buildInputCard(Icons.person_outline, "Username",
-                                _usernameController),
-                            _buildInputCard(
-                              Icons.phone,
-                              "Phone",
-                              _phoneController,
-                              validator: (value) {
-                                if (value != null) {
-                                  if (value.isNotEmpty &&
-                                      !RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                    return 'Phone can only contain numbers';
-                                  }
-                                }
-                                return null;
-                              },
+                            const SizedBox(height: 30),
+                            Text(
+                              "⭐ Edit your personal details ⭐",
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                              ),
                             ),
+                            const SizedBox(height: 16),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // all your widgets including:
+                                  _buildInputCard(
+                                    Icons.person,
+                                    "Name",
+                                    _nameController,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Name is required';
+                                      }
+                                      if (!RegExp(r'^[a-zA-Z\s]+$')
+                                          .hasMatch(value)) {
+                                        return 'Name can only contain alphabets';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  _buildInputCard(Icons.person_outline,
+                                      "Username", _usernameController),
+                                  _buildInputCard(
+                                    Icons.phone,
+                                    "Phone",
+                                    _phoneController,
+                                    validator: (value) {
+                                      if (value != null) {
+                                        if (value.isNotEmpty &&
+                                            !RegExp(r'^[0-9]+$')
+                                                .hasMatch(value)) {
+                                          return 'Phone can only contain numbers';
+                                        }
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildRoundedButton(
+                                    icon: Icons.lock_outline,
+                                    label: "Password",
+                                    onTap: () => GoRouter.of(context)
+                                        .push("/editPassword"),
+                                    color: const Color(0xffEA7A84),
+                                    context: context),
+                                const SizedBox(width: 16),
+                                buildRoundedButton(
+                                    icon: Icons.save,
+                                    label: "Save",
+                                    onTap: _saveProfile,
+                                    color: const Color(0xffF79F3C),
+                                    context: context),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    GoRouter.of(context).push("/deleteAccount"),
+                                icon: const Icon(Icons.delete_forever_outlined,
+                                    color: Colors.white, size: 18),
+                                label: Text(
+                                  "Delete Account",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 243, 102, 114),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  elevation: 1,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildRoundedButton(
-                              icon: Icons.lock_outline,
-                              label: "Password",
-                              onTap: () =>
-                                  GoRouter.of(context).push("/editPassword"),
-                              color: const Color(0xffEA7A84),
-                              context: context),
-                          const SizedBox(width: 16),
-                          buildRoundedButton(
-                              icon: Icons.save,
-                              label: "Save",
-                              onTap: _saveProfile,
-                              color: const Color(0xffF79F3C),
-                              context: context),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () =>
-                              GoRouter.of(context).push("/deleteAccount"),
-                          icon: const Icon(Icons.delete_forever_outlined,
-                              color: Colors.white, size: 18),
-                          label: Text(
-                            "Delete Account",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 243, 102, 114),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 1,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
               ),
             ),
           ),

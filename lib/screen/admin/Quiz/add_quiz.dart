@@ -45,7 +45,10 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Maximum of 4 options allowed.'), backgroundColor: Colors.red,),
+        const SnackBar(
+          content: Text('Maximum of 4 options allowed.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -60,7 +63,10 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Minimum of 2 options required.'), backgroundColor: Colors.red,),
+        const SnackBar(
+          content: Text('Minimum of 2 options required.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -85,8 +91,8 @@ class _AddQuizPageState extends State<AddQuizPage> {
     try {
       String fileName =
           '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
-                  Reference storageRef =
-            FirebaseStorage.instance.ref().child('quizz/$fileName');
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('quizz/$fileName');
 
       UploadTask uploadTask = storageRef.putFile(_image!);
       TaskSnapshot taskSnapshot = await uploadTask;
@@ -144,14 +150,20 @@ class _AddQuizPageState extends State<AddQuizPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz added successfully!'), backgroundColor: Colors.green,),
+        const SnackBar(
+          content: Text('Quiz added successfully!'),
+          backgroundColor: Colors.green,
+        ),
       );
 
       GoRouter.of(context).pop();
     } catch (e) {
       print('Error uploading quiz: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add quiz.'), backgroundColor: Colors.red,),
+        const SnackBar(
+          content: Text('Failed to add quiz.'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() {
@@ -246,74 +258,69 @@ class _AddQuizPageState extends State<AddQuizPage> {
                   ],
                 ),
                 const SizedBox(height: 8),
-             ...List.generate(_optionControllers.length, (index) {
-                        return Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                          maxLines: 2,
-                                          controller: _optionControllers[index],
-                                          style:
-                                              GoogleFonts.poppins(fontSize: 16),
-                                          decoration: InputDecoration(
-                                            hintText: "Option ${index + 1}",
-                                            hintStyle: GoogleFonts.poppins(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.w500),
-                                            filled: true,
-                                            fillColor: const Color(0xFFFFF9F1),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 12),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                  color: Color(0xFFECE7D9),
-                                                  width: 1.5),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                  color: Color(0xFFD9CFC2),
-                                                  width: 2),
-                                            ),
-                                          ),
-                                        ),
+                ...List.generate(_optionControllers.length, (index) {
+                  return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    maxLines: 2,
+                                    controller: _optionControllers[index],
+                                    style: GoogleFonts.poppins(fontSize: 16),
+                                    decoration: InputDecoration(
+                                      hintText: "Option ${index + 1}",
+                                      hintStyle: GoogleFonts.poppins(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFFF9F1),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFECE7D9),
+                                            width: 1.5),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.remove_circle,
-                                            color: Colors.red),
-                                        onPressed: () => _removeOption(index),
-                                      ),
-                                      Radio<int>(
-                                        value: index,
-                                        groupValue: _selectedAnswer,
-                                        onChanged: (value) => setState(
-                                            () => _selectedAnswer = value!),
-                                        activeColor: const Color(0xff2D7D84),
-                                      ),
-                                    ],
-                                  ),
-                                  if (_isOptionEmpty.length > index &&
-                                      _isOptionEmpty[index])
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 4, left: 8),
-                                      child: Text(
-                                        "Option can not be blank",
-                                        style: TextStyle(
-                                            color: Colors.red, fontSize: 13),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFD9CFC2), width: 2),
                                       ),
                                     ),
-                                ]));
-                      }),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.remove_circle,
+                                      color: Colors.red),
+                                  onPressed: () => _removeOption(index),
+                                ),
+                                Radio<int>(
+                                  value: index,
+                                  groupValue: _selectedAnswer,
+                                  onChanged: (value) =>
+                                      setState(() => _selectedAnswer = value!),
+                                  activeColor: const Color(0xff2D7D84),
+                                ),
+                              ],
+                            ),
+                            if (_isOptionEmpty.length > index &&
+                                _isOptionEmpty[index])
+                              const Padding(
+                                padding: EdgeInsets.only(top: 4, left: 8),
+                                child: Text(
+                                  "Option can not be blank",
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 13),
+                                ),
+                              ),
+                          ]));
+                }),
                 const SizedBox(height: 4),
                 Text('Tick the option to mark it as the correct answer.',
                     style: GoogleFonts.poppins(
@@ -351,16 +358,35 @@ class _AddQuizPageState extends State<AddQuizPage> {
                 ),
                 const SizedBox(height: 8),
                 if (_image != null)
-                  Container(
-                    width: double.infinity,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: DecorationImage(
-                        image: FileImage(_image!),
-                        fit: BoxFit.cover,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          _image!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.center,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _image = null;
+                            });
+                          },
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          label: const Text(
+                            "Remove Image",
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 const SizedBox(height: 30),
                 Center(

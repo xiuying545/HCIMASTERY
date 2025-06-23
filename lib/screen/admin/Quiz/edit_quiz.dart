@@ -69,7 +69,9 @@ class _EditQuizPageState extends State<EditQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Maximum of 4 options allowed.'), backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text('Maximum of 4 options allowed.'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -84,7 +86,9 @@ class _EditQuizPageState extends State<EditQuizPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Minimum of 2 options required.'), backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text('Minimum of 2 options required.'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -108,7 +112,8 @@ class _EditQuizPageState extends State<EditQuizPage> {
     try {
       String fileName =
           '${DateTime.now().millisecondsSinceEpoch}_${_image!.path.split('/').last}';
-      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('quizz/$fileName');
       UploadTask uploadTask = storageRef.putFile(_image!);
       TaskSnapshot taskSnapshot = await uploadTask;
 
@@ -159,13 +164,18 @@ class _EditQuizPageState extends State<EditQuizPage> {
           widget.chapterId, widget.quizId, updatedQuiz);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz updated successfully!'), backgroundColor: Colors.green),
+        const SnackBar(
+            content: Text('Quiz updated successfully!'),
+            backgroundColor: Colors.green),
       );
       GoRouter.of(context).pop();
     } catch (e) {
       print('Error updating quiz: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update quiz.'), backgroundColor: Colors.red,),
+        const SnackBar(
+          content: Text('Failed to update quiz.'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() {
@@ -357,7 +367,9 @@ class _EditQuizPageState extends State<EditQuizPage> {
                               ),
                             ),
                             child: Text(
-                              _image == null ? 'Add Image' : 'Change Image',
+                              (_currentImageUrl != null || _image != null)
+                                  ? 'Change Image'
+                                  : 'Add Image',
                               style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -368,18 +380,44 @@ class _EditQuizPageState extends State<EditQuizPage> {
                       ),
                       const SizedBox(height: 8),
                       if (_currentImageUrl != null || _image != null)
-                        Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: _image != null
-                                  ? FileImage(_image!)
-                                  : NetworkImage(_currentImageUrl!)
-                                      as ImageProvider,
-                              fit: BoxFit.cover,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: _image != null
+                                  ? Image.file(
+                                      _image!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    )
+                                  : Image.network(
+                                      _currentImageUrl!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
                             ),
-                          ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.center,
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _image = null;
+                                    _currentImageUrl = null;
+                                  });
+                                },
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                label: const Text(
+                                  "Remove Image",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       const SizedBox(height: 30),
                       Center(

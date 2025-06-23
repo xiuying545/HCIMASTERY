@@ -33,19 +33,20 @@ import 'package:fyp1/screen/user/profile/edit_profile.dart';
 import 'package:fyp1/screen/user/profile/profile_page.dart';
 import 'package:fyp1/screen/admin/admin_navbar.dart';
 import 'package:fyp1/screen/student/student_navbar.dart';
+import 'package:fyp1/screen/user/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router() {
   return GoRouter(
     // initialLocation: '/adminNav',
     //  initialLocation: '/studentNav',
-    initialLocation: '/signin',
+    initialLocation: '/',
     navigatorKey: navigatorKey,
     routes: [
       // ====================
       // ✅ AUTHENTICATION
       // ====================
-      GoRoute(path: '/', builder: (context, state) => const SignInScreen()),
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
           path: '/signin', builder: (context, state) => const SignInScreen()),
       GoRoute(
