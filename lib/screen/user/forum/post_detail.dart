@@ -192,8 +192,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                                                     children: [
                                                                       Text(
                                                                         isMyReply
-                                                                            ? "${forumViewModel.userMap[reply.creator]?.name ?? "Deleted User"} (You)"
-                                                                            : forumViewModel.userMap[reply.creator]?.name ??
+                                                                            ? "${forumViewModel.userMap[reply.creator]?.username ?? "Deleted User"} (You)"
+                                                                            : forumViewModel.userMap[reply.creator]?.username ??
                                                                                 "Deleted User",
                                                                         style: GoogleFonts
                                                                             .fredoka(
@@ -392,7 +392,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          forumViewModel.userMap[post.creator]?.name ??
+                          forumViewModel.userMap[post.creator]?.username ??
                               "Deleted User",
                           style: GoogleFonts.fredoka(
                             fontSize: 16,

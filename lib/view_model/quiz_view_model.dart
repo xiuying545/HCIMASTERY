@@ -36,7 +36,6 @@ class QuizViewModel extends BaseViewModel {
   }
 
   Future<void> loadData(String chapterId) async {
-   
     _chapterId = chapterId;
     tryFunction(() async {
       if (StorageHelper.get(USER_ID) != null) {

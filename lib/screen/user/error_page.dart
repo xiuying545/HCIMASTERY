@@ -56,7 +56,7 @@ class ErrorPage extends StatelessWidget {
                     }
                     
                   } else {
-                    GoRouter.of(context).go('/login');
+                    GoRouter.of(context).go('/signin');
                   }
                 },
                 child: const Text(
