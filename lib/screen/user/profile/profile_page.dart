@@ -4,6 +4,9 @@ import 'package:fyp1/cache/storage_helper.dart';
 import 'package:fyp1/common/common_widget/custom_dialog.dart';
 import 'package:fyp1/common/common_widget/loading_shimmer.dart';
 import 'package:fyp1/common/common_widget/helpers.dart';
+import 'package:fyp1/view_model/forum_view_model.dart';
+import 'package:fyp1/view_model/note_view_model.dart';
+import 'package:fyp1/view_model/quiz_view_model.dart';
 import 'package:fyp1/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadProfile() async {
-          StorageHelper.clearAll();
+    StorageHelper.clearAll();
     if (userViewModel.userId != null) {
       await userViewModel.loadUser(userViewModel.userId!);
     } else {
@@ -55,16 +58,21 @@ class _ProfilePageState extends State<ProfilePage> {
         content: 'Are you sure you want to logout?',
         action: 'Alert',
         onConfirm: () {
-           _logout();
+          _logout();
           Navigator.of(context).pop();
-       
         },
       ),
     );
   }
 
   Future<void> _logout() async {
+    setState(() {
+      isLoading = true;
+    });
     await userViewModel.logout();
+     Provider.of<NoteViewModel>(context, listen: false).clear();
+     Provider.of<ForumViewModel>(context, listen: false).clear();
+     Provider.of<QuizViewModel>(context, listen: false).clear();
     if (mounted) {
       GoRouter.of(context).go('/signIn');
     }

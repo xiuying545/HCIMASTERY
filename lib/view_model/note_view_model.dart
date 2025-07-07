@@ -267,4 +267,26 @@ class NoteViewModel extends BaseViewModel {
           chapterID, noteID);
     });
   }
+
+  void clear() {
+    // Cancel and remove all debounce timers
+    for (var timer in _debounceTimers.values) {
+      timer.cancel();
+    }
+    _debounceTimers.clear();
+
+    // Clear all data structures
+    _notes.clear();
+    _chapters.clear();
+    _notesByChapter.clear();
+    _studentProgress.clear();
+    _noteCount.clear();
+    _progressMap.clear();
+
+    // Reset single values
+    _chapterId = "";
+    _userId = "";
+
+    notifyListeners();
+  }
 }

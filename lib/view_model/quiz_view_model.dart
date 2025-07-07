@@ -167,4 +167,20 @@ class QuizViewModel extends BaseViewModel {
       await _quizAnswerService.deleteQuizAnswerForQuiz(chapterID, quizID);
     });
   }
+
+  void clear() {
+    // Cancel debounce timer
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
+
+    // Clear all data
+    _cachedAnswers.clear();
+    _quizzes.clear();
+    _quizzesByChapter.clear();
+    _score = 0;
+    _userId = "";
+    _chapterId = "";
+
+    notifyListeners();
+  }
 }

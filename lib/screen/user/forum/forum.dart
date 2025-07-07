@@ -373,6 +373,18 @@ class _ForumPageState extends State<ForumPage> {
     var isLiked = forumViewModel.isLikedByUser[post.postID] ?? false;
     int index = forumViewModel.posts.indexWhere((p) => p.postID == post.postID);
     var isMyPost = post.creator == userViewModel.userId;
+    final user = forumViewModel.userMap[post.creator];
+    String displayName;
+
+    if (user == null) {
+      displayName = "Deleted User";
+    } else if (user.username?.isNotEmpty == true) {
+      displayName = user.username!;
+    } else if (user.name.isNotEmpty == true) {
+      displayName = user.name;
+    } else {
+      displayName = "Deleted User";
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Card(
@@ -420,13 +432,7 @@ class _ForumPageState extends State<ForumPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            isMyPost
-                                ? '${forumViewModel.userMap[post.creator]?.username ?? forumViewModel.userMap[post.creator]?.name} (You)'
-                                : forumViewModel
-                                        .userMap[post.creator]?.username ??
-                                    forumViewModel
-                                        .userMap[post.creator]?.name ??
-                                    "Deleted User",
+                            isMyPost ? "$displayName (You)" : displayName,
                             style: GoogleFonts.fredoka(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

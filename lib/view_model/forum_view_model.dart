@@ -88,20 +88,18 @@ class ForumViewModel extends BaseViewModel {
   /// Likes a post, updates local state, and sends the request to the backend
   Future<void> likePost(int index, String userId) async {
     _isLikedByUser[_posts[index].postID!] = true;
-        _posts[index].likedByUserIds.add(userId);
+    _posts[index].likedByUserIds.add(userId);
     notifyListeners();
     await _postService.likePost(_posts[index].postID!, userId);
-
   }
 
   /// Unlikes a post, updates local state, and sends the request to the backend
   Future<void> unlikePost(int index, String userId) async {
     _isLikedByUser[_posts[index].postID!] = false;
-      _posts[index].likedByUserIds.remove(userId);
-      notifyListeners();
+    _posts[index].likedByUserIds.remove(userId);
+    notifyListeners();
 
     await _postService.unlikePost(_posts[index].postID!, userId);
-
   }
 
   /// Adds a reply to a post
@@ -123,5 +121,13 @@ class ForumViewModel extends BaseViewModel {
           .removeAt(replyIndex);
       notifyListeners();
     });
+  }
+
+  void clear() {
+    _posts.clear();
+    _isLikedByUser.clear();
+    _userMap.clear();
+    _userId = "";
+    notifyListeners();
   }
 }

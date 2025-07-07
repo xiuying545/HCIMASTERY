@@ -56,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _redirectUserBasedOnRole(String userId) async {
     if (mounted) {
       userViewModel.setUserId(userId);
-      await userViewModel.loadUser(userId);
+      await userViewModel.rememberUser(userId);
       String route;
       if (userViewModel.user?.role == ROLE_ADMIN) {
         route = '/adminNav';

@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await noteViewModel.setupChapterData();
-      await noteViewModel.calculateProgressByChapter();
+      // await noteViewModel.calculateProgressByChapter();
       setState(() {
         isLoading = false;
       });

@@ -62,11 +62,11 @@ class UserViewModel extends BaseViewModel {
 
   Future<void> logout() async {
     await tryFunction(() async {
-      await FirebaseAuth.instance.signOut();
       _userId = null;
       _user = null;
       role = null;
       StorageHelper.clearAll();
+      await FirebaseAuth.instance.signOut();
     });
   }
 }

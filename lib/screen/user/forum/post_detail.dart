@@ -132,121 +132,128 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 const SizedBox(height: 8),
                                 // Scrollable Replies List
                                 SizedBox(
-                                    height: constraints.maxHeight * 0.5,
-                                    child: 
-                                          ValueListenableBuilder<List<Reply>>(
-                                              valueListenable: repliesNotifier,
-                                              builder: (context, replies, _) {
-                                                return ListView.builder(
-                                                  itemCount: replies.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    var reply = replies[index];
-                                                    final isMyReply = reply
-                                                            .creator ==
-                                                        userViewModel.userId;
-                                                    return InkWell(
-                                                        onLongPress: () =>
-                                                            _showReplyOptionsBottomSheet(
-                                                                post, index),
-                                                        child: Card(
-                                                          elevation: 2,
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 8.0),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16),
+                                  height: constraints.maxHeight * 0.5,
+                                  child: ValueListenableBuilder<List<Reply>>(
+                                      valueListenable: repliesNotifier,
+                                      builder: (context, replies, _) {
+                                        return ListView.builder(
+                                          itemCount: replies.length,
+                                          itemBuilder: (context, index) {
+                                            var reply = replies[index];
+                                            final isMyReply = reply.creator ==
+                                                userViewModel.userId;
+                                            final user = forumViewModel
+                                                .userMap[reply.creator];
+                                            String displayName;
+
+                                            if (user == null) {
+                                              displayName = "Deleted User";
+                                            } else if (user
+                                                    .username?.isNotEmpty ==
+                                                true) {
+                                              displayName = user.username!;
+                                            } else if (user.name.isNotEmpty ==
+                                                true) {
+                                              displayName = user.name;
+                                            } else {
+                                              displayName = "Deleted User";
+                                            }
+                                            return InkWell(
+                                                onLongPress: () =>
+                                                    _showReplyOptionsBottomSheet(
+                                                        post, index),
+                                                child: Card(
+                                                  elevation: 2,
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 8.0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16),
+                                                  ),
+                                                  color: Colors.white,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    child: Row(
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 20,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                            forumViewModel
+                                                                    .userMap[reply
+                                                                        .creator]
+                                                                    ?.profileImage ??
+                                                                "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
                                                           ),
-                                                          color: Colors.white,
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(16.0),
-                                                            child: Row(
-                                                              children: [
-                                                                CircleAvatar(
-                                                                  radius: 20,
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                    forumViewModel
-                                                                            .userMap[reply.creator]
-                                                                            ?.profileImage ??
-                                                                        "https://cdn-icons-png.flaticon.com/512/9368/9368192.png",
-                                                                  ),
-                                                                  backgroundColor:
-                                                                      Colors.grey[
-                                                                          300],
+                                                          backgroundColor:
+                                                              Colors.grey[300],
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 12),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                isMyReply
+                                                                    ? "$displayName (You)"
+                                                                    : displayName,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .fredoka(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
                                                                 ),
-                                                                const SizedBox(
-                                                                    width: 12),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Text(
-                                                                        isMyReply
-                                                                            ? "${forumViewModel.userMap[reply.creator]?.username ?? "Deleted User"} (You)"
-                                                                            : forumViewModel.userMap[reply.creator]?.username ??
-                                                                                "Deleted User",
-                                                                        style: GoogleFonts
-                                                                            .fredoka(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              16,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
-                                                                        style: GoogleFonts
-                                                                            .fredoka(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              Colors.grey,
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              8),
-                                                                      Text(
-                                                                        reply
-                                                                            .content,
-                                                                        style: GoogleFonts.fredoka(
-                                                                            fontSize:
-                                                                                14),
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                              ),
+                                                              Text(
+                                                                "posted on ${DateFormat('yyyy-MM-dd').format(reply.timeCreated)}",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .fredoka(
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .grey,
                                                                 ),
-                                                                if (userViewModel
-                                                                        .role ==
-                                                                    "admin")
-                                                                  IconButton(
-                                                                    icon: const Icon(
-                                                                        Icons
-                                                                            .delete),
-                                                                    color: const Color(
-                                                                        0xFF757575),
-                                                                    onPressed: () =>
-                                                                        confirmDeleteReply(
-                                                                            index),
-                                                                  ),
-                                                              ],
-                                                            ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              Text(
+                                                                reply.content,
+                                                                style: GoogleFonts
+                                                                    .fredoka(
+                                                                        fontSize:
+                                                                            14),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ));
-                                                  },
-                                                );
-                                              }),
-                                    )
+                                                        ),
+                                                        if (userViewModel
+                                                                .role ==
+                                                            "admin")
+                                                          IconButton(
+                                                            icon: const Icon(
+                                                                Icons.delete),
+                                                            color: const Color(
+                                                                0xFF757575),
+                                                            onPressed: () =>
+                                                                confirmDeleteReply(
+                                                                    index),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ));
+                                          },
+                                        );
+                                      }),
+                                )
                               ],
                             ),
                           ),
@@ -353,6 +360,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   Widget _buildPostHeader(Post post) {
+    final user = forumViewModel.userMap[post.creator];
+    String displayName;
+    var isMyPost = post.creator == userViewModel.userId;
+    if (user == null) {
+      displayName = "Deleted User";
+    } else if (user.username?.isNotEmpty == true) {
+      displayName = user.username!;
+    } else if (user.name.isNotEmpty == true) {
+      displayName = user.name;
+    } else {
+      displayName = "Deleted User";
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Card(
@@ -392,8 +412,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          forumViewModel.userMap[post.creator]?.username ??
-                              "Deleted User",
+                          isMyPost ? "$displayName (You)" : displayName,
                           style: GoogleFonts.fredoka(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

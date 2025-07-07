@@ -19,6 +19,7 @@ class StudentNavBar extends StatefulWidget {
 
 class _StudentNavBar extends State<StudentNavBar> {
   int _selectedIndex = 0;
+  bool _loading = true;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -29,21 +30,36 @@ class _StudentNavBar extends State<StudentNavBar> {
   @override
   void initState() {
     super.initState();
+
     _selectedIndex = widget.bottomIndex;
 
     final userid = StorageHelper.get(USER_ID);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (userid == null) {
+    if (userid == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         GoRouter.of(context).go("/login");
-      } else {
-        Provider.of<UserViewModel>(context, listen: false).loadUser(userid);
-      }
-    });
+      });
+    } else {
+      Provider.of<UserViewModel>(context, listen: false)
+          .loadUser(userid)
+          .then((_) {
+        setState(() {
+          _loading = false;
+        });
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     Widget getBodyWidget(int index) {
       switch (index) {
         case 0:
@@ -83,8 +99,8 @@ class _StudentNavBar extends State<StudentNavBar> {
             selectedFontSize: 14,
             unselectedFontSize: 12,
             iconSize: 28,
-            selectedItemColor: const Color(0xFF2773C8), // 明亮蓝色
-            unselectedItemColor: const Color(0xFF9CA3AF), // 柔和灰蓝
+            selectedItemColor: const Color(0xFF2773C8), // Bright blue
+            unselectedItemColor: const Color(0xFF9CA3AF), // Soft gray-blue
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             items: const [
