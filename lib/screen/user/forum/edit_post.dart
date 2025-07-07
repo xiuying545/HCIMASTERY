@@ -112,7 +112,7 @@ class _EditPostPageState extends State<EditPostPage> {
         editStatus: true,
       );
 
-      await PostService().editPost(post);
+      await forumViewModel.editPost(post);
 
       _titleController.clear();
       _contentController.clear();
