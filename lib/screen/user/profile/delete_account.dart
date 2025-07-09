@@ -16,13 +16,15 @@ class DeleteAccountPage extends StatefulWidget {
 
 class _DeleteAccountPageState extends State<DeleteAccountPage> {
   final TextEditingController _passwordController = TextEditingController();
+
   void _onDeletePressed() async {
     if (_passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("Please enter your password."),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red),
+          content: Text("Sila masukkan kata laluan anda."),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -34,15 +36,17 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         password: _passwordController.text.trim(),
       );
 
-      // Attempt reauthentication
+      // Re-authenticate
       await user.reauthenticateWithCredential(cred);
 
-      // Delete user from database
+      // Delete data from database
       Provider.of<NoteViewModel>(context, listen: false)
           .deleteNoteProgressForUser(user.uid);
-                Provider.of<QuizViewModel>(context, listen: false)
+      Provider.of<QuizViewModel>(context, listen: false)
           .deleteQuizAnswerForUser(user.uid);
       await Provider.of<UserViewModel>(context, listen: false).deleteUser();
+
+      // Delete Firebase account
       await user.delete();
 
       showDialog(
@@ -54,7 +58,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
           backgroundColor: const Color(0xFFFFF6E6),
           title: const Center(
             child: Text(
-              "GoodBye",
+              "Selamat Tinggal",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF2A4F4F),
@@ -62,7 +66,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             ),
           ),
           content: const Text(
-            "Your account has been deleted.\nHope to see you next time! 😊",
+            "Akaun anda telah dipadam.\nSemoga kita berjumpa lagi! 😊",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
@@ -95,19 +99,17 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      print(e.code);
       if (e.code == 'invalid-credential') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text("Incorrect password. Please try again."),
+              content: Text("Kata laluan tidak sah. Sila cuba lagi."),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.red),
         );
       } else {
-        print(e.code);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text("Something went wrong. Please try again."),
+              content: Text("Ralat telah berlaku. Sila cuba lagi."),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.red),
         );
@@ -126,9 +128,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             left: 16,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.brown, size: 28),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
             ),
           ),
           Center(
@@ -143,7 +143,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Delete Account",
+                    "Padam Akaun",
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                   Image.asset("assets/Animation/sadBear.png", height: 200),
                   const SizedBox(height: 16),
                   Text(
-                    "Sorry to let you go.\nHope to see you next time!",
+                    "Maaf kerana anda ingin pergi.\nSemoga kita berjumpa lagi!",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 17,
@@ -165,17 +165,15 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    style: const TextStyle(
-                        color: Color(0xFF2A4F4F)), // Deep green text
+                    style: const TextStyle(color: Color(0xFF2A4F4F)),
                     decoration: InputDecoration(
-                      hintText: "Password",
+                      hintText: "Kata Laluan",
                       hintStyle: const TextStyle(
                         color: Color(0xFF2A4F4F),
                         fontWeight: FontWeight.w500,
                       ),
                       filled: true,
-                      fillColor: const Color(
-                          0xFFFFF6E6), // Soft pastel cream background
+                      fillColor: const Color(0xFFFFF6E6),
                       prefixIcon: const Icon(Icons.lock_outline,
                           color: Color(0xFF2A4F4F)),
                       contentPadding: const EdgeInsets.symmetric(
@@ -205,7 +203,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: Text(
-                        "Delete",
+                        "Padam",
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           color: Colors.white,

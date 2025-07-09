@@ -256,7 +256,7 @@ class _NotePageState extends State<NotePage> {
                           color: Color(0xff368173), size: 28),
                       const SizedBox(width: 10),
                       Text(
-                        'Note Content',
+                        'Kandungan Nota',
                         style: GoogleFonts.merriweather(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,

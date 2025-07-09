@@ -17,7 +17,6 @@ class _FlowAScreenState extends State<FlowAScreen> {
   int? sugarAmount;
   int step = 0;
 
-
   void nextStep() {
     setState(() {
       step++;
@@ -29,10 +28,10 @@ class _FlowAScreenState extends State<FlowAScreen> {
       case 0:
         return stepCard(
           emoji: '☕',
-          label: 'Choose your coffee:',
+          label: 'Pilih kopi anda:',
           child: DropdownButtonFormField<String>(
             value: coffeeType,
-            decoration: inputDecoration('Select Coffee'),
+            decoration: inputDecoration('Pilih Jenis Kopi'),
             items: ['Espresso', 'Latte', 'Cappuccino']
                 .map((type) => DropdownMenuItem(value: type, child: Text(type)))
                 .toList(),
@@ -42,11 +41,11 @@ class _FlowAScreenState extends State<FlowAScreen> {
       case 1:
         return stepCard(
           emoji: '🥛',
-          label: 'Pick your milk:',
+          label: 'Pilih jenis susu:',
           child: DropdownButtonFormField<String>(
             value: milkType,
-            decoration: inputDecoration('Select Milk'),
-            items: ['Whole', 'Oat', 'Almond', 'None']
+            decoration: inputDecoration('Pilih Jenis Susu'),
+            items: ['Penuh Krim', 'Oat', 'Badam', 'Tiada']
                 .map((milk) => DropdownMenuItem(value: milk, child: Text(milk)))
                 .toList(),
             onChanged: (val) => setState(() => milkType = val),
@@ -55,13 +54,13 @@ class _FlowAScreenState extends State<FlowAScreen> {
       case 2:
         return stepCard(
           emoji: '🍬',
-          label: 'How many teaspoons of sugar?',
+          label: 'Berapa sudu teh gula?',
           child: DropdownButtonFormField<int>(
             value: sugarAmount,
-            decoration: inputDecoration('Select Sugar'),
+            decoration: inputDecoration('Pilih Kuantiti Gula'),
             items: [0, 1, 2, 3]
                 .map((sugar) =>
-                    DropdownMenuItem(value: sugar, child: Text('$sugar tsp')))
+                    DropdownMenuItem(value: sugar, child: Text('$sugar sudu')))
                 .toList(),
             onChanged: (val) => setState(() => sugarAmount = val),
           ),
@@ -114,7 +113,6 @@ class _FlowAScreenState extends State<FlowAScreen> {
 
   @override
   Widget build(BuildContext context) {
-  
     bool isNextEnabled = (step == 0 && coffeeType != null) ||
         (step == 1 && milkType != null) ||
         (step == 2 && sugarAmount != null);
@@ -124,7 +122,7 @@ class _FlowAScreenState extends State<FlowAScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("☕ Flow A — Step by Step",
+        title: const Text("☕ Aliran A — Langkah demi Langkah",
             style: TextStyle(color: Colors.brown)),
         leading: const BackButton(color: Colors.brown),
       ),
@@ -141,19 +139,20 @@ class _FlowAScreenState extends State<FlowAScreen> {
                 onPressed: isNextEnabled
                     ? () async {
                         if (step == 2) {
-                          if(widget.fromFlowB == true) {
-                                 Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FeedbackScreen()),
-                          );
-                          } else{
-                 
-                             Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FlowBScreen(fromFlowA: true,)),
-                          );
+                          if (widget.fromFlowB == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const FeedbackScreen()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const FlowBScreen(
+                                        fromFlowA: true,
+                                      )),
+                            );
                           }
                         } else {
                           nextStep();
@@ -169,10 +168,10 @@ class _FlowAScreenState extends State<FlowAScreen> {
                 ),
                 child: Text(
                   step == 2
-                      ? (widget.fromFlowB  == true
-                          ? "Give Feedback 💌"
-                          : "Next: Flow B 🌈")
-                      : "Next ➡️",
+                      ? (widget.fromFlowB == true
+                          ? "Beri Maklum Balas 💌"
+                          : "Seterusnya: Aliran B 🌈")
+                      : "Seterusnya ➡️",
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),

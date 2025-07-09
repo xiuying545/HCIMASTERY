@@ -266,7 +266,7 @@ class _ProductDesignChallengePage
       onResult([
         {
           "text":
-              "⚠️ Try dragging in some UI components to start your design . You're creating a product listing page where users can easily find, view product, and navigate to other sections.",
+              "⚠️ Cuba seret beberapa komponen UI untuk memulakan reka bentuk anda. Anda sedang mencipta halaman senarai produk di mana pengguna boleh mencari, melihat produk dan navigasi ke bahagian lain dengan mudah.",
           "image": "assets/Game/empty.png",
         }
       ]);
@@ -283,14 +283,15 @@ class _ProductDesignChallengePage
     final hasNav = components.any((c) => c.type == 'BottomNavBar');
 
     List<String> missing = [];
-    if (!hasSearchBar) missing.add("Search Bar");
-    if (!hasFilter) missing.add("Filter Tabs");
-    if (!hasProduct) missing.add("Product Item");
-    if (!hasNav) missing.add("Bottom Navigation");
+    if (!hasSearchBar) missing.add("Bar Carian");
+    if (!hasFilter) missing.add("Tab Penapis");
+    if (!hasProduct) missing.add("Item Produk");
+    if (!hasNav) missing.add("Navigasi Bawah");
 
     if (missing.isNotEmpty) {
       feedbackList.add({
-        "text": "⚠️ You're missing some key components: ${missing.join(", ")}.",
+        "text":
+            "⚠️ Anda kehilangan beberapa komponen penting: ${missing.join(", ")}.",
         "image": "assets/Game/missingcomponent.png"
       });
     }
@@ -305,7 +306,7 @@ class _ProductDesignChallengePage
     if (!layoutOk) {
       feedbackList.add({
         "text":
-            "⚠️ Some components extend beyond the canvas. Try adjusting their position.",
+            "⚠️ Beberapa komponen melebihi kanvas. Laraskan kedudukan mereka.",
         "image": "assets/Game/withinscreen.png"
       });
     }
@@ -320,7 +321,7 @@ class _ProductDesignChallengePage
     if (!navAtBottom & hasNav) {
       feedbackList.add({
         "text":
-            "⚠️ Consider placing the Bottom Navigation at the bottom and stick at the bottom for better usability.",
+            "⚠️ Letakkan Navigasi Bawah di bahagian bawah dan kekalkan di situ untuk kebolehgunaan yang lebih baik.",
         "image": "assets/Game/bottomnavbar.png"
       });
     }
@@ -334,7 +335,7 @@ class _ProductDesignChallengePage
     if ((!searchAtTop && hasSearchBar) || (!filterAtTop && hasFilter)) {
       feedbackList.add({
         "text":
-            "⚠️ Place Search Bar and Filters near the top where users expect them.",
+            "⚠️ Letakkan Bar Carian dan Tab Penapis di bahagian atas di mana pengguna menjangkakannya.",
         "image": "assets/Game/searchbar.png"
       });
     }
@@ -346,7 +347,7 @@ class _ProductDesignChallengePage
     if (checkLayoutIssue(components) == LayoutIssue.overlap) {
       feedbackList.add({
         "text":
-            "⚠️ Some components are overlapping. Please ensure each element has enough spacing and doesn't cover another.",
+            "⚠️ Beberapa komponen bertindih. Pastikan setiap elemen mempunyai jarak yang cukup dan tidak menutupi yang lain.",
         "image": "assets/Game/overlapping.png"
       });
     } else {
@@ -354,7 +355,7 @@ class _ProductDesignChallengePage
           !(_isAlignedVertically(productCards))) {
         feedbackList.add({
           "text":
-              "⚠️ Product items seem misaligned. Try organizing them in a grid-like structure.",
+              "⚠️ Item produk kelihatan tidak sejajar. Cuba susun dalam struktur grid.",
           "image": "assets/Game/productcardalign.png"
         });
       }
@@ -363,7 +364,7 @@ class _ProductDesignChallengePage
     if (!_hasConsistentSpacing(components)) {
       feedbackList.add({
         'text':
-            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+            "Beberapa elemen terlalu rapat. Berikan lebih ruang dan jarak antara elemen untuk keterbacaan yang lebih baik.",
         'image': 'assets/Game/spacing.png',
       });
     }
@@ -371,7 +372,7 @@ class _ProductDesignChallengePage
     if (components.where((c) => c.type == 'SearchBarUI').length > 1) {
       feedbackList.add({
         "text":
-            "⚠️ Only one Search Bar should be used. Multiple search bars can confuse users.",
+            "⚠️ Hanya satu Bar Carian sepatutnya digunakan. Banyak bar carian boleh mengelirukan pengguna.",
         "image": "assets/Game/userconfuse.png"
       });
     }
@@ -379,7 +380,7 @@ class _ProductDesignChallengePage
     if (components.where((c) => c.type == 'FilterTabs').length > 1) {
       feedbackList.add({
         "text":
-            "⚠️ You’ve added multiple Filter Tabs. Consider using only one for clarity.",
+            "⚠️ Anda telah menambah lebih daripada satu Tab Penapis. Gunakan satu sahaja untuk lebih kejelasan.",
         "image": "assets/Game/userconfuse.png"
       });
     }
@@ -387,7 +388,7 @@ class _ProductDesignChallengePage
     if (components.where((c) => c.type == 'BottomNavBar').length > 1) {
       feedbackList.add({
         "text":
-            "⚠️ Only one Bottom Navigation Bar is expected. Multiple nav bars may confuse users.",
+            "⚠️ Hanya satu Navigasi Bawah yang dijangkakan. Banyak navigasi boleh mengelirukan pengguna.",
         "image": "assets/Game/userconfuse.png"
       });
     }
@@ -395,7 +396,7 @@ class _ProductDesignChallengePage
     if (feedbackList.isEmpty) {
       feedbackList.add({
         'text':
-            "Well done! Your design looks great overall. HCI reminds us that users don’t read manuals — they rely on design to guide them. Make every element speak for itself. 🎉",
+            "Syabas! Reka bentuk anda kelihatan hebat secara keseluruhan. HCI mengingatkan kita bahawa pengguna tidak membaca manual — mereka bergantung pada reka bentuk. Biarkan setiap elemen bercakap untuk dirinya sendiri. 🎉",
         'image': 'assets/Game/welldone.png',
       });
     }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fyp1/screen/user/design_challenge/design_challenge_parent.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -175,7 +174,7 @@ class _ProfileDesignChallengePageState
     );
   }
 
-@override
+  @override
   void submitDesign(
       void Function(List<Map<String, String>> feedbackList) onResult) {
     int total = components.length;
@@ -184,7 +183,7 @@ class _ProfileDesignChallengePageState
       onResult([
         {
           'text':
-              "Hmm... there's nothing to check here! Try adding some components first.",
+              "Hmm... tiada apa yang boleh diperiksa di sini! Cuba tambah beberapa komponen terlebih dahulu.",
         }
       ]);
       return;
@@ -195,12 +194,13 @@ class _ProfileDesignChallengePageState
       const allowedTypes = {'Name', 'Bio', 'ContactInfo'};
       return allowedTypes.contains(component.type);
     }).toList();
+
     // Font Size
     int goodFontSize = components.where((c) => c.fontSize > 14.0).length;
     if (goodFontSize != total) {
       feedbackList.add({
         'text':
-            "Oops, some of your text looks a bit tiny – I can barely see it! Usually, a font size of 15pt or above works well for readability.",
+            "Oops, sesetengah teks anda kelihatan agak kecil – saya hampir tak nampak! Kebiasaannya, saiz fon 15pt ke atas lebih sesuai untuk keterbacaan.",
         'image': 'assets/Game/fontsizetoosmall.png',
       });
     }
@@ -210,7 +210,7 @@ class _ProfileDesignChallengePageState
     if (fontSizes.length > 1) {
       feedbackList.add({
         'text':
-            "Hmm… it looks like quite a few different font sizes are being used. That might make the page feel a bit messy.",
+            "Hmm… nampaknya terdapat beberapa saiz fon yang berbeza digunakan. Ini boleh menyebabkan halaman kelihatan tidak kemas.",
         'image': 'assets/Game/toomanyfontsize.png',
       });
     }
@@ -219,7 +219,7 @@ class _ProfileDesignChallengePageState
     if (components.any((c) => c.color.value == 0xFFEEEEEE)) {
       feedbackList.add({
         'text':
-            "⚠️ Some components have very low contrast with white text. Try using a darker color.",
+            "⚠️ Sesetengah komponen mempunyai kontras yang sangat rendah dengan teks putih. Cuba gunakan warna yang lebih gelap.",
         'image': 'assets/Game/lowconstrast.png',
       });
     }
@@ -233,7 +233,7 @@ class _ProfileDesignChallengePageState
     if (!layoutOk) {
       feedbackList.add({
         'text':
-            "Uh-oh… it seems like some components are falling outside the screen. You might want to drag them back in.",
+            "Uh-oh… nampaknya ada komponen yang terkeluar dari skrin. Anda mungkin perlu seretnya semula ke dalam.",
         'image': 'assets/Game/withinscreen.png',
       });
     }
@@ -246,12 +246,11 @@ class _ProfileDesignChallengePageState
     if (components.isNotEmpty && components.last.type != "Button") {
       feedbackList.add({
         'text':
-            "Hmm... where’s the action button? Try placing it near the bottom – that’s where users usually look.",
+            "Hmm... di mana butang tindakan? Cuba letakkannya berhampiran bahagian bawah – itu tempat biasa pengguna mencarinya.",
         'image': 'assets/Game/layout.jpg',
       });
     }
-    
-    
+
     // Alignment
     double? commonX =
         checkedComponents.isNotEmpty ? checkedComponents.first.x : null;
@@ -264,16 +263,16 @@ class _ProfileDesignChallengePageState
     if (!consistentAlignment && checkedComponents.length > 1) {
       feedbackList.add({
         'text':
-            "Hmm, looks like some items are a bit off-alignment. Aligning them better could make your design feel more polished.",
+            "Hmm, nampaknya sesetengah elemen tidak sejajar dengan betul. Penjajaran yang baik akan menjadikan reka bentuk anda lebih kemas.",
         'image': 'assets/Game/goodalignment.png',
       });
     }
 
-     // Consistent Vertical Spacing
+    // Consistent Vertical Spacing
     if (!hasConsistentVerticalSpacing(checkedComponents)) {
       feedbackList.add({
         'text':
-            "It seems the vertical spacing between elements is inconsistent. Consistent spacing improves readability and visual flow!",
+            "Jarak menegak antara elemen tidak konsisten. Jarak yang konsisten membantu keterbacaan dan aliran visual!",
         'image': 'assets/Game/consistentspacing.png',
       });
     }
@@ -281,7 +280,7 @@ class _ProfileDesignChallengePageState
     if (!hasMinimumVerticalSpacing(components)) {
       feedbackList.add({
         'text':
-            "Some elements are too close together. Try giving them more breathing room and spacing for better readability.",
+            "Sesetengah elemen terlalu rapat antara satu sama lain. Cuba berikan lebih ruang agar reka bentuk lebih mudah dibaca.",
         'image': 'assets/Game/spacing.png',
       });
     }
@@ -290,11 +289,10 @@ class _ProfileDesignChallengePageState
     if (feedbackList.isEmpty) {
       feedbackList.add({
         'text':
-            "Well done! Your design looks great overall. 🎉HCI is about helping users — not making them squint. 🧐 Font size, spacing, and clarity all matter.",
+            "Syabas! Reka bentuk anda kelihatan hebat secara keseluruhan. 🎉 HCI berkaitan dengan membantu pengguna — bukan membuat mereka juling mata. 🧐 Saiz fon, jarak, dan kejelasan semuanya penting.",
         'image': 'assets/Game/welldone.png',
       });
     }
-   
 
     onResult(feedbackList);
   }

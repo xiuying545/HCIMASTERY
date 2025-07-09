@@ -96,7 +96,7 @@ class _ForumPageState extends State<ForumPage> {
                     ),
                   ),
                   child: Text(
-                    'Posts',
+                    'Pos',
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
@@ -122,7 +122,7 @@ class _ForumPageState extends State<ForumPage> {
                     ),
                   ),
                   child: Text(
-                    'My Posts',
+                    'Pos Saya',
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
@@ -545,7 +545,7 @@ class _ForumPageState extends State<ForumPage> {
                         },
                       ),
                       Text(
-                        '${forumViewModel.posts[index].likedByUserIds.length} likes',
+                        '${forumViewModel.posts[index].likedByUserIds.length} suka',
                         style: GoogleFonts.fredoka(
                           fontSize: 14,
                           color: const Color(0xff94A3B8),
@@ -557,7 +557,7 @@ class _ForumPageState extends State<ForumPage> {
                       const Icon(Icons.comment, color: Color(0xFF757575)),
                       const SizedBox(width: 5),
                       Text(
-                        '${forumViewModel.posts[index].replies.length} replies',
+                        '${forumViewModel.posts[index].replies.length} balasan',
                         style: GoogleFonts.fredoka(
                           fontSize: 14,
                           color: const Color(0xFF757575),

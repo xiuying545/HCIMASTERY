@@ -23,7 +23,6 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Reauthenticate the user with their current password
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null && user.email != null) {
         AuthCredential credential = EmailAuthProvider.credential(
@@ -32,16 +31,14 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
         );
 
         await user.reauthenticateWithCredential(credential);
-
-        // Update the password
         await user.updatePassword(_newPasswordController.text.trim());
 
-        _showSnackBar("Password updated successfully.");
+        _showSnackBar("Kata laluan berjaya dikemaskini.");
         if (mounted) {
           GoRouter.of(context).go('/studentNav?index=3');
         }
       } else {
-        _showSnackBar("User not logged in.");
+        _showSnackBar("Pengguna tidak log masuk.");
       }
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);
@@ -56,21 +53,22 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     String message;
     switch (e.code) {
       case 'wrong-password':
-        message = 'Incorrect current password.';
+        message = 'Kata laluan semasa tidak betul.';
         break;
       case 'weak-password':
-        message = 'New password is too weak.';
+        message = 'Kata laluan baru terlalu lemah.';
         break;
       default:
-        message = 'Failed to update password. Please try again.';
+        message = 'Gagal mengemaskini kata laluan. Sila cuba lagi.';
     }
     _showSnackBar(message);
   }
 
   void _showSnackBar(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message), backgroundColor: Colors.green,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.green),
+      );
     }
   }
 
@@ -79,7 +77,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Edit Password"),
+        title: const Text("Kemaskini Kata Laluan"),
         backgroundColor: Colors.blue.shade900,
         foregroundColor: Colors.white,
       ),
@@ -97,7 +95,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                   ),
                   SizedBox(height: constraints.maxHeight * 0.03),
                   Text(
-                    "Change Password",
+                    "Tukar Kata Laluan",
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall!
@@ -108,50 +106,45 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        // Current Password Field
                         CustomInputField(
-                          label: "Current Password",
+                          label: "Kata Laluan Semasa",
                           controller: _currentPasswordController,
                           isSecure: true,
                         ),
                         const SizedBox(height: 30),
                         CustomInputField(
-                          label: "New Password",
+                          label: "Kata Laluan Baru",
                           controller: _newPasswordController,
                           isSecure: true,
                           validators: [
                             (value) {
                               if (value!.length < 6) {
-                                return 'Password must be at least 6 characters';
+                                return 'Kata laluan mesti sekurang-kurangnya 6 aksara';
                               }
                               final passwordPattern = RegExp(
                                   r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).+$');
                               if (!passwordPattern.hasMatch(value)) {
-                                return 'Combination of characters, numbers, and special characters.';
+                                return 'Gabungan huruf, nombor dan simbol diperlukan.';
                               }
                               return null;
                             },
                           ],
                         ),
                         const SizedBox(height: 16),
-
-                        // Confirm New Password Field
                         CustomInputField(
-                          label: "Confirm New Password",
+                          label: "Sahkan Kata Laluan Baru",
                           controller: _confirmPasswordController,
                           isSecure: true,
                           validators: [
                             (value) {
                               if (value != _newPasswordController.text) {
-                                return 'Passwords do not match';
+                                return 'Kata laluan tidak sepadan';
                               }
                               return null;
                             },
                           ],
                         ),
                         const SizedBox(height: 30),
-
-                        // Update Password Button
                         ElevatedButton(
                           onPressed: _isLoading ? null : _updatePassword,
                           style: ElevatedButton.styleFrom(
@@ -166,7 +159,7 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
                               ? const CircularProgressIndicator(
                                   color: Colors.white)
                               : const Text(
-                                  "Update Password",
+                                  "Kemaskini Kata Laluan",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,

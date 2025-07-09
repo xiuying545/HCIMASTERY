@@ -23,7 +23,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("📋 Feedback Time",
+        title: const Text("📋 Masa Maklum Balas",
             style: TextStyle(color: Colors.brown)),
         leading: const BackButton(color: Colors.brown),
       ),
@@ -36,14 +36,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🌈 Which flow did you like better?',
+                  '🌈 Aliran mana yang anda lebih suka?',
                   style: GoogleFonts.fredoka(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-             
-
                 const SizedBox(height: 20),
                 Card(
                   elevation: 2,
@@ -54,7 +52,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     children: [
                       ListTile(
                         title: Text(
-                          'Flow A (Step-by-step)',
+                          'Aliran A (Langkah demi langkah)',
                           style: GoogleFonts.fredoka(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -73,7 +71,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       const Divider(height: 1, indent: 20, endIndent: 20),
                       ListTile(
                         title: Text(
-                          'Flow B (All-in-one)',
+                          'Aliran B (Semua dalam satu)',
                           style: GoogleFonts.fredoka(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -92,17 +90,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     ],
                   ),
                 ),
-                   if (flowErrorText != null)
+                if (flowErrorText != null)
                   Padding(
-    padding: const EdgeInsets.only(top: 8.0, left: 8.0),
-    child: Text(
-      flowErrorText!,
-      style: TextStyle(color: Colors.red[700], fontSize: 14),
-    ),
-  ),
+                    padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                    child: Text(
+                      flowErrorText!,
+                      style: TextStyle(color: Colors.red[700], fontSize: 14),
+                    ),
+                  ),
                 const SizedBox(height: 30),
                 Text(
-                  '💬 Why did you prefer it?',
+                  '💬 Mengapa anda lebih suka aliran tersebut?',
                   style: GoogleFonts.fredoka(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -121,11 +119,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       controller: _feedbackController,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Share your thoughts...',
+                        hintText: 'Kongsikan pendapat anda...',
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please provide your feedback.';
+                          return 'Sila berikan maklum balas anda.';
                         }
                         return null;
                       },
@@ -149,26 +147,28 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                  onPressed: () {
-  setState(() {
-    flowErrorText = selectedFlow == null ? 'Please select a flow.' : null;
-  });
+                    onPressed: () {
+                      setState(() {
+                        flowErrorText =
+                            selectedFlow == null ? 'Sila pilih satu aliran.' : null;
+                      });
 
-  if (_formKey.currentState!.validate() && selectedFlow != null) {
-    feedbackText = _feedbackController.text;
+                      if (_formKey.currentState!.validate() &&
+                          selectedFlow != null) {
+                        feedbackText = _feedbackController.text;
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ExplanationScreen(),
-      ),
-    );
-  }
-},
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ExplanationScreen(),
+                          ),
+                        );
+                      }
+                    },
                     child: const Text(
-                      'Submit 🎉',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      'Hantar 🎉',
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

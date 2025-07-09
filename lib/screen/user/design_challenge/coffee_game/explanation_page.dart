@@ -14,27 +14,27 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
 
   final List<Map<String, String>> slides = [
     {
-      'title': '🎮 What Did You Just Do?',
+      'title': '🎮 Apa yang anda baru lakukan?',
       'text':
-          'You participated in a fun and simple A/B testing activity! In HCI, this helps designers understand which design works better for users.',
+          'Anda telah menyertai aktiviti ujian A/B yang mudah dan menyeronokkan! Dalam HCI, ini membantu pereka bentuk memahami reka bentuk mana yang lebih sesuai untuk pengguna.',
       'image': 'assets/Animation/abtesting.png'
     },
     {
-      'title': '☕ Flow A: Step-by-Step',
+      'title': '☕ Aliran A: Langkah demi langkah',
       'text':
-          'Flow A guides users one step at a time. It helps beginners focus and reduces mistakes. Slower but safer!',
+          'Aliran A membimbing pengguna satu langkah pada satu masa. Ia membantu pengguna baru untuk fokus dan mengurangkan kesilapan. Lebih perlahan tetapi lebih selamat!',
       'image': 'assets/Animation/flowa.png'
     },
     {
-      'title': '⚡ Flow B: All-in-One',
+      'title': '⚡ Aliran B: Semua dalam satu',
       'text':
-          'Flow B lets users choose everything on one screen. Fast and efficient, but might be overwhelming for some users.',
+          'Aliran B membenarkan pengguna membuat semua pilihan dalam satu skrin. Cepat dan cekap, tetapi mungkin mengelirukan bagi sesetengah pengguna.',
       'image': 'assets/Animation/flowb.png'
     },
     {
-      'title': '💡 HCI Takeaway',
+      'title': '💡 Pengajaran HCI',
       'text':
-          'There is no perfect design. Good UX depends on who the user is and what they’re trying to do. That’s the heart of HCI! 🎓',
+          'Tiada reka bentuk yang sempurna. UX yang baik bergantung kepada siapa penggunanya dan apa yang mereka cuba lakukan. Itulah intipati HCI! 🎓',
       'image': 'assets/Animation/hci.png'
     },
   ];
@@ -46,7 +46,7 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("📚 HCI Learning", style: TextStyle(color: Colors.brown)),
+        title: const Text("📚 Pembelajaran HCI", style: TextStyle(color: Colors.brown)),
         leading: const BackButton(color: Colors.brown),
       ),
       body: Column(
@@ -95,7 +95,7 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
                   TextButton(
                     onPressed: () => _controller.previousPage(
                         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-                    child: const Text('← Back'),
+                    child: const Text('← Kembali'),
                   ),
                 if (currentIndex < slides.length - 1)
                   ElevatedButton(
@@ -108,7 +108,7 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    child: const Text('Next →', style: TextStyle(fontSize: 16)),
+                    child: const Text('Seterusnya →', style: TextStyle(fontSize: 16)),
                   )
                 else
                   ElevatedButton(
@@ -120,7 +120,7 @@ class _ExplanationScreenState extends State<ExplanationScreen> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    child: const Text('Back to Start 🔁', style: TextStyle(fontSize: 16)),
+                    child: const Text('Kembali ke Mula 🔁', style: TextStyle(fontSize: 16)),
                   ),
               ],
             ),

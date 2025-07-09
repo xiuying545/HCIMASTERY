@@ -412,7 +412,7 @@ abstract class DesignChallengeUIState<T extends StatefulWidget>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Design Feedback",
+                        "Maklum Balas Reka Bentuk",
                         style: GoogleFonts.fredoka(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,

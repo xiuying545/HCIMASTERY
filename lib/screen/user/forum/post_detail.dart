@@ -94,7 +94,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5E9),
-      appBar: const AppBarWithBackBtn(title: 'Post Detail'),
+      appBar: const AppBarWithBackBtn(title: 'Perincian Hantaran'),
       body: isLoading
           ? const LoadingShimmer()
           : SafeArea(
@@ -119,7 +119,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: Text(
-                                        'Replies (${replies.length})',
+                                        'Balasan (${replies.length})',
                                         style: GoogleFonts.poppins(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,

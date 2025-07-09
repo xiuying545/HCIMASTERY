@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fyp1/common/common_widget/app_bar_with_back.dart';
 import 'package:fyp1/view_model/quiz_view_model.dart';
@@ -42,7 +41,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarWithBackBtn(
-        title: 'Quiz Result',
+        title: 'Keputusan Kuiz',
         route: '/studentNav',
       ),
       backgroundColor: const Color(0xFFFFFDF5),
@@ -56,7 +55,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
         } else if (quizViewModel.quizzes.isEmpty) {
           return Center(
             child: Text(
-              'No quizzes available.',
+              'Tiada kuiz tersedia.',
               style: GoogleFonts.poppins(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w500,
@@ -73,7 +72,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                 _buildHeader(),
                 const SizedBox(height: 20),
                 Text(
-                  "See your answer",
+                  "Semak jawapan anda",
                   style: GoogleFonts.rubik(
                     fontSize: 22.0,
                     fontWeight: FontWeight.w700,
@@ -96,21 +95,20 @@ class _QuizResultPageState extends State<QuizResultPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF54A2E3),
         borderRadius: BorderRadius.circular(20),
-        image: const DecorationImage(image: AssetImage("assets/Animation/congratulation.png"),fit:BoxFit.contain)
+        image: const DecorationImage(
+          image: AssetImage("assets/Animation/congratulation.png"),
+          fit: BoxFit.contain,
+        ),
       ),
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      child: Container(
-        
-        
-        child:Center(
+      child: Center(
         child: Column(
           children: [
             Text(
-              'Congratulations, you had scored',
+              'Tahniah, anda telah memperoleh',
               textAlign: TextAlign.center,
               style: GoogleFonts.rubik(
                 fontSize: 22.0,
-                
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -133,7 +131,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                     ),
                   ),
                   Text(
-                    "out of ${quizViewModel.quizzes.length}",
+                    "daripada ${quizViewModel.quizzes.length}",
                     style: GoogleFonts.rubik(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w500,
@@ -146,7 +144,6 @@ class _QuizResultPageState extends State<QuizResultPage> {
           ],
         ),
       ),
-      ),
     );
   }
 
@@ -156,86 +153,88 @@ class _QuizResultPageState extends State<QuizResultPage> {
         itemCount: quizViewModel.quizzes.length,
         itemBuilder: (context, index) {
           final quiz = quizViewModel.quizzes[index];
-          final isCorrect = quiz.answer == quizViewModel.cachedAnswers[quiz.quizzID];
+          final isCorrect =
+              quiz.answer == quizViewModel.cachedAnswers[quiz.quizzID];
 
-          return 
-          GestureDetector(
-            onTap:   ()  {
+          return GestureDetector(
+            onTap: () {
               String? quizzID = quiz.quizzID;
-         
-
-     
-                context.push(
-                  '/student/quizAnswer?quizzID=$quizzID',
-                );
-            
+              context.push('/student/quizAnswer?quizzID=$quizzID');
             },
-          child:Container(
-      
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCorrect ? Colors.green.shade100 : Colors.red.shade100,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${index + 1}',
-                        style: GoogleFonts.rubik(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isCorrect ? Colors.green.shade700 : Colors.red.shade700,
-                        ),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isCorrect
+                            ? Colors.green.shade100
+                            : Colors.red.shade100,
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          quiz.question,
+                      child: Center(
+                        child: Text(
+                          '${index + 1}',
                           style: GoogleFonts.rubik(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF111827),
+                            color: isCorrect
+                                ? Colors.green.shade700
+                                : Colors.red.shade700,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          isCorrect ? 'Correct Answer' : 'Wrong Answer',
-                          style: GoogleFonts.rubik(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: isCorrect ? Colors.green.shade700 : Colors.red.shade700,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            quiz.question,
+                            style: GoogleFonts.rubik(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF111827),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            isCorrect
+                                ? 'Jawapan Betul'
+                                : 'Jawapan Salah',
+                            style: GoogleFonts.rubik(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: isCorrect
+                                  ? Colors.green.shade700
+                                  : Colors.red.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ));
+          );
         },
       ),
     );

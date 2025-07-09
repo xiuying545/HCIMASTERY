@@ -21,6 +21,7 @@ class EditProfilePage extends StatefulWidget {
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
+
 class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -95,9 +96,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveProfile() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -125,7 +125,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       await userViewModel.saveUser(user);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Profile edited successfully!',
+          content: Text('Profil berjaya dikemas kini!',
               style: AppTheme.snackBarText),
           backgroundColor: Colors.green,
         ),
@@ -143,17 +143,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: Stack(
         children: [
           isLoading
-                    ? LoadingShimmer()
-                    :  SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).viewPadding.top -
-                      MediaQuery.of(context).viewPadding.bottom,
-                ),
-                child:IntrinsicHeight(
+              ? LoadingShimmer()
+              : SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).viewPadding.top -
+                            MediaQuery.of(context).viewPadding.bottom,
+                      ),
+                      child: IntrinsicHeight(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -172,10 +172,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             width: 110,
                                             height: 110,
                                             fit: BoxFit.cover,
-                                            loadingBuilder:
-                                                (_, child, progress) {
-                                              if (progress == null)
-                                                return child;
+                                            loadingBuilder: (_, child, progress) {
+                                              if (progress == null) return child;
                                               return CircularProgressIndicator(
                                                 color: AppTheme.primaryColor,
                                               );
@@ -206,7 +204,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                             const SizedBox(height: 30),
                             Text(
-                              "⭐ Edit your personal details ⭐",
+                              "⭐ Kemaskini Maklumat Diri ⭐",
                               style: GoogleFonts.poppins(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -217,38 +215,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             Form(
                               key: _formKey,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // all your widgets including:
                                   _buildInputCard(
                                     Icons.person,
-                                    "Name",
+                                    "Nama",
                                     _nameController,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Name is required';
+                                        return 'Nama diperlukan';
                                       }
                                       if (!RegExp(r'^[a-zA-Z\s]+$')
                                           .hasMatch(value)) {
-                                        return 'Name can only contain alphabets';
+                                        return 'Nama hanya boleh mengandungi huruf';
                                       }
                                       return null;
                                     },
                                   ),
                                   _buildInputCard(Icons.person_outline,
-                                      "Username", _usernameController),
+                                      "Nama Pengguna", _usernameController),
                                   _buildInputCard(
                                     Icons.phone,
-                                    "Phone",
+                                    "Nombor Telefon",
                                     _phoneController,
                                     validator: (value) {
-                                      if (value != null) {
-                                        if (value.isNotEmpty &&
-                                            !RegExp(r'^[0-9]+$')
-                                                .hasMatch(value)) {
-                                          return 'Phone can only contain numbers';
-                                        }
+                                      if (value != null &&
+                                          value.isNotEmpty &&
+                                          !RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                        return 'Nombor hanya boleh mengandungi digit';
                                       }
                                       return null;
                                     },
@@ -261,31 +254,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 buildRoundedButton(
-                                    icon: Icons.lock_outline,
-                                    label: "Password",
-                                    onTap: () => GoRouter.of(context)
-                                        .push("/editPassword"),
-                                    color: const Color(0xffEA7A84),
-                                    context: context),
+                                  icon: Icons.lock_outline,
+                                  label: "Kata Laluan",
+                                  onTap: () => GoRouter.of(context)
+                                      .push("/editPassword"),
+                                  color: const Color(0xffEA7A84),
+                                  context: context,
+                                ),
                                 const SizedBox(width: 16),
                                 buildRoundedButton(
-                                    icon: Icons.save,
-                                    label: "Save",
-                                    onTap: _saveProfile,
-                                    color: const Color(0xffF79F3C),
-                                    context: context),
+                                  icon: Icons.save,
+                                  label: "Simpan",
+                                  onTap: _saveProfile,
+                                  color: const Color(0xffF79F3C),
+                                  context: context,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 20),
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                onPressed: () =>
-                                    GoRouter.of(context).push("/deleteAccount"),
+                                onPressed: () => GoRouter.of(context)
+                                    .push("/deleteAccount"),
                                 icon: const Icon(Icons.delete_forever_outlined,
                                     color: Colors.white, size: 18),
                                 label: Text(
-                                  "Delete Account",
+                                  "Padam Akaun",
                                   style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -294,8 +289,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       const Color.fromARGB(255, 243, 102, 114),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 14),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -307,9 +302,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ],
                         ),
                       ),
-              ),
-            ),
-          ),
+                    ),
+                  ),
+                ),
           Positioned(
             top: 40,
             left: 16,
@@ -326,8 +321,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildInputCard(
-      IconData icon, String label, TextEditingController controller,
-      {String? Function(String?)? validator}) {
+    IconData icon,
+    String label,
+    TextEditingController controller, {
+    String? Function(String?)? validator,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -395,3 +393,4 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 }
+

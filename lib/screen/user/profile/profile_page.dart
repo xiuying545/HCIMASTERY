@@ -37,9 +37,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (userViewModel.userId != null) {
       await userViewModel.loadUser(userViewModel.userId!);
     } else {
-      String errorMessage = "User ID is null";
+      String errorMessage = "ID Pengguna adalah kosong";
 
-      // Log error in Firebase Crashlytics
       FirebaseCrashlytics.instance.recordError(
         Exception(errorMessage),
         StackTrace.current,
@@ -54,9 +53,9 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => CustomDialog(
-        title: 'Logout',
-        content: 'Are you sure you want to logout?',
-        action: 'Alert',
+        title: 'Log Keluar',
+        content: 'Adakah anda pasti ingin log keluar?',
+        action: 'Amaran',
         onConfirm: () {
           _logout();
           Navigator.of(context).pop();
@@ -70,9 +69,9 @@ class _ProfilePageState extends State<ProfilePage> {
       isLoading = true;
     });
     await userViewModel.logout();
-     Provider.of<NoteViewModel>(context, listen: false).clear();
-     Provider.of<ForumViewModel>(context, listen: false).clear();
-     Provider.of<QuizViewModel>(context, listen: false).clear();
+    Provider.of<NoteViewModel>(context, listen: false).clear();
+    Provider.of<ForumViewModel>(context, listen: false).clear();
+    Provider.of<QuizViewModel>(context, listen: false).clear();
     if (mounted) {
       GoRouter.of(context).go('/signIn');
     }
@@ -94,140 +93,119 @@ class _ProfilePageState extends State<ProfilePage> {
             }
 
             return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20),
-
-                    // When is fetching the profile data
-
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 4,
-                        ),
-                      ),
-                      child: CircleAvatar(
-                        radius: size.width * 0.15,
-                        backgroundColor: Colors.grey[200],
-                        backgroundImage: userViewModel.user?.profileImage !=
-                                null
-                            ? NetworkImage(userViewModel.user!.profileImage!)
-                            : const NetworkImage(
-                                "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        )
+                      ],
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
                       ),
                     ),
-
-                    const SizedBox(height: 16),
-
-                    // Name with Star Decoration
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // const Icon(Icons.star, color: Colors.amber, size: 20),
-                        // const SizedBox(width: 8),
-                        Text(
-                            userViewModel.user != null
-                                ? userViewModel.user!.name
-                                : 'User',
-                            style: GoogleFonts.poppins(
-                              fontSize: 22,
-                              color: Colors.blue.shade900,
-                              fontWeight: FontWeight.bold,
-                            )),
-
-                        // const SizedBox(width: 8),
-                        // const Icon(Icons.star, color: Colors.amber, size: 20),
-                      ],
+                    child: CircleAvatar(
+                      radius: size.width * 0.15,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: userViewModel.user?.profileImage != null
+                          ? NetworkImage(userViewModel.user!.profileImage!)
+                          : const NetworkImage(
+                              "https://cdn-icons-png.flaticon.com/512/9368/9368192.png"),
                     ),
-
-                    const SizedBox(height: 8),
-
-                    // Email with Mail Icon
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.mail_outline,
-                            color: Colors.blue, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          userViewModel.user!.email,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        userViewModel.user != null
+                            ? userViewModel.user!.name
+                            : 'Pengguna',
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          color: Colors.blue.shade900,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-                    _buildInfoCard(
-                      icon: Icons.person_outline,
-                      title: "Username",
-                      value: userViewModel.user!.username == null ||
-                              userViewModel.user!.username!.isEmpty
-                          ? "Not set yet"
-                          : userViewModel.user!.username!,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    _buildInfoCard(
-                      icon: Icons.phone,
-                      title: "Phone Number",
-                      value: userViewModel.user!.phone == null ||
-                              userViewModel.user!.phone!.isEmpty
-                          ? "Not set yet"
-                          : userViewModel.user!.phone!,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    _buildInfoCard(
-                      icon: Icons.email,
-                      title: "Email",
-                      value: userViewModel.user!.email,
-                    ),
-
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        buildRoundedButton(
-                            icon: Icons.logout,
-                            label: "Logout",
-                            onTap: () => _showLogoutConfirmation(),
-                            color: const Color(0xffEA7A84),
-                            context: context),
-                        const SizedBox(width: 16),
-                        buildRoundedButton(
-                            icon: Icons.edit,
-                            label: "Edit Profile",
-                            onTap: () {
-                              GoRouter.of(context).push(
-                                  "/editProfile/${userViewModel.userId!}");
-                            },
-                            color: const Color(0xffF79F3C),
-                            context: context),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    const SizedBox(height: 32),
-                  ],
-                ));
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.mail_outline,
+                          color: Colors.blue, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        userViewModel.user!.email,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildInfoCard(
+                    icon: Icons.person_outline,
+                    title: "Nama Pengguna",
+                    value: userViewModel.user!.username == null ||
+                            userViewModel.user!.username!.isEmpty
+                        ? "Belum ditetapkan"
+                        : userViewModel.user!.username!,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoCard(
+                    icon: Icons.phone,
+                    title: "Nombor Telefon",
+                    value: userViewModel.user!.phone == null ||
+                            userViewModel.user!.phone!.isEmpty
+                        ? "Belum ditetapkan"
+                        : userViewModel.user!.phone!,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoCard(
+                    icon: Icons.email,
+                    title: "Emel",
+                    value: userViewModel.user!.email,
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildRoundedButton(
+                          icon: Icons.logout,
+                          label: "Log Keluar",
+                          onTap: () => _showLogoutConfirmation(),
+                          color: const Color(0xffEA7A84),
+                          context: context),
+                      const SizedBox(width: 16),
+                      buildRoundedButton(
+                          icon: Icons.edit,
+                          label: "Edit Profil",
+                          onTap: () {
+                            GoRouter.of(context)
+                                .push("/editProfile/${userViewModel.userId!}");
+                          },
+                          color: const Color(0xffF79F3C),
+                          context: context),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            );
           }),
         ),
       ),
@@ -255,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: getBubbleColor(icon), // pick pastel bg based on icon type
+              color: getBubbleColor(icon),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
@@ -281,7 +259,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   value,
                   style: GoogleFonts.poppins(
-                    // Change to poppins for cuteness
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[800],

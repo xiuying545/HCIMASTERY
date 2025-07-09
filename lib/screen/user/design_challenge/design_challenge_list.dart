@@ -4,28 +4,28 @@ import 'package:google_fonts/google_fonts.dart';
 
 class DesignChallengesPage extends StatelessWidget {
   final List<Map<String, dynamic>> challenges = [
-    {
-      "title": "Design a Profile Page ",
-      "description": "Spot the Design Flaws! Fix Usability!",
-      "icon": Icons.brush,
-      "color": Colors.orange.shade400,
-      "routes": "/practicalExercise/profilePage"
-    },
-    {
-      "title": "Design a Product List Page",
-      "description": "Add Suitable Component into product list page",
-      "icon": Icons.graphic_eq,
-      "color": Colors.green.shade400,
-      "routes": "/practicalExercise/productgame"
-    },
-    {
-      "title": "A/B Testing",
-      "description": "Learn how to do A/B Testing",
-      "icon": Icons.auto_awesome,
-      "color": Colors.purple.shade400,
-      "routes": "/practicalExercise/coffeegame"
-    },
-  ];
+  {
+    "title": "Betulkan Halaman Profil",
+    "description": "Kenal pasti Kecacatan Reka Bentuk! Baiki Kebolehgunaan!",
+    "icon": Icons.brush,
+    "color": Colors.orange.shade400,
+    "routes": "/practicalExercise/profilePage"
+  },
+  {
+    "title": "Reka Halaman Senarai Produk",
+    "description": "Tambah Komponen Yang Sesuai ke dalam halaman senarai produk",
+    "icon": Icons.graphic_eq,
+    "color": Colors.green.shade400,
+    "routes": "/practicalExercise/productgame"
+  },
+  {
+    "title": "Ujian A/B",
+    "description": "Pelajari cara melakukan Ujian A/B",
+    "icon": Icons.auto_awesome,
+    "color": Colors.purple.shade400,
+    "routes": "/practicalExercise/coffeegame"
+  },
+];
 
   DesignChallengesPage({super.key});
 

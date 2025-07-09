@@ -16,16 +16,14 @@ class _FlowBScreenState extends State<FlowBScreen> {
   String? milkType;
   double sugarAmount = 0;
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.yellow.shade50,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("☕ Flow B - All in One",
+        title: const Text("☕ Aliran B - Semua Sekali",
             style: TextStyle(color: Colors.brown)),
         leading: const BackButton(color: Colors.brown),
       ),
@@ -35,13 +33,13 @@ class _FlowBScreenState extends State<FlowBScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('🌟 Choose your coffee type:',
+            const Text('🌟 Pilih jenis kopi anda:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: coffeeType,
               decoration: InputDecoration(
-                hintText: "Select Coffee",
+                hintText: "Pilih Jenis Kopi",
                 filled: true,
                 fillColor: const Color(0xFFF9F4E8),
                 contentPadding:
@@ -58,13 +56,13 @@ class _FlowBScreenState extends State<FlowBScreen> {
               onChanged: (val) => setState(() => coffeeType = val),
             ),
             const SizedBox(height: 45),
-            const Text('🌸 Pick your milk:',
+            const Text('🌸 Pilih jenis susu anda:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
-               DropdownButtonFormField<String>(
+            DropdownButtonFormField<String>(
               value: milkType,
               decoration: InputDecoration(
-                hintText: "Select Milk",
+                hintText: "Pilih Jenis Susu",
                 filled: true,
                 fillColor: const Color(0xFFF9F4E8),
                 contentPadding:
@@ -74,15 +72,14 @@ class _FlowBScreenState extends State<FlowBScreen> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              items: ['Whole', 'Oat', 'Almond', 'None']
+              items: ['Penuh Krim', 'Oat', 'Badam', 'Tiada']
                   .map((type) =>
                       DropdownMenuItem(value: type, child: Text(type)))
                   .toList(),
-              onChanged: (val) => setState(() => milkType = milkType),
+              onChanged: (val) => setState(() => milkType = val),
             ),
-            
             const SizedBox(height: 45),
-            Text('🍬 Sugar: ${sugarAmount.round()} tsp',
+            Text('🍬 Gula: ${sugarAmount.round()} sudu',
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
             Slider(
@@ -105,28 +102,27 @@ class _FlowBScreenState extends State<FlowBScreen> {
                       borderRadius: BorderRadius.circular(24)),
                 ),
                 onPressed: () {
-                               if(widget.fromFlowA == true) {
-                                 Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const FeedbackScreen()),
-                          );
-                          } else{
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const FlowAScreen(fromFlowB: true)),
-                  );
-                          }
+                  if (widget.fromFlowA == true) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const FeedbackScreen()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const FlowAScreen(fromFlowB: true)),
+                    );
+                  }
                 },
-                child: 
-                
-                
-                 Text(widget.fromFlowA == true
-                          ? 'Give Feedback 💌'
-                          : "Next: Flow A 🌈",
-                    style:
-                        const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                    widget.fromFlowA == true
+                        ? 'Beri Maklum Balas 💌'
+                        : "Seterusnya: Aliran A 🌈",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             )
           ],

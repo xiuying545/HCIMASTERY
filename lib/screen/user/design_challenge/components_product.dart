@@ -185,7 +185,7 @@ class BottomNavBar extends UIComponent {
           text: '',
           fontSize: 14,
           x: 0,
-          y: 700,
+          y: 450,
           width: 360,
           height: 80,
         );

@@ -33,7 +33,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await noteViewModel.setupChapterData();
-      // await noteViewModel.calculateProgressByChapter();
       setState(() {
         isLoading = false;
       });
@@ -49,11 +48,9 @@ class _MainPageState extends State<MainPage> {
           const SizedBox(height: 20),
           _buildHeader(),
           CustomBanner(
-            title: "Explore, Learn,\nand Master HCI\nby using\nHCI Mastery",
+            title: "Teroka, Belajar,\ndan Kuasai HCI\ndengan\nHCI Mastery",
             imagePath: 'assets/Animation/child.png',
-            onPressed: () {
-              // Handle banner tap
-            },
+            onPressed: () {},
           ),
           const SizedBox(height: 20),
           Expanded(child: _buildCoursesSection()),
@@ -70,7 +67,7 @@ class _MainPageState extends State<MainPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Good Day 👋',
+            'Selamat Sejahtera 👋',
             style: GoogleFonts.fredoka(
               color: const Color(0xff2c2c2c),
               fontSize: 28,
@@ -79,7 +76,7 @@ class _MainPageState extends State<MainPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Let us learn HCI together!',
+            'Mari kita belajar HCI bersama-sama!',
             style: GoogleFonts.poppins(
               color: const Color(0xff2c2c2c),
               fontSize: 16,
@@ -101,8 +98,8 @@ class _MainPageState extends State<MainPage> {
         if (viewModel.chapters.isEmpty) {
           return const BlankState(
             icon: Icons.menu_book_outlined,
-            title: 'No chapters yet',
-            subtitle: 'Please check back later for available chapters.',
+            title: 'Tiada bab tersedia',
+            subtitle: 'Sila semak semula kemudian untuk bab yang tersedia.',
           );
         }
 
@@ -112,14 +109,14 @@ class _MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '📚 Courses',
+                '📚 Kursus',
                 style: GoogleFonts.fredoka(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xff2c2c2c),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 5),
               Expanded(
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
@@ -171,14 +168,6 @@ class _MainPageState extends State<MainPage> {
                                       color: const Color(0xff2c2c2c),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  // Text(
-                                  //   '${viewModel.noteCount[chapter.chapterID]} lessons',
-                                  //   style: GoogleFonts.poppins(
-                                  //     fontSize: 14,
-                                  //     color: Colors.grey[600],
-                                  //   ),
-                                  // ),
                                   const SizedBox(height: 6),
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
@@ -259,26 +248,6 @@ class CustomBanner extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //     elevation: 0,
-                //     padding:
-                //         const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                //     backgroundColor: Colors.white,
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(20),
-                //     ),
-                //   ),
-                //   onPressed: onPressed,
-                //   child: Text(
-                //     "Explore",
-                //     style: GoogleFonts.poppins(
-                //       fontSize: 15,
-                //       fontWeight: FontWeight.w600,
-                //       color: const Color(0xFF1565C0),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
